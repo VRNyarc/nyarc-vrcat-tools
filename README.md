@@ -9,8 +9,8 @@
 ## ✨ Features
 
 ### 🦴 **Bone Transform Saver**
-The core module for precise armature modifications with advanced bone transformation capabilities:
-- **Precision Correction Engine**: Armature diff export with coordinate space conversion accuracy
+The core module for CATS-like pose mode editing and bone transformation management:
+- **Pose Mode Management**: CATS-style start/stop pose mode editing with automatic context switching
 - **Intelligent Bone Mapping**: Fuzzy matching for automatic bone name resolution across different armature naming conventions
 - **Advanced Preset Management**: Scrollable UI with organized preset categories and easy sharing
 - **Pose History Tracking**: Complete rollback system with metadata storage for non-destructive editing
