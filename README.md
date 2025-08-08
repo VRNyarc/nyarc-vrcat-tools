@@ -8,28 +8,35 @@
 
 ## ✨ Features
 
-### 🦴 **Advanced Bone Transform System**
-- **Precision Correction Engine**: Amateur diff export with coordinate space conversion accuracy
-- **Intelligent Bone Mapping**: Fuzzy matching for automatic bone name resolution
-- **Advanced Preset Management**: Scrollable UI with organized preset categories
-- **Pose History Tracking**: Rollback system with metadata storage
-- **VRChat Compatibility**: Full bone validation and naming compliance
+### 🦴 **Bone Transform Saver**
+The core module for precise armature modifications with advanced bone transformation capabilities:
+- **Precision Correction Engine**: Armature diff export with coordinate space conversion accuracy
+- **Intelligent Bone Mapping**: Fuzzy matching for automatic bone name resolution across different armature naming conventions
+- **Advanced Preset Management**: Scrollable UI with organized preset categories and easy sharing
+- **Pose History Tracking**: Complete rollback system with metadata storage for non-destructive editing
+- **VRChat Compatibility**: Full bone validation and VRChat naming standard compliance
+- **Inherit Scale Controls**: Smart bone scaling inheritance management with visual indicators
 
-### 🔷 **Shape Key Transfer Tools** 
-- **Surface Deform Transfer**: Professional-grade shape key transfer system
-- **Live Synchronization**: Real-time shape key value sync between meshes
-- **Batch Operations**: Multi-target, multi-shape key transfer workflows
-- **Automatic Validation**: Mesh compatibility checking and preparation
+### 🔷 **Shape Key Transfer**
+Professional-grade shape key transfer system with real-time synchronization:
+- **Surface Deform Transfer**: High-quality shape key transfer using Blender's Surface Deform modifier
+- **Live Synchronization**: Real-time shape key value sync between source and target meshes
+- **Batch Operations**: Multi-target, multi-shape key transfer workflows for efficient avatar creation
+- **Automatic Mesh Preparation**: Smart mesh compatibility checking and Surface Deform setup
+- **Expandable Help System**: Built-in guidance with collapsible instruction panels
 
-### 🔄 **Mirror Flip Utilities**
-- **One-Click Accessory Flipping**: Smart detection and .L/.R naming
-- **Bone Symmetrization**: Advanced bone chain analysis and mirroring
-- **Auto-Detection**: Intelligent flip candidate identification
+### 🔄 **Mirror Flip**
+One-click mirroring system for accessories and bone structures:
+- **Smart Accessory Flipping**: Intelligent detection and duplication of .L/.R accessories
+- **Bone Chain Mirroring**: Advanced bone chain analysis and symmetrical duplication
+- **Auto-Detection System**: Automatic identification of flip candidates with safety validation
+- **Combined Operations**: Simultaneous mesh and bone flipping for complete workflows
 
-### 📤 **Export & Integration**
-- **Armature Diff Export**: Professional difference calculation system
-- **VRChat Standards**: Compliance checking and optimization
-- **Preset Synchronization**: Advanced preset management across projects
+### 📤 **Armature Diff Export** *(Work in Progress)*
+Advanced armature difference calculation and export system:
+- **Difference Calculation**: Precise mathematical difference detection between armature states
+- **Export Integration**: Seamless integration with existing VRChat workflows
+- **Coordinate Space Handling**: Proper coordinate space conversion for accurate results
 
 ## 🚀 Installation
 
