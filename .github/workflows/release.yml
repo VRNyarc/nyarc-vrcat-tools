@@ -1,0 +1,145 @@
+name: Build and Release Addon
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for changelog generation
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Extract version from tag
+      id: version
+      run: |
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        VERSION=${TAG_NAME#v}
+        echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+    
+    - name: Build Addon ZIP
+      run: |
+        echo "Building Nyarc VRCat Tools addon..."
+        python -c "
+        import zipfile
+        import os
+        
+        zip_filename = 'nyarc-vrcat-tools-${{ steps.version.outputs.tag_name }}.zip'
+        print(f'Creating {zip_filename}...')
+        
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk('nyarc_vrcat_tools'):
+                # Skip unwanted directories
+                dirs[:] = [d for d in dirs if not d.startswith('.') and d != '__pycache__']
+                
+                for file in files:
+                    if file.endswith('.py'):
+                        file_path = os.path.join(root, file)
+                        # Maintain the nyarc_vrcat_tools structure in the ZIP
+                        zipf.write(file_path, file_path)
+                        print(f'  Added: {file_path}')
+        
+        print(f'✅ {zip_filename} created successfully!')
+        "
+    
+    - name: Verify ZIP contents
+      run: |
+        ZIP_FILE="nyarc-vrcat-tools-${{ steps.version.outputs.tag_name }}.zip"
+        echo "📦 ZIP file contents:"
+        python -c "
+        import zipfile
+        with zipfile.ZipFile('$ZIP_FILE', 'r') as zipf:
+            files = zipf.namelist()
+            print(f'Total files: {len(files)}')
+            for f in sorted(files)[:10]:  # Show first 10 files
+                print(f'  {f}')
+            if len(files) > 10:
+                print(f'  ... and {len(files) - 10} more files')
+        "
+    
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        echo "📝 Generating release notes..."
+        
+        # Extract changelog for this version
+        if [ -f "CHANGELOG.md" ]; then
+          echo "Using CHANGELOG.md for release notes"
+          # Extract the section for this version
+          python -c "
+        import re
+        
+        try:
+            with open('CHANGELOG.md', 'r') as f:
+                content = f.read()
+            
+            # Find the section for this version
+            version_pattern = r'## v${{ steps.version.outputs.version }}.*?\n(.*?)(?=\n## |$)'
+            match = re.search(version_pattern, content, re.DOTALL)
+            
+            if match:
+                release_notes = match.group(1).strip()
+                print('Found changelog entry for this version')
+            else:
+                release_notes = '* Release v${{ steps.version.outputs.version }}'
+                print('No specific changelog entry found, using generic notes')
+            
+            # Save to file for GitHub Actions
+            with open('release_notes.txt', 'w') as f:
+                f.write(release_notes)
+                
+        except Exception as e:
+            print(f'Error processing changelog: {e}')
+            with open('release_notes.txt', 'w') as f:
+                f.write('* Release v${{ steps.version.outputs.version }}')
+          "
+        else
+          echo "* Release v${{ steps.version.outputs.version }}" > release_notes.txt
+        fi
+        
+        echo "Release notes generated:"
+        cat release_notes.txt
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.tag_name }}
+        name: "Release ${{ steps.version.outputs.tag_name }}"
+        body_path: release_notes.txt
+        files: nyarc-vrcat-tools-${{ steps.version.outputs.tag_name }}.zip
+        draft: false
+        prerelease: false
+        generate_release_notes: true  # Append auto-generated notes
+        append_body: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Release Summary
+      run: |
+        echo "🎉 Release ${{ steps.version.outputs.tag_name }} completed successfully!"
+        echo ""
+        echo "📦 Files created:"
+        echo "  - nyarc-vrcat-tools-${{ steps.version.outputs.tag_name }}.zip"
+        echo ""
+        echo "🚀 Release available at:"
+        echo "  https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag_name }}"
+        echo ""
+        echo "🛠️ Installation instructions:"
+        echo "  1. Download the ZIP file from the release page"
+        echo "  2. Open Blender"  
+        echo "  3. Go to Edit > Preferences > Add-ons"
+        echo "  4. Click Install... and select the downloaded ZIP"
+        echo "  5. Enable 'Nyarc VRCat Tools' in the add-ons list"

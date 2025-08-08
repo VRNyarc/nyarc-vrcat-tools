@@ -2,7 +2,7 @@ bl_info = {
     "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
     "category": "3D View", 
-    "version": (0, 3, 1),
+    "version": (0, 0, 1),
     "author": "Nyarc",
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
@@ -433,7 +433,7 @@ class VIEW3D_PT_nyarc_tools_manager(Panel):
         # Header info
         header_box = layout.box()
         header_row = header_box.row()
-        header_row.label(text="Nyarc VRCat Tools v0.3.1", icon='TOOL_SETTINGS')
+        header_row.label(text="Nyarc VRCat Tools v0.0.1", icon='TOOL_SETTINGS')
         header_row.label(text="🐱 Meow!")
         
         # Separator
