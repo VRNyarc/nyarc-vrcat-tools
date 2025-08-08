@@ -28,9 +28,9 @@ class INFO_OT_open_support(Operator):
     
     def execute(self, context):
         import webbrowser
-        # Replace with actual support URL
-        webbrowser.open("https://discord.gg/vrchat")
-        self.report({'INFO'}, "Support resources opened in web browser")
+        # Open GitHub issues page for support
+        webbrowser.open("https://github.com/VRNyarc/nyarc-vrcat-tools/issues")
+        self.report({'INFO'}, "Support page opened in web browser")
         return {'FINISHED'}
 
 

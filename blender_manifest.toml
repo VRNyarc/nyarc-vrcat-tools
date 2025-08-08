@@ -10,8 +10,8 @@ type = "add-on"
 website = "https://github.com/VRNyarc/nyarc-vrcat-tools"
 
 # Supported Blender versions
-blender_version_min = "3.0.0"
-blender_version_max = "4.2.0"
+blender_version_min = "4.2.0"
+blender_version_max = "5.0.0"
 
 # License
 license = [

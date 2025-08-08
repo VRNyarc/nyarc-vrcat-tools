@@ -3,7 +3,7 @@
 **Professional Blender addon for VRChat avatar creation workflows**
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Blender](https://img.shields.io/badge/Blender-3.0+-orange.svg)](https://www.blender.org/)
+[![Blender](https://img.shields.io/badge/Blender-4.2+-orange.svg)](https://www.blender.org/)
 [![Release](https://img.shields.io/github/v/release/VRNyarc/nyarc-vrcat-tools)](https://github.com/VRNyarc/nyarc-vrcat-tools/releases)
 
 ## ✨ Features
@@ -62,7 +62,7 @@
 
 ## 🛠️ System Requirements
 
-- **Blender**: 3.0 or newer (4.2+ recommended for full feature support)
+- **Blender**: 4.2 or newer (required for full feature support)
 - **Platform**: Windows, macOS, Linux
 - **Memory**: 4GB RAM minimum, 8GB+ recommended for complex avatars
 - **VRChat SDK**: Compatible with VRChat Creator Companion workflow
@@ -101,7 +101,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/VRNyarc/nyarc-vrcat-tools/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/VRNyarc/nyarc-vrcat-tools/discussions)
-- **Discord**: [VRChat Community Server](https://discord.gg/vrchat)
 - **Documentation**: [Wiki](https://github.com/VRNyarc/nyarc-vrcat-tools/wiki)
 
 ---
