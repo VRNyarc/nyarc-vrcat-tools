@@ -10,155 +10,166 @@ VRCHAT_STANDARD_BONES = {
         
         # Hips/Pelvis variations - Standard, Valve, Mixamo, Japanese, IK
         'hips', 'hip', 'pelvis', 'root', '腰', 'ik_腰', 'ik_hips',
-        'valvebipedbip01pelvis', 'valvebipedbip01hip', 'Hips', 'Hip', 'Pelvis', 'Root',
-        'mixamorig:Hips', 'mixamorig_Hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis',
+        'valvebipedbip01pelvis', 'valvebipedbip01hip', 'mixamorig:hips', 'mixamorig_hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis',
         
         # Spine variations - Standard, Valve, Mixamo, Japanese, IK
         'spine', 'back', 'torso', '脊椎', 'ik_脊椎', 'ik_spine',
-        'valvebipedbip01spine', 'valvebipedbip01spine1', 'Spine', 'Back', 'Torso',
-        'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig_Spine', 'mixamorig_Spine1',
+        'valvebipedbip01spine', 'valvebipedbip01spine1', 'mixamorig:spine', 'mixamorig:spine1', 'mixamorig_spine', 'mixamorig_spine1',
         'bip01spine', 'bip01_spine', 'bip01spine1', 'bip01_spine1',
         
         # Chest variations - Standard, Valve, Mixamo, Japanese, IK
         'chest', 'ribcage', 'upper_body', '胸', 'ik_胸', 'ik_chest',
         'upperchest', 'upper_chest', '上胸', 'ik_上胸', 'ik_upperchest',
-        'valvebipedbip01spine2', 'valvebipedbip01spine3', 'Chest', 'UpperChest', 'Upper_Chest',
-        'mixamorig:Spine2', 'mixamorig:Spine3', 'mixamorig_Spine2', 'mixamorig_Spine3',
+        'valvebipedbip01spine2', 'valvebipedbip01spine3', 'mixamorig:spine2', 'mixamorig:spine3', 'mixamorig_spine2', 'mixamorig_spine3',
         'bip01spine2', 'bip01_spine2', 'bip01spine3', 'bip01_spine3',
         
         # Neck variations - Standard, Valve, Mixamo, Japanese, IK
-        'neck', '首', 'ik_首', 'ik_neck',
-        'valvebipedbip01neck1', 'valvebipedbip01neck', 'Neck', 'neck1',
-        'mixamorig:Neck', 'mixamorig_Neck', 'bip01neck', 'bip01_neck',
+        'neck', '首', 'ik_首', 'ik_neck', 'neck1',
+        'valvebipedbip01neck1', 'valvebipedbip01neck', 'mixamorig:neck', 'mixamorig_neck', 'bip01neck', 'bip01_neck',
         'bip01neck1', 'bip01_neck1',
         
         # Head variations - Standard, Valve, Mixamo, Japanese, IK
-        'head', '頭', 'ik_頭', 'ik_head',
-        'valvebipedbip01head1', 'valvebipedbip01head', 'Head', 'head1',
-        'mixamorig:Head', 'mixamorig_Head', 'bip01head', 'bip01_head',
+        'head', '頭', 'ik_頭', 'ik_head', 'head1',
+        'valvebipedbip01head1', 'valvebipedbip01head', 'mixamorig:head', 'mixamorig_head', 'bip01head', 'bip01_head',
         'bip01head1', 'bip01_head1'
     ],
-    'arms_left': [
-        # Left arm bones - Enhanced from Avatar Toolkit with Valve/Source engine support
-        
-        # Shoulder variations - Standard, Valve, Mixamo, Japanese, IK
+    'shoulder_left': [
+        # Left shoulder bones (clavicle) - Separated from arms for proper semantic mapping
         'shoulder.l', 'shoulder_l', 'leftshoulder', 'left_shoulder', 'shoulderl', 'lshoulder',
-        '肩.l', '左肩', 'ik_左肩', 'ik_shoulder.l', 'Left shoulder', 'left shoulder',
-        'valvebipedbip01lclavicle', 'valvebipedbip01leftshoulder', 'Shoulder.L', 'LeftShoulder',
-        'mixamorig:LeftShoulder', 'mixamorig_LeftShoulder', 'bip01lclavicle', 'bip01_l_clavicle',
-        
-        # Upper Arm variations - Standard, Valve, Mixamo, Japanese, IK
+        'clavicle.l', 'clavicle_l', 'leftclavicle', 'left_clavicle', 'clavicleleft', 'lclavicle',
+        '肩.l', '左肩', 'ik_左肩', 'ik_shoulder.l', 'left shoulder',
+        'valvebipedbip01lclavicle', 'valvebipedbip01leftshoulder',
+        'mixamorig:leftshoulder', 'mixamorig_leftshoulder', 'bip01lclavicle', 'bip01_l_clavicle'
+    ],
+    'upper_arm_left': [
+        # Left upper arm bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
         'upper_arm.l', 'upperarm.l', 'arm.l', 'upper_arm_l', 'leftupperarm', 'leftarm',
-        'arml', 'larm', 'upperarml', 'lupperarm', 'UpperArm_L', '左腕', '腕.l', 'ik_左腕', 'ik_upper_arm.l',
-        'Left arm', 'left arm', 'LeftArm', 'Left_Arm',
-        'valvebipedbip01lupperarm', 'valvebipedbip01leftarm', 'UpperArm.L', 'Arm.L',
-        'mixamorig:LeftArm', 'mixamorig_LeftArm', 'bip01lupperarm', 'bip01_l_upperarm',
-        
-        # Forearm/Elbow variations - Standard, Valve, Mixamo, Japanese, IK
+        'arml', 'larm', 'upperarml', 'lupperarm', 'uparml', 'luparm', '左腕', '腕.l', 'ik_左腕', 'ik_upper_arm.l',
+        'left arm', 'leftarm', 'left_arm',
+        'upperarm_l', 'upperarm.l', 'upper_arm.l',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01lupperarm', 'valvebipedbip01leftarm', 'upperarm.l', 'arm.l',
+        'mixamorig:leftarm', 'mixamorig_leftarm', 'bip01lupperarm', 'bip01_l_upperarm'
+    ],
+    'forearm_left': [
+        # Left forearm/elbow bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
         'forearm.l', 'lower_arm.l', 'elbow.l', 'forearm_l', 'leftforearm', 'leftlowerarm',
-        'elbowl', 'lelbow', 'leftelbow', 'lowerarml', 'llowerarm', 'LowerArm_L', '左ひじ', 'ひじ.l',
-        'ik_左ひじ', 'ik_forearm.l', 'Left elbow', 'left elbow', 'LeftForeArm', 'Left_ForeArm',
-        'valvebipedbip01lforearm', 'valvebipedbip01leftelbow', 'ForeArm.L', 'LowerArm.L',
-        'mixamorig:LeftForeArm', 'mixamorig_LeftForeArm', 'bip01lforearm', 'bip01_l_forearm',
-        
-        # Hand/Wrist variations - Standard, Valve, Mixamo, Japanese, IK
-        'hand.l', 'wrist.l', 'hand_l', 'lefthand', 'leftwrist',
-        'handl', 'lhand', 'wristl', 'lwrist', '左手首', '手首.l', 'ik_左手首', 'ik_hand.l',
-        'Left hand', 'left hand', 'LeftHand', 'Left_Hand',
-        'valvebipedbip01lhand', 'valvebipedbip01lefthand', 'Hand.L', 'Wrist.L',
-        'mixamorig:LeftHand', 'mixamorig_LeftHand', 'bip01lhand', 'bip01_l_hand'
+        'elbowl', 'lelbow', 'leftelbow', 'lowerarml', 'llowerarm', 'lowerarm_l', 'lowarml', 'llowarm',
+        'forearml', 'lforearm', '左ひじ', 'ひじ.l', 'すね.l', 'ik_左ひじ', 'ik_ひじ.l', 'ik_forearm.l',
+        'left elbow', 'leftforearm', 'left_forearm', 'left_elbow',
+        'lowerarm_l', 'lower_arm_l', 'lowerarm.l', 'forearm.l',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01lforearm', 'valvebipedbip01leftelbow', 'forearm.l', 'lowerarm.l',
+        'mixamorig:leftforearm', 'mixamorig_leftforearm', 'bip01lforearm', 'bip01_l_forearm'
     ],
-    'arms_right': [
-        # Right arm bones - Enhanced from Avatar Toolkit with Valve/Source engine support
-        
-        # Shoulder variations - Standard, Valve, Mixamo, Japanese, IK
+    'hand_left': [
+        # Left hand/wrist bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
+        'hand.l', 'wrist.l', 'hand_l', 'lefthand', 'leftwrist', 'lefthand',
+        'handl', 'lhand', 'wristl', 'lwrist', '左手首', '手首.l', 'ik_左手首', 'ik_手首.l', 'ik_hand.l',
+        'left hand', 'lefthand', 'left_hand', 'left wrist', 'left_wrist',
+        'hand_l', 'hand.l',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01lhand', 'valvebipedbip01lefthand', 'hand.l', 'wrist.l',
+        'mixamorig:lefthand', 'mixamorig_lefthand', 'bip01lhand', 'bip01_l_hand'
+    ],
+    'shoulder_right': [
+        # Right shoulder bones (clavicle) - Separated from arms for proper semantic mapping
         'shoulder.r', 'shoulder_r', 'rightshoulder', 'right_shoulder', 'shoulderr', 'rshoulder',
-        '肩.r', '右肩', 'ik_右肩', 'ik_shoulder.r', 'Right shoulder', 'right shoulder',
-        'valvebipedbip01rclavicle', 'valvebipedbip01rightshoulder', 'Shoulder.R', 'RightShoulder',
-        'mixamorig:RightShoulder', 'mixamorig_RightShoulder', 'bip01rclavicle', 'bip01_r_clavicle',
-        
-        # Upper Arm variations - Standard, Valve, Mixamo, Japanese, IK
-        'upper_arm.r', 'upperarm.r', 'arm.r', 'upper_arm_r', 'rightupperarm', 'rightarm',
-        'armr', 'rarm', 'upperarmr', 'rupperarm', '右腕', '腕.r', 'ik_右腕', 'ik_upper_arm.r',
-        'Right arm', 'right arm', 'RightArm', 'Right_Arm',
-        'valvebipedbip01rupperarm', 'valvebipedbip01rightarm', 'UpperArm.R', 'Arm.R',
-        'mixamorig:RightArm', 'mixamorig_RightArm', 'bip01rupperarm', 'bip01_r_upperarm',
-        
-        # Forearm/Elbow variations - Standard, Valve, Mixamo, Japanese, IK
-        'forearm.r', 'lower_arm.r', 'elbow.r', 'forearm_r', 'rightforearm', 'rightlowerarm',
-        'elbowr', 'relbow', 'rightelbow', 'lowerarmr', 'rlowerarm', '右ひじ', 'ひじ.r',
-        'ik_右ひじ', 'ik_forearm.r', 'Right elbow', 'right elbow', 'RightForeArm', 'Right_ForeArm',
-        'valvebipedbip01rforearm', 'valvebipedbip01rightelbow', 'ForeArm.R', 'LowerArm.R',
-        'mixamorig:RightForeArm', 'mixamorig_RightForeArm', 'bip01rforearm', 'bip01_r_forearm',
-        
-        # Hand/Wrist variations - Standard, Valve, Mixamo, Japanese, IK
-        'hand.r', 'wrist.r', 'hand_r', 'righthand', 'rightwrist',
-        'handr', 'rhand', 'wristr', 'rwrist', '右手首', '手首.r', 'ik_右手首', 'ik_hand.r',
-        'Right hand', 'right hand', 'RightHand', 'Right_Hand',
-        'valvebipedbip01rhand', 'valvebipedbip01righthand', 'Hand.R', 'Wrist.R',
-        'mixamorig:RightHand', 'mixamorig_RightHand', 'bip01rhand', 'bip01_r_hand'
+        'clavicle.r', 'clavicle_r', 'rightclavicle', 'right_clavicle', 'clavicleright', 'rclavicle',
+        '肩.r', '右肩', 'ik_右肩', 'ik_shoulder.r', 'right shoulder',
+        'valvebipedbip01rclavicle', 'valvebipedbip01rightshoulder',
+        'mixamorig:rightshoulder', 'mixamorig_rightshoulder', 'bip01rclavicle', 'bip01_r_clavicle'
     ],
-    'legs_left': [
-        # Left leg bones - comprehensive variations from Avatar Toolkit with Valve/Source engine support
-        
-        # Thigh/Upper Leg variations - Standard, Valve, Mixamo, Japanese, IK
+    'upper_arm_right': [
+        # Right upper arm bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
+        'upper_arm.r', 'upperarm.r', 'arm.r', 'upper_arm_r', 'rightupperarm', 'rightarm',
+        'armr', 'rarm', 'upperarmr', 'rupperarm', 'uparmr', 'ruparm', '右腕', '腕.r', 'ik_右腕', 'ik_upper_arm.r',
+        'right arm', 'rightarm', 'right_arm',
+        'upperarm_r', 'upperarm.r', 'upper_arm.r',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01rupperarm', 'valvebipedbip01rightarm', 'upperarm.r', 'arm.r',
+        'mixamorig:rightarm', 'mixamorig_rightarm', 'bip01rupperarm', 'bip01_r_upperarm'
+    ],
+    'forearm_right': [
+        # Right forearm/elbow bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
+        'forearm.r', 'lower_arm.r', 'elbow.r', 'forearm_r', 'rightforearm', 'rightlowerarm',
+        'elbowr', 'relbow', 'rightelbow', 'lowerarmr', 'rlowerarm', 'lowerarm_r', 'lowarmr', 'rlowarm',
+        'forearmr', 'rforearm', '右ひじ', 'ひじ.r', 'すね.r', 'ik_右ひじ', 'ik_ひじ.r', 'ik_forearm.r',
+        'right elbow', 'rightforearm', 'right_forearm', 'right_elbow',
+        'lowerarm_r', 'lower_arm_r', 'lowerarm.r', 'forearm.r',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01rforearm', 'valvebipedbip01rightelbow', 'forearm.r', 'lowerarm.r',
+        'mixamorig:rightforearm', 'mixamorig_rightforearm', 'bip01rforearm', 'bip01_r_forearm'
+    ],
+    'hand_right': [
+        # Right hand/wrist bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat (all lowercase)
+        'hand.r', 'wrist.r', 'hand_r', 'righthand', 'rightwrist', 'righthand',
+        'handr', 'rhand', 'wristr', 'rwrist', '右手首', '手首.r', 'ik_右手首', 'ik_手首.r', 'ik_hand.r',
+        'right hand', 'righthand', 'right_hand', 'right wrist', 'right_wrist',
+        'hand_r', 'hand.r',  # Unity/VRChat patterns (lowercase)
+        'valvebipedbip01rhand', 'valvebipedbip01righthand', 'hand.r', 'wrist.r',
+        'mixamorig:righthand', 'mixamorig_righthand', 'bip01rhand', 'bip01_r_hand'
+    ],
+    'upper_leg_left': [
+        # Left thigh/upper leg bones - Standard, Valve, Mixamo, Japanese, IK
         'thigh.l', 'upper_leg.l', 'leg.l', 'thigh_l', 'leftupperleg', 'leftupleg', 'leftleg',
         'legl', 'lleg', 'upperlegl', 'lupperleg', 'thighl', '左足', '太もも.l', 'ik_左足',
         'Left leg', 'left leg', 'LeftLeg', 'Left_Leg', 'LeftUpLeg', 'Left_UpLeg',
         'upper_leg_L', 'UpperLeg_L',  # Common underscore + capital L pattern
         'valvebipedbip01lthigh', 'valvebipedbip01leftleg', 'Thigh.L', 'UpperLeg.L',
-        'mixamorig:LeftUpLeg', 'mixamorig_LeftUpLeg', 'bip01lthigh', 'bip01_l_thigh',
-        
-        # Knee/Lower Leg variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:LeftUpLeg', 'mixamorig_LeftUpLeg', 'bip01lthigh', 'bip01_l_thigh'
+    ],
+    'lower_leg_left': [
+        # Left knee/lower leg bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat
         'shin.l', 'lower_leg.l', 'knee.l', 'shin_l', 'leftlowerleg', 'leftknee',
         'kneel', 'lknee', 'lowerlegl', 'llowerleg', 'lowlegl', 'llowleg', 'calfl', 'lcalf',
-        'lower_leg_L', 'LowerLeg_L',  # Common underscore + capital L pattern
+        'lower_leg_L', 'LowerLeg_L', 'lowerleg_l',  # Common Unity/VRChat patterns
         '左ひざ', 'ひざ.l', 'すね.l', 'ik_左ひざ', 'ik_knee.l',
         'Left knee', 'left knee', 'LeftKnee', 'leftKnee', 'LeftLeg', 'Left_Knee',
         'valvebipedbip01lcalf', 'valvebipedbip01leftknee', 'Shin.L', 'LowerLeg.L', 'Calf.L',
-        'mixamorig:LeftLeg', 'mixamorig_LeftLeg', 'bip01lcalf', 'bip01_l_calf',
-        
-        # Foot/Ankle variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:LeftLeg', 'mixamorig_LeftLeg', 'bip01lcalf', 'bip01_l_calf'
+    ],
+    'foot_left': [
+        # Left foot/ankle bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat
         'foot.l', 'ankle.l', 'foot_l', 'leftfoot', 'leftankle',
         'anklel', 'lankle', 'footl', 'lfoot', '左足首', '足首.l', 'ik_左足首', 'ik_foot.l',
         'Left ankle', 'left ankle', 'LeftFoot', 'Left_Foot', 'LeftAnkle', 'Left_Ankle',
+        'Foot_L', 'foot_l',  # Common Unity/VRChat patterns
         'valvebipedbip01lfoot', 'valvebipedbip01leftfoot', 'Foot.L', 'Ankle.L',
-        'mixamorig:LeftFoot', 'mixamorig_LeftFoot', 'bip01lfoot', 'bip01_l_foot',
-        
-        # Toe variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:LeftFoot', 'mixamorig_LeftFoot', 'bip01lfoot', 'bip01_l_foot'
+    ],
+    'toe_left': [
+        # Left toe bones - Standard, Valve, Mixamo, Japanese, IK
         'toe.l', 'toes.l', 'toe_l', 'lefttoe', 'lefttoes', '左つま先', 'つま先.l',
         'ik_左つま先', 'ik_toe.l', 'Left Toe', 'left toe', 'LeftToe', 'Left_Toe',
         'valvebipedbip01ltoe0', 'valvebipedbip01lefttoe', 'Toe.L', 'Toes.L',
         'mixamorig:LeftToeBase', 'mixamorig_LeftToeBase', 'bip01ltoe0', 'bip01_l_toe0'
     ],
-    'legs_right': [
-        # Right leg bones - comprehensive variations from Avatar Toolkit with Valve/Source engine support
-        
-        # Thigh/Upper Leg variations - Standard, Valve, Mixamo, Japanese, IK
+    'upper_leg_right': [
+        # Right thigh/upper leg bones - Standard, Valve, Mixamo, Japanese, IK
         'thigh.r', 'upper_leg.r', 'leg.r', 'thigh_r', 'rightupperleg', 'rightupleg', 'rightleg',
         'legr', 'rleg', 'upperlegr', 'rupperleg', 'thighr', '右足', '太もも.r', 'ik_右足',
         'Right leg', 'right leg', 'RightLeg', 'Right_Leg', 'RightUpLeg', 'Right_UpLeg',
         'upper_leg_R',  # Common underscore + capital R pattern
         'valvebipedbip01rthigh', 'valvebipedbip01rightleg', 'Thigh.R', 'UpperLeg.R',
-        'mixamorig:RightUpLeg', 'mixamorig_RightUpLeg', 'bip01rthigh', 'bip01_r_thigh',
-        
-        # Knee/Lower Leg variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:RightUpLeg', 'mixamorig_RightUpLeg', 'bip01rthigh', 'bip01_r_thigh'
+    ],
+    'lower_leg_right': [
+        # Right knee/lower leg bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat
         'shin.r', 'lower_leg.r', 'knee.r', 'shin_r', 'rightlowerleg', 'rightknee',
         'kneer', 'rknee', 'lowerlegr', 'rlowerleg', 'lowlegr', 'rlowleg', 'calfr', 'rcalf',
-        'lower_leg_R',  # Common underscore + capital R pattern
+        'lower_leg_R', 'LowerLeg_R', 'lowerleg_r',  # Common Unity/VRChat patterns
         '右ひざ', 'ひざ.r', 'すね.r', 'ik_右ひざ', 'ik_knee.r',
         'Right knee', 'right knee', 'RightKnee', 'rightKnee', 'RightLeg', 'Right_Knee',
         'valvebipedbip01rcalf', 'valvebipedbip01rightknee', 'Shin.R', 'LowerLeg.R', 'Calf.R',
-        'mixamorig:RightLeg', 'mixamorig_RightLeg', 'bip01rcalf', 'bip01_r_calf',
-        
-        # Foot/Ankle variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:RightLeg', 'mixamorig_RightLeg', 'bip01rcalf', 'bip01_r_calf'
+    ],
+    'foot_right': [
+        # Right foot/ankle bones - Standard, Valve, Mixamo, Japanese, IK, Unity/VRChat
         'foot.r', 'ankle.r', 'foot_r', 'rightfoot', 'rightankle',
         'ankler', 'rankle', 'footr', 'rfoot', '右足首', '足首.r', 'ik_右足首', 'ik_foot.r',
         'Right ankle', 'right ankle', 'RightFoot', 'Right_Foot', 'RightAnkle', 'Right_Ankle',
+        'Foot_R', 'foot_r',  # Common Unity/VRChat patterns
         'valvebipedbip01rfoot', 'valvebipedbip01rightfoot', 'Foot.R', 'Ankle.R',
-        'mixamorig:RightFoot', 'mixamorig_RightFoot', 'bip01rfoot', 'bip01_r_foot',
-        
-        # Toe variations - Standard, Valve, Mixamo, Japanese, IK
+        'mixamorig:RightFoot', 'mixamorig_RightFoot', 'bip01rfoot', 'bip01_r_foot'
+    ],
+    'toe_right': [
+        # Right toe bones - Standard, Valve, Mixamo, Japanese, IK
         'toe.r', 'toes.r', 'toe_r', 'righttoe', 'righttoes', '右つま先', 'つま先.r',
         'ik_右つま先', 'ik_toe.r', 'Right Toe', 'right toe', 'RightToe', 'Right_Toe',
         'valvebipedbip01rtoe0', 'valvebipedbip01righttoe', 'Toe.R', 'Toes.R',
@@ -438,217 +449,217 @@ VRCHAT_STANDARD_BONES = {
     # Detailed toe bones - each bone type gets its own category for proper opposite matching
     # Left toe bones
     'toe_little_proximal_left': [
-        'toe_little_proximal_l', 'Toe_Little_Proximal_L', 'toe_little_proximal.l',
-        'little_toe_proximal_l', 'Little_Toe_Proximal_L', 'littletoe_proximal_l'
+        'toe_little_proximal_l', 'toe_little_proximal_l', 'toe_little_proximal.l',
+        'little_toe_proximal_l', 'little_toe_proximal_l', 'littletoe_proximal_l'
     ],
     'toe_little_intermediate_left': [
-        'toe_little_intermediate_l', 'Toe_Little_Intermediate_L', 'toe_little_intermediate.l',
-        'little_toe_intermediate_l', 'Little_Toe_Intermediate_L', 'littletoe_intermediate_l'
+        'toe_little_intermediate_l', 'toe_little_intermediate_l', 'toe_little_intermediate.l',
+        'little_toe_intermediate_l', 'little_toe_intermediate_l', 'littletoe_intermediate_l'
     ],
     'toe_little_distal_left': [
-        'toe_little_distal_l', 'Toe_Little_Distal_L', 'toe_little_distal.l',
-        'little_toe_distal_l', 'Little_Toe_Distal_L', 'littletoe_distal_l'
+        'toe_little_distal_l', 'toe_little_distal_l', 'toe_little_distal.l',
+        'little_toe_distal_l', 'little_toe_distal_l', 'littletoe_distal_l'
     ],
     'toe_ring_proximal_left': [
-        'toe_ring_proximal_l', 'Toe_Ring_Proximal_L', 'toe_ring_proximal.l',
-        'ring_toe_proximal_l', 'Ring_Toe_Proximal_L', 'ringtoe_proximal_l'
+        'toe_ring_proximal_l', 'toe_ring_proximal_l', 'toe_ring_proximal.l',
+        'ring_toe_proximal_l', 'ring_toe_proximal_l', 'ringtoe_proximal_l'
     ],
     'toe_ring_intermediate_left': [
-        'toe_ring_intermediate_l', 'Toe_Ring_Intermediate_L', 'toe_ring_intermediate.l',
-        'ring_toe_intermediate_l', 'Ring_Toe_Intermediate_L', 'ringtoe_intermediate_l'
+        'toe_ring_intermediate_l', 'toe_ring_intermediate_l', 'toe_ring_intermediate.l',
+        'ring_toe_intermediate_l', 'ring_toe_intermediate_l', 'ringtoe_intermediate_l'
     ],
     'toe_ring_distal_left': [
-        'toe_ring_distal_l', 'Toe_Ring_Distal_L', 'toe_ring_distal.l',
-        'ring_toe_distal_l', 'Ring_Toe_Distal_L', 'ringtoe_distal_l'
+        'toe_ring_distal_l', 'toe_ring_distal_l', 'toe_ring_distal.l',
+        'ring_toe_distal_l', 'ring_toe_distal_l', 'ringtoe_distal_l'
     ],
     'toe_middle_proximal_left': [
-        'toe_middle_proximal_l', 'Toe_Middle_Proximal_L', 'toe_middle_proximal.l',
-        'middle_toe_proximal_l', 'Middle_Toe_Proximal_L', 'middletoe_proximal_l'
+        'toe_middle_proximal_l', 'toe_middle_proximal_l', 'toe_middle_proximal.l',
+        'middle_toe_proximal_l', 'middle_toe_proximal_l', 'middletoe_proximal_l'
     ],
     'toe_middle_intermediate_left': [
-        'toe_middle_intermediate_l', 'Toe_Middle_Intermediate_L', 'toe_middle_intermediate.l',
-        'middle_toe_intermediate_l', 'Middle_Toe_Intermediate_L', 'middletoe_intermediate_l'
+        'toe_middle_intermediate_l', 'toe_middle_intermediate_l', 'toe_middle_intermediate.l',
+        'middle_toe_intermediate_l', 'middle_toe_intermediate_l', 'middletoe_intermediate_l'
     ],
     'toe_middle_distal_left': [
-        'toe_middle_distal_l', 'Toe_Middle_Distal_L', 'toe_middle_distal.l',
-        'middle_toe_distal_l', 'Middle_Toe_Distal_L', 'middletoe_distal_l'
+        'toe_middle_distal_l', 'toe_middle_distal_l', 'toe_middle_distal.l',
+        'middle_toe_distal_l', 'middle_toe_distal_l', 'middletoe_distal_l'
     ],
     'toe_index_proximal_left': [
-        'toe_index_proximal_l', 'Toe_Index_Proximal_L', 'toe_index_proximal.l',
-        'index_toe_proximal_l', 'Index_Toe_Proximal_L', 'indextoe_proximal_l'
+        'toe_index_proximal_l', 'toe_index_proximal_l', 'toe_index_proximal.l',
+        'index_toe_proximal_l', 'index_toe_proximal_l', 'indextoe_proximal_l'
     ],
     'toe_index_intermediate_left': [
-        'toe_index_intermediate_l', 'Toe_Index_Intermediate_L', 'toe_index_intermediate.l',
-        'index_toe_intermediate_l', 'Index_Toe_Intermediate_L', 'indextoe_intermediate_l'
+        'toe_index_intermediate_l', 'toe_index_intermediate_l', 'toe_index_intermediate.l',
+        'index_toe_intermediate_l', 'index_toe_intermediate_l', 'indextoe_intermediate_l'
     ],
     'toe_index_distal_left': [
-        'toe_index_distal_l', 'Toe_Index_Distal_L', 'toe_index_distal.l',
-        'index_toe_distal_l', 'Index_Toe_Distal_L', 'indextoe_distal_l'
+        'toe_index_distal_l', 'toe_index_distal_l', 'toe_index_distal.l',
+        'index_toe_distal_l', 'index_toe_distal_l', 'indextoe_distal_l'
     ],
     'toe_thumb_proximal_left': [
-        'toe_thumb_proximal_l', 'Toe_Thumb_Proximal_L', 'toe_thumb_proximal.l',
-        'thumb_toe_proximal_l', 'Thumb_Toe_Proximal_L', 'thumbtoe_proximal_l',
-        'big_toe_proximal_l', 'Big_Toe_Proximal_L', 'bigtoe_proximal_l'
+        'toe_thumb_proximal_l', 'toe_thumb_proximal_l', 'toe_thumb_proximal.l',
+        'thumb_toe_proximal_l', 'thumb_toe_proximal_l', 'thumbtoe_proximal_l',
+        'big_toe_proximal_l', 'big_toe_proximal_l', 'bigtoe_proximal_l'
     ],
     'toe_thumb_intermediate_left': [
-        'toe_thumb_intermediate_l', 'Toe_Thumb_Intermediate_L', 'toe_thumb_intermediate.l',
-        'thumb_toe_intermediate_l', 'Thumb_Toe_Intermediate_L', 'thumbtoe_intermediate_l',
-        'big_toe_intermediate_l', 'Big_Toe_Intermediate_L', 'bigtoe_intermediate_l'
+        'toe_thumb_intermediate_l', 'toe_thumb_intermediate_l', 'toe_thumb_intermediate.l',
+        'thumb_toe_intermediate_l', 'thumb_toe_intermediate_l', 'thumbtoe_intermediate_l',
+        'big_toe_intermediate_l', 'big_toe_intermediate_l', 'bigtoe_intermediate_l'
     ],
     'toe_thumb_distal_left': [
-        'toe_thumb_distal_l', 'Toe_Thumb_Distal_L', 'toe_thumb_distal.l',
-        'thumb_toe_distal_l', 'Thumb_Toe_Distal_L', 'thumbtoe_distal_l',
-        'big_toe_distal_l', 'Big_Toe_Distal_L', 'bigtoe_distal_l'
+        'toe_thumb_distal_l', 'toe_thumb_distal_l', 'toe_thumb_distal.l',
+        'thumb_toe_distal_l', 'thumb_toe_distal_l', 'thumbtoe_distal_l',
+        'big_toe_distal_l', 'big_toe_distal_l', 'bigtoe_distal_l'
     ],
     
     # Right toe bones
     'toe_little_proximal_right': [
-        'toe_little_proximal_r', 'Toe_Little_Proximal_R', 'toe_little_proximal.r',
-        'little_toe_proximal_r', 'Little_Toe_Proximal_R', 'littletoe_proximal_r'
+        'toe_little_proximal_r', 'toe_little_proximal_r', 'toe_little_proximal.r',
+        'little_toe_proximal_r', 'little_toe_proximal_r', 'littletoe_proximal_r'
     ],
     'toe_little_intermediate_right': [
-        'toe_little_intermediate_r', 'Toe_Little_Intermediate_R', 'toe_little_intermediate.r',
-        'little_toe_intermediate_r', 'Little_Toe_Intermediate_R', 'littletoe_intermediate_r'
+        'toe_little_intermediate_r', 'toe_little_intermediate_r', 'toe_little_intermediate.r',
+        'little_toe_intermediate_r', 'little_toe_intermediate_r', 'littletoe_intermediate_r'
     ],
     'toe_little_distal_right': [
-        'toe_little_distal_r', 'Toe_Little_Distal_R', 'toe_little_distal.r',
-        'little_toe_distal_r', 'Little_Toe_Distal_R', 'littletoe_distal_r'
+        'toe_little_distal_r', 'toe_little_distal_r', 'toe_little_distal.r',
+        'little_toe_distal_r', 'little_toe_distal_r', 'littletoe_distal_r'
     ],
     'toe_ring_proximal_right': [
-        'toe_ring_proximal_r', 'Toe_Ring_Proximal_R', 'toe_ring_proximal.r',
-        'ring_toe_proximal_r', 'Ring_Toe_Proximal_R', 'ringtoe_proximal_r'
+        'toe_ring_proximal_r', 'toe_ring_proximal_r', 'toe_ring_proximal.r',
+        'ring_toe_proximal_r', 'ring_toe_proximal_r', 'ringtoe_proximal_r'
     ],
     'toe_ring_intermediate_right': [
-        'toe_ring_intermediate_r', 'Toe_Ring_Intermediate_R', 'toe_ring_intermediate.r',
-        'ring_toe_intermediate_r', 'Ring_Toe_Intermediate_R', 'ringtoe_intermediate_r'
+        'toe_ring_intermediate_r', 'toe_ring_intermediate_r', 'toe_ring_intermediate.r',
+        'ring_toe_intermediate_r', 'ring_toe_intermediate_r', 'ringtoe_intermediate_r'
     ],
     'toe_ring_distal_right': [
-        'toe_ring_distal_r', 'Toe_Ring_Distal_R', 'toe_ring_distal.r',
-        'ring_toe_distal_r', 'Ring_Toe_Distal_R', 'ringtoe_distal_r'
+        'toe_ring_distal_r', 'toe_ring_distal_r', 'toe_ring_distal.r',
+        'ring_toe_distal_r', 'ring_toe_distal_r', 'ringtoe_distal_r'
     ],
     'toe_middle_proximal_right': [
-        'toe_middle_proximal_r', 'Toe_Middle_Proximal_R', 'toe_middle_proximal.r',
-        'middle_toe_proximal_r', 'Middle_Toe_Proximal_R', 'middletoe_proximal_r'
+        'toe_middle_proximal_r', 'toe_middle_proximal_r', 'toe_middle_proximal.r',
+        'middle_toe_proximal_r', 'middle_toe_proximal_r', 'middletoe_proximal_r'
     ],
     'toe_middle_intermediate_right': [
-        'toe_middle_intermediate_r', 'Toe_Middle_Intermediate_R', 'toe_middle_intermediate.r',
-        'middle_toe_intermediate_r', 'Middle_Toe_Intermediate_R', 'middletoe_intermediate_r'
+        'toe_middle_intermediate_r', 'toe_middle_intermediate_r', 'toe_middle_intermediate.r',
+        'middle_toe_intermediate_r', 'middle_toe_intermediate_r', 'middletoe_intermediate_r'
     ],
     'toe_middle_distal_right': [
-        'toe_middle_distal_r', 'Toe_Middle_Distal_R', 'toe_middle_distal.r',
-        'middle_toe_distal_r', 'Middle_Toe_Distal_R', 'middletoe_distal_r'
+        'toe_middle_distal_r', 'toe_middle_distal_r', 'toe_middle_distal.r',
+        'middle_toe_distal_r', 'middle_toe_distal_r', 'middletoe_distal_r'
     ],
     'toe_index_proximal_right': [
-        'toe_index_proximal_r', 'Toe_Index_Proximal_R', 'toe_index_proximal.r',
-        'index_toe_proximal_r', 'Index_Toe_Proximal_R', 'indextoe_proximal_r'
+        'toe_index_proximal_r', 'toe_index_proximal_r', 'toe_index_proximal.r',
+        'index_toe_proximal_r', 'index_toe_proximal_r', 'indextoe_proximal_r'
     ],
     'toe_index_intermediate_right': [
-        'toe_index_intermediate_r', 'Toe_Index_Intermediate_R', 'toe_index_intermediate.r',
-        'index_toe_intermediate_r', 'Index_Toe_Intermediate_R', 'indextoe_intermediate_r'
+        'toe_index_intermediate_r', 'toe_index_intermediate_r', 'toe_index_intermediate.r',
+        'index_toe_intermediate_r', 'index_toe_intermediate_r', 'indextoe_intermediate_r'
     ],
     'toe_index_distal_right': [
-        'toe_index_distal_r', 'Toe_Index_Distal_R', 'toe_index_distal.r',
-        'index_toe_distal_r', 'Index_Toe_Distal_R', 'indextoe_distal_r'
+        'toe_index_distal_r', 'toe_index_distal_r', 'toe_index_distal.r',
+        'index_toe_distal_r', 'index_toe_distal_r', 'indextoe_distal_r'
     ],
     'toe_thumb_proximal_right': [
-        'toe_thumb_proximal_r', 'Toe_Thumb_Proximal_R', 'toe_thumb_proximal.r',
-        'thumb_toe_proximal_r', 'Thumb_Toe_Proximal_R', 'thumbtoe_proximal_r',
-        'big_toe_proximal_r', 'Big_Toe_Proximal_R', 'bigtoe_proximal_r'
+        'toe_thumb_proximal_r', 'toe_thumb_proximal_r', 'toe_thumb_proximal.r',
+        'thumb_toe_proximal_r', 'thumb_toe_proximal_r', 'thumbtoe_proximal_r',
+        'big_toe_proximal_r', 'big_toe_proximal_r', 'bigtoe_proximal_r'
     ],
     'toe_thumb_intermediate_right': [
-        'toe_thumb_intermediate_r', 'Toe_Thumb_Intermediate_R', 'toe_thumb_intermediate.r',
-        'thumb_toe_intermediate_r', 'Thumb_Toe_Intermediate_R', 'thumbtoe_intermediate_r',
-        'big_toe_intermediate_r', 'Big_Toe_Intermediate_R', 'bigtoe_intermediate_r'
+        'toe_thumb_intermediate_r', 'toe_thumb_intermediate_r', 'toe_thumb_intermediate.r',
+        'thumb_toe_intermediate_r', 'thumb_toe_intermediate_r', 'thumbtoe_intermediate_r',
+        'big_toe_intermediate_r', 'big_toe_intermediate_r', 'bigtoe_intermediate_r'
     ],
     'toe_thumb_distal_right': [
-        'toe_thumb_distal_r', 'Toe_Thumb_Distal_R', 'toe_thumb_distal.r',
-        'thumb_toe_distal_r', 'Thumb_Toe_Distal_R', 'thumbtoe_distal_r',
-        'big_toe_distal_r', 'Big_Toe_Distal_R', 'bigtoe_distal_r'
+        'toe_thumb_distal_r', 'toe_thumb_distal_r', 'toe_thumb_distal.r',
+        'thumb_toe_distal_r', 'thumb_toe_distal_r', 'thumbtoe_distal_r',
+        'big_toe_distal_r', 'big_toe_distal_r', 'bigtoe_distal_r'
     ],
     
     # Eye bones - critical for VRChat facial animation
     'eye_left': [
         'eye.l', 'eye_l', 'lefteye', 'left_eye', 'eyeleft', 'eyel', 'leye',
-        'LeftEye', 'Left_Eye', 'EyeLeft', 'Eye_Left', 'Eye.L',
+        'lefteye', 'left_eye', 'eyeleft', 'eye_left', 'eye.l',
         '左目', 'ik_左目', 'left_eyeball', 'eyeball.l', 'eyeball_l'
     ],
     'eye_right': [
         'eye.r', 'eye_r', 'righteye', 'right_eye', 'eyeright', 'eyer', 'reye',
-        'RightEye', 'Right_Eye', 'EyeRight', 'Eye_Right', 'Eye.R',
+        'righteye', 'right_eye', 'eyeright', 'eye_right', 'eye.r',
         '右目', 'ik_右目', 'right_eyeball', 'eyeball.r', 'eyeball_r'
     ],
     
     # Metacarpal finger bones (base segments) - complete 4-segment finger chains
     'thumb_metacarpal_left': [
         'thumb_0_l', 'thumb_metacarpal_l', 'thumb_0.l', 'thumb_metacarpal.l',
-        'Thumb_0_L', 'Thumb_Metacarpal_L', 'thumbmetacarpal_l', 'thumb_meta_l',
-        'LeftThumbMetacarpal', 'Left_Thumb_Metacarpal'
+        'thumb_0_l', 'thumb_metacarpal_l', 'thumbmetacarpal_l', 'thumb_meta_l',
+        'leftthumbmetacarpal', 'left_thumb_metacarpal'
     ],
     'thumb_metacarpal_right': [
         'thumb_0_r', 'thumb_metacarpal_r', 'thumb_0.r', 'thumb_metacarpal.r',
-        'Thumb_0_R', 'Thumb_Metacarpal_R', 'thumbmetacarpal_r', 'thumb_meta_r',
-        'RightThumbMetacarpal', 'Right_Thumb_Metacarpal'
+        'thumb_0_r', 'thumb_metacarpal_r', 'thumbmetacarpal_r', 'thumb_meta_r',
+        'rightthumbmetacarpal', 'right_thumb_metacarpal'
     ],
     'index_metacarpal_left': [
         'index_0_l', 'index_metacarpal_l', 'index_0.l', 'index_metacarpal.l',
-        'Index_0_L', 'Index_Metacarpal_L', 'indexmetacarpal_l', 'index_meta_l',
-        'LeftIndexMetacarpal', 'Left_Index_Metacarpal'
+        'index_0_l', 'index_metacarpal_l', 'indexmetacarpal_l', 'index_meta_l',
+        'leftindexmetacarpal', 'left_index_metacarpal'
     ],
     'index_metacarpal_right': [
         'index_0_r', 'index_metacarpal_r', 'index_0.r', 'index_metacarpal.r',
-        'Index_0_R', 'Index_Metacarpal_R', 'indexmetacarpal_r', 'index_meta_r',
-        'RightIndexMetacarpal', 'Right_Index_Metacarpal'
+        'index_0_r', 'index_metacarpal_r', 'indexmetacarpal_r', 'index_meta_r',
+        'rightindexmetacarpal', 'right_index_metacarpal'
     ],
     'middle_metacarpal_left': [
         'middle_0_l', 'middle_metacarpal_l', 'middle_0.l', 'middle_metacarpal.l',
-        'Middle_0_L', 'Middle_Metacarpal_L', 'middlemetacarpal_l', 'middle_meta_l',
-        'LeftMiddleMetacarpal', 'Left_Middle_Metacarpal'
+        'middle_0_l', 'middle_metacarpal_l', 'middlemetacarpal_l', 'middle_meta_l',
+        'leftmiddlemetacarpal', 'left_middle_metacarpal'
     ],
     'middle_metacarpal_right': [
         'middle_0_r', 'middle_metacarpal_r', 'middle_0.r', 'middle_metacarpal.r',
-        'Middle_0_R', 'Middle_Metacarpal_R', 'middlemetacarpal_r', 'middle_meta_r',
-        'RightMiddleMetacarpal', 'Right_Middle_Metacarpal'
+        'middle_0_r', 'middle_metacarpal_r', 'middlemetacarpal_r', 'middle_meta_r',
+        'rightmiddlemetacarpal', 'right_middle_metacarpal'
     ],
     'ring_metacarpal_left': [
         'ring_0_l', 'ring_metacarpal_l', 'ring_0.l', 'ring_metacarpal.l',
-        'Ring_0_L', 'Ring_Metacarpal_L', 'ringmetacarpal_l', 'ring_meta_l',
-        'LeftRingMetacarpal', 'Left_Ring_Metacarpal'
+        'ring_0_l', 'ring_metacarpal_l', 'ringmetacarpal_l', 'ring_meta_l',
+        'leftringmetacarpal', 'left_ring_metacarpal'
     ],
     'ring_metacarpal_right': [
         'ring_0_r', 'ring_metacarpal_r', 'ring_0.r', 'ring_metacarpal.r',
-        'Ring_0_R', 'Ring_Metacarpal_R', 'ringmetacarpal_r', 'ring_meta_r',
-        'RightRingMetacarpal', 'Right_Ring_Metacarpal'
+        'ring_0_r', 'ring_metacarpal_r', 'ringmetacarpal_r', 'ring_meta_r',
+        'rightringmetacarpal', 'right_ring_metacarpal'
     ],
     'pinky_metacarpal_left': [
         'pinky_0_l', 'pinky_metacarpal_l', 'pinky_0.l', 'pinky_metacarpal.l',
-        'Pinky_0_L', 'Pinky_Metacarpal_L', 'pinkymetacarpal_l', 'pinky_meta_l',
-        'little_0_l', 'little_metacarpal_l', 'LeftPinkyMetacarpal', 'Left_Pinky_Metacarpal'
+        'pinky_0_l', 'pinky_metacarpal_l', 'pinkymetacarpal_l', 'pinky_meta_l',
+        'little_0_l', 'little_metacarpal_l', 'leftpinkymetacarpal', 'left_pinky_metacarpal'
     ],
     'pinky_metacarpal_right': [
         'pinky_0_r', 'pinky_metacarpal_r', 'pinky_0.r', 'pinky_metacarpal.r',
-        'Pinky_0_R', 'Pinky_Metacarpal_R', 'pinkymetacarpal_r', 'pinky_meta_r',
-        'little_0_r', 'little_metacarpal_r', 'RightPinkyMetacarpal', 'Right_Pinky_Metacarpal'
+        'pinky_0_r', 'pinky_metacarpal_r', 'pinkymetacarpal_r', 'pinky_meta_r',
+        'little_0_r', 'little_metacarpal_r', 'rightpinkymetacarpal', 'right_pinky_metacarpal'
     ],
     
     # Breast bones - for adult avatar compatibility
     'breast_upper_left': [
         'breast_upper_1_l', 'breast_upper_l', 'breast_1_l', 'breast.l',
-        'Breast_Upper_1_L', 'Breast_Upper_L', 'Breast_1_L', 'Breast.L',
-        'leftbreast', 'left_breast', 'breastl', 'lbreast', 'LeftBreast', 'Left_Breast'
+        'breast_upper_1_l', 'breast_upper_l', 'breast_1_l', 'breast.l',
+        'leftbreast', 'left_breast', 'breastl', 'lbreast', 'leftbreast', 'left_breast'
     ],
     'breast_upper_right': [
         'breast_upper_1_r', 'breast_upper_r', 'breast_1_r', 'breast.r',
-        'Breast_Upper_1_R', 'Breast_Upper_R', 'Breast_1_R', 'Breast.R',
-        'rightbreast', 'right_breast', 'breastr', 'rbreast', 'RightBreast', 'Right_Breast'
+        'breast_upper_1_r', 'breast_upper_r', 'breast_1_r', 'breast.r',
+        'rightbreast', 'right_breast', 'breastr', 'rbreast', 'rightbreast', 'right_breast'
     ],
     'breast_lower_left': [
         'breast_upper_2_l', 'breast_lower_l', 'breast_2_l', 'breast_secondary_l',
-        'Breast_Upper_2_L', 'Breast_Lower_L', 'Breast_2_L', 'Breast_Secondary_L',
+        'breast_upper_2_l', 'breast_lower_l', 'breast_2_l', 'breast_secondary_l',
         'leftbreast2', 'left_breast_2', 'breastl2', 'lbreast2'
     ],
     'breast_lower_right': [
         'breast_upper_2_r', 'breast_lower_r', 'breast_2_r', 'breast_secondary_r',
-        'Breast_Upper_2_R', 'Breast_Lower_R', 'Breast_2_R', 'Breast_Secondary_R',
+        'breast_upper_2_r', 'breast_lower_r', 'breast_2_r', 'breast_secondary_r',
         'rightbreast2', 'right_breast_2', 'breastr2', 'rbreast2'
     ]
 }
@@ -656,7 +667,11 @@ VRCHAT_STANDARD_BONES = {
 # Inheritance relationships - when parent bones change, these child categories should be checked
 BONE_INHERITANCE_CHAINS = {
     'core': ['eye_left', 'eye_right'],  # Core/head changes can affect eye bones
-    'arms_left': [  # Left arm/hand changes affect left finger segments and metacarpals
+    'shoulder_left': [],  # Shoulder bones are independent
+    'shoulder_right': [],  # Shoulder bones are independent
+    'upper_arm_left': ['forearm_left', 'hand_left'],  # Upper arm changes affect forearm and hand
+    'forearm_left': ['hand_left'],  # Forearm changes affect hand
+    'hand_left': [  # Left hand changes affect left finger segments and metacarpals
         # Metacarpal bones (segment 0)
         'thumb_metacarpal_left', 'index_metacarpal_left', 'middle_metacarpal_left',
         'ring_metacarpal_left', 'pinky_metacarpal_left',
@@ -667,7 +682,9 @@ BONE_INHERITANCE_CHAINS = {
         'ring_1_left', 'ring_2_left', 'ring_3_left',
         'pinky_1_left', 'pinky_2_left', 'pinky_3_left'
     ],
-    'arms_right': [  # Right arm/hand changes affect right finger segments and metacarpals
+    'upper_arm_right': ['forearm_right', 'hand_right'],  # Upper arm changes affect forearm and hand
+    'forearm_right': ['hand_right'],  # Forearm changes affect hand
+    'hand_right': [  # Right hand changes affect right finger segments and metacarpals
         # Metacarpal bones (segment 0)
         'thumb_metacarpal_right', 'index_metacarpal_right', 'middle_metacarpal_right',
         'ring_metacarpal_right', 'pinky_metacarpal_right',
@@ -678,14 +695,20 @@ BONE_INHERITANCE_CHAINS = {
         'ring_1_right', 'ring_2_right', 'ring_3_right',
         'pinky_1_right', 'pinky_2_right', 'pinky_3_right'
     ],
-    'legs_left': [  # Left leg changes affect left detailed toe bones
+    'upper_leg_left': ['lower_leg_left', 'foot_left', 'toe_left'],  # Upper leg changes affect lower leg, foot, toe
+    'lower_leg_left': ['foot_left', 'toe_left'],  # Lower leg changes affect foot and toe
+    'foot_left': ['toe_left'],  # Foot changes affect toe
+    'toe_left': [  # Left toe changes affect left detailed toe bones
         'toe_little_proximal_left', 'toe_little_intermediate_left', 'toe_little_distal_left',
         'toe_ring_proximal_left', 'toe_ring_intermediate_left', 'toe_ring_distal_left',
         'toe_middle_proximal_left', 'toe_middle_intermediate_left', 'toe_middle_distal_left',
         'toe_index_proximal_left', 'toe_index_intermediate_left', 'toe_index_distal_left',
         'toe_thumb_proximal_left', 'toe_thumb_intermediate_left', 'toe_thumb_distal_left'
     ],
-    'legs_right': [  # Right leg changes affect right detailed toe bones
+    'upper_leg_right': ['lower_leg_right', 'foot_right', 'toe_right'],  # Upper leg changes affect lower leg, foot, toe
+    'lower_leg_right': ['foot_right', 'toe_right'],  # Lower leg changes affect foot and toe
+    'foot_right': ['toe_right'],  # Foot changes affect toe
+    'toe_right': [  # Right toe changes affect right detailed toe bones
         'toe_little_proximal_right', 'toe_little_intermediate_right', 'toe_little_distal_right',
         'toe_ring_proximal_right', 'toe_ring_intermediate_right', 'toe_ring_distal_right',
         'toe_middle_proximal_right', 'toe_middle_intermediate_right', 'toe_middle_distal_right',
@@ -721,36 +744,36 @@ BONE_LOGICAL_GROUPS = {
     'core_hips': [
         # Hips/Pelvis variations - Standard, Valve, Mixamo, Japanese, IK
         'hips', 'hip', 'pelvis', 'root', '腰', 'ik_腰', 'ik_hips',
-        'valvebipedbip01pelvis', 'valvebipedbip01hip', 'Hips', 'Hip', 'Pelvis', 'Root',
-        'mixamorig:Hips', 'mixamorig_Hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis'
+        'valvebipedbip01pelvis', 'valvebipedbip01hip', 'hips', 'hip', 'pelvis', 'root',
+        'mixamorig:hips', 'mixamorig_hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis'
     ],
     'core_spine': [
         # Spine variations - Standard, Valve, Mixamo, Japanese, IK
         'spine', 'back', 'torso', '脊椎', 'ik_脊椎', 'ik_spine',
-        'valvebipedbip01spine', 'valvebipedbip01spine1', 'Spine', 'Back', 'Torso',
-        'mixamorig:Spine', 'mixamorig:Spine1', 'mixamorig_Spine', 'mixamorig_Spine1',
+        'valvebipedbip01spine', 'valvebipedbip01spine1', 'spine', 'back', 'torso',
+        'mixamorig:spine', 'mixamorig:spine1', 'mixamorig_spine', 'mixamorig_spine1',
         'bip01spine', 'bip01_spine', 'bip01spine1', 'bip01_spine1'
     ],
     'core_chest': [
         # Chest variations - Standard, Valve, Mixamo, Japanese, IK
         'chest', 'ribcage', 'upper_body', '胸', 'ik_胸', 'ik_chest',
         'upperchest', 'upper_chest', '上胸', 'ik_上胸', 'ik_upperchest',
-        'valvebipedbip01spine2', 'valvebipedbip01spine3', 'Chest', 'UpperChest', 'Upper_Chest',
-        'mixamorig:Spine2', 'mixamorig:Spine3', 'mixamorig_Spine2', 'mixamorig_Spine3',
+        'valvebipedbip01spine2', 'valvebipedbip01spine3', 'chest', 'upperchest', 'upper_chest',
+        'mixamorig:spine2', 'mixamorig:spine3', 'mixamorig_spine2', 'mixamorig_spine3',
         'bip01spine2', 'bip01_spine2', 'bip01spine3', 'bip01_spine3'
     ],
     'core_neck': [
         # Neck variations - Standard, Valve, Mixamo, Japanese, IK
         'neck', '首', 'ik_首', 'ik_neck',
-        'valvebipedbip01neck1', 'valvebipedbip01neck', 'Neck', 'neck1',
-        'mixamorig:Neck', 'mixamorig_Neck', 'bip01neck', 'bip01_neck',
+        'valvebipedbip01neck1', 'valvebipedbip01neck', 'neck', 'neck1',
+        'mixamorig:neck', 'mixamorig_neck', 'bip01neck', 'bip01_neck',
         'bip01neck1', 'bip01_neck1'
     ],
     'core_head': [
         # Head variations - Standard, Valve, Mixamo, Japanese, IK
         'head', '頭', 'ik_頭', 'ik_head',
-        'valvebipedbip01head1', 'valvebipedbip01head', 'Head', 'head1',
-        'mixamorig:Head', 'mixamorig_Head', 'bip01head', 'bip01_head',
+        'valvebipedbip01head1', 'valvebipedbip01head', 'head', 'head1',
+        'mixamorig:head', 'mixamorig_head', 'bip01head', 'bip01_head',
         'bip01head1', 'bip01_head1'
     ],
     
