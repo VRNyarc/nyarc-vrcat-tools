@@ -13,8 +13,8 @@ class INFO_OT_open_documentation(Operator):
     
     def execute(self, context):
         import webbrowser
-        # Replace with actual documentation URL
-        webbrowser.open("https://github.com/vrchat-community/avatar-tools")
+        # Open Nyarc VRCat Tools documentation/README
+        webbrowser.open("https://github.com/VRNyarc/nyarc-vrcat-tools#readme")
         self.report({'INFO'}, "Documentation opened in web browser")
         return {'FINISHED'}
 
@@ -43,7 +43,7 @@ class INFO_OT_open_nyarc_github(Operator):
     
     def execute(self, context):
         import webbrowser
-        webbrowser.open("https://github.com/nyarc-labs/vrchat-tools")
+        webbrowser.open("https://github.com/VRNyarc/nyarc-vrcat-tools")
         self.report({'INFO'}, "GitHub repository opened in web browser")
         return {'FINISHED'}
 
