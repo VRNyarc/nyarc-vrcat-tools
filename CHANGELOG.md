@@ -5,6 +5,30 @@ All notable changes to NYARC VRChat Tools will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## v0.0.1 (2025-08-08)
+
+### New Features
+* feat: initial project structure and professional Blender addon
+* docs: add comprehensive version management documentation for /clear recovery
+
+### Bug Fixes
+* docs: improve README feature descriptions and fix typos
+* docs: fix Bone Transform Saver description to accurately reflect CATS-like functionality
+
+### Other Changes
+* Initial commit
+* docs: update Blender requirement to 4.2+ and remove Discord references
+* docs: remove internal GitHub workflow documentation from public repo
+* Update README.md
+* Update README.md
+* Major bone mapping improvements for VRChat compatibility
+* Update companion module for first release preparation
+* Merge branch 'main' of https://github.com/VRNyarc/nyarc-vrcat-tools
+* Setup automated version management and release system
+* remove: VERSION_MANAGEMENT.md from repo (belongs in project root)
+
+
 ## [Unreleased]
 
 ### Added
