@@ -1,6 +1,7 @@
 # NYARC VRChat Tools
 
 **Professional Blender addon for VRChat avatar creation workflows**
+
 I am new to Github / Dev. Please go easy on me. This Project was Developed with help of Claude Code.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
