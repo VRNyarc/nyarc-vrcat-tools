@@ -1,0 +1,43 @@
+schema_version = "1.0.0"
+
+id = "nyarc_vrcat_tools"
+version = "1.0.0"
+name = "NYARC VRChat Tools"
+tagline = "Professional Blender addon for VRChat avatar creation workflows"
+maintainer = "NYARC Labs <support@nyarc-labs.dev>"
+type = "add-on"
+
+website = "https://github.com/VRNyarc/nyarc-vrcat-tools"
+
+# Supported Blender versions
+blender_version_min = "3.0.0"
+blender_version_max = "4.2.0"
+
+# License
+license = [
+  "SPDX:MIT"
+]
+
+# Copyright
+copyright = [
+  "2025 NYARC Labs and Contributors"
+]
+
+# Tags for discoverability
+tags = [
+  "VRChat",
+  "Avatar",
+  "Bone Transform",  
+  "Shape Keys",
+  "Export",
+  "3D",
+  "Game Development",
+  "Rigging",
+  "Animation"
+]
+
+# Platforms
+platforms = ["windows-x64", "macos-arm64", "macos-x64", "linux-x64"]
+
+# Permissions (none required - addon operates entirely within Blender)
+permissions = []
