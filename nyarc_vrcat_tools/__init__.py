@@ -2,7 +2,7 @@ bl_info = {
     "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
     "category": "3D View", 
-    "version": (0, 1, 1),
+    "version": (0, 1, 0),
     "author": "Nyarc",
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
@@ -100,6 +100,15 @@ class NyarcToolsProperties(PropertyGroup):
         description="Mesh to transfer shape keys to (drag from Outliner)",
         type=Object,
         poll=mesh_poll
+    )
+    
+    # Temporary target object for the empty drag & drop field
+    temp_target_object: PointerProperty(
+        name="Add Target Mesh",
+        description="Drag mesh here to add as target",
+        type=Object,
+        poll=mesh_poll,
+        update=lambda self, context: self.on_temp_target_changed(context)
     )
     
     shapekey_shape_key: EnumProperty(
@@ -398,6 +407,19 @@ class NyarcToolsProperties(PropertyGroup):
         
         total_operations = len(targets) * len(shape_keys)
         return f"{len(shape_keys)} shape key(s) → {len(targets)} target(s) = {total_operations} operations"
+    
+    def on_temp_target_changed(self, context):
+        """Handle when something is dropped into the temp target field"""
+        if self.temp_target_object:
+            # Check if it's not the source object
+            if self.temp_target_object == self.shapekey_source_object:
+                self.temp_target_object = None
+                return
+            
+            # Add to target objects collection
+            if self.add_target_object(self.temp_target_object):
+                # Clear the temp field to show it was added
+                self.temp_target_object = None
 
 
 def _delayed_message_bus_setup():
