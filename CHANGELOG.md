@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## v0.1.1 (2025-08-10)
+
+### 🐛 Critical Bug Fixes
+* **Fixed inherit scale mixed case overscaling** - Flattening algorithm now respects individual bone inherit_scale settings
+* **Resolved mode switching errors** - Added safe mode switching with retry logic for drawing/rendering states
+* **Fixed missing variable error** - Added inherit_scale_settings reading logic to flatten_bone_transforms_for_save
+* **Prevented overscaling** - Bones with inherit_scale=NONE now keep their original scale during apply rest pose
+* **Eliminated "can't modify blend data" errors** - Safer mode transitions prevent Blender state conflicts
+
+### 🔧 Technical Improvements  
+* Enhanced error handling with retry logic and proper fallbacks
+* Better debugging output for inheritance flattening operations
+* Improved robustness in mixed inherit scale scenarios
+
 
 ## v0.1.0 (2025-08-10)
 
