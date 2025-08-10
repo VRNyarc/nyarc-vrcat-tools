@@ -7,10 +7,10 @@ from bpy.types import Operator
 
 
 class MESH_OT_add_target_object(Operator):
-    """Add currently selected object as a target for batch transfer"""
+    """Add all selected mesh objects as targets for batch transfer"""
     bl_idname = "mesh.add_target_object"
-    bl_label = "Add Target Object"
-    bl_description = "Add the active object as a target for batch shape key transfer"
+    bl_label = "Add Target Objects"
+    bl_description = "Add all selected mesh objects as targets for batch shape key transfer"
     bl_options = {'REGISTER', 'UNDO'}
     
     def execute(self, context):
@@ -19,26 +19,54 @@ class MESH_OT_add_target_object(Operator):
             self.report({'ERROR'}, "Properties not found")
             return {'CANCELLED'}
         
-        active_obj = context.active_object
-        if not active_obj:
-            self.report({'ERROR'}, "No active object selected")
+        # Get all selected objects
+        selected_objects = [obj for obj in context.selected_objects if obj.type == 'MESH']
+        
+        if not selected_objects:
+            self.report({'ERROR'}, "No mesh objects selected")
             return {'CANCELLED'}
         
-        if active_obj.type != 'MESH':
-            self.report({'ERROR'}, "Selected object is not a mesh")
-            return {'CANCELLED'}
+        # Filter out source object and process each selected mesh
+        valid_objects = []
+        skipped_objects = []
+        duplicate_objects = []
         
-        # Check if object is already the source
-        if active_obj == props.shapekey_source_object:
-            self.report({'ERROR'}, "Cannot add source object as target")
-            return {'CANCELLED'}
+        for obj in selected_objects:
+            # Check if object is already the source
+            if obj == props.shapekey_source_object:
+                skipped_objects.append(obj.name)
+                continue
+            
+            # Try to add the target
+            if props.add_target_object(obj):
+                valid_objects.append(obj.name)
+            else:
+                duplicate_objects.append(obj.name)
         
-        # Try to add the target
-        if props.add_target_object(active_obj):
-            self.report({'INFO'}, f"Added '{active_obj.name}' as target")
+        # Report results
+        if valid_objects:
+            if len(valid_objects) == 1:
+                self.report({'INFO'}, f"Added '{valid_objects[0]}' as target")
+            else:
+                self.report({'INFO'}, f"Added {len(valid_objects)} targets: {', '.join(valid_objects[:3])}")
+            
+            # Additional info for skipped/duplicate objects
+            if skipped_objects:
+                self.report({'WARNING'}, f"Skipped source object(s): {', '.join(skipped_objects)}")
+            if duplicate_objects:
+                self.report({'WARNING'}, f"Already in target list: {', '.join(duplicate_objects[:3])}")
+                
             return {'FINISHED'}
         else:
-            self.report({'WARNING'}, f"'{active_obj.name}' is already in target list")
+            # No objects were added
+            if skipped_objects and duplicate_objects:
+                self.report({'WARNING'}, "No new targets added - objects were source or already in list")
+            elif skipped_objects:
+                self.report({'WARNING'}, "Cannot add source object(s) as targets")
+            elif duplicate_objects:
+                self.report({'WARNING'}, "All selected objects already in target list")
+            else:
+                self.report({'ERROR'}, "No valid objects to add")
             return {'CANCELLED'}
 
 
@@ -84,6 +112,8 @@ class MESH_OT_clear_target_objects(Operator):
         props.clear_target_objects()
         self.report({'INFO'}, "All target objects cleared")
         return {'FINISHED'}
+
+
 
 
 def get_classes():

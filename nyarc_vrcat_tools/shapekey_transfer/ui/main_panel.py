@@ -5,6 +5,27 @@ import bpy
 from .preview_ui import draw_live_preview_ui
 
 
+def _check_shape_key_exists_on_targets(props, shape_key_name):
+    """Check if shape key exists on any target mesh"""
+    if not props:
+        return False
+    
+    # Get all target objects
+    target_objects = []
+    if props.shapekey_target_object:
+        target_objects.append(props.shapekey_target_object)
+    target_objects.extend(props.get_target_objects_list())
+    
+    # Check if shape key exists on any target
+    for target_obj in target_objects:
+        if (target_obj and target_obj.data.shape_keys and 
+            target_obj.data.shape_keys.key_blocks and
+            shape_key_name in target_obj.data.shape_keys.key_blocks):
+            return True
+    
+    return False
+
+
 def draw_ui(layout, context):
     """Draw the Shape Key Transfer UI content (called from modules.py)"""
     props = getattr(context.scene, 'nyarc_tools_props', None)
@@ -15,9 +36,8 @@ def draw_ui(layout, context):
     # Mode toggle
     layout.prop(props, "shapekey_multi_mode", text="Multi-Target Mode", icon='OUTLINER_OB_GROUP_INSTANCE')
     
-    layout.separator()
-    
-    # Source object selector
+    # Source object selector (reduced spacing)
+    layout.separator(factor=0.5)
     layout.label(text="Source Mesh (with shape keys):")
     layout.prop(props, "shapekey_source_object", text="")
     
@@ -27,9 +47,8 @@ def draw_ui(layout, context):
         row.label(text="Shape Keys:")
         row.operator("mesh.update_shapekey_list", text="", icon='FILE_REFRESH')
     
-    layout.separator()
-    
-    # Mode-specific UI
+    # Mode-specific UI (reduced spacing)
+    layout.separator(factor=0.5)
     if props.shapekey_multi_mode:
         draw_multi_target_ui(layout, context, props)
     else:
@@ -38,6 +57,9 @@ def draw_ui(layout, context):
     # Live Preview Section
     if props.shapekey_source_object:
         draw_live_preview_ui(layout, context, props)
+        
+        # Help section moved here - below live preview
+        draw_help_section(layout, context, multi_mode=props.shapekey_multi_mode)
 
 
 def draw_single_target_ui(layout, context, props):
@@ -51,7 +73,7 @@ def draw_single_target_ui(layout, context, props):
         layout.label(text="Shape Key to Transfer:")
         layout.prop(props, "shapekey_shape_key", text="")
     
-    layout.separator()
+    layout.separator(factor=0.5)
     
     # Transfer button
     if (props.shapekey_source_object and props.shapekey_target_object and 
@@ -65,7 +87,7 @@ def draw_single_target_ui(layout, context, props):
         transfer_op.skip_existing = props.shapekey_skip_existing
         
         # Transfer options below the button
-        layout.separator()
+        layout.separator(factor=0.3)
         options_box = layout.box()
         options_box.label(text="Transfer Options:", icon='PREFERENCES')
         
@@ -80,10 +102,6 @@ def draw_single_target_ui(layout, context, props):
             
     else:
         layout.label(text="Select source, target, and shape key", icon='INFO')
-    
-    # Help section
-    layout.separator()
-    draw_help_section(layout, context, multi_mode=False)
 
 
 def draw_multi_target_ui(layout, context, props):
@@ -95,18 +113,29 @@ def draw_multi_target_ui(layout, context, props):
     targets_header.operator("mesh.add_target_object", text="", icon='ADD')
     targets_header.operator("mesh.clear_target_objects", text="", icon='TRASH')
     
-    # Show current targets
+    # Show current targets as individual drag & drop fields (like source mesh)
     for i, target_item in enumerate(props.shapekey_target_objects):
         if target_item.target_object:
             row = targets_box.row()
-            row.label(text=target_item.target_object.name, icon='MESH_DATA')
+            # Drag & drop field for existing target
+            row.prop(target_item, "target_object", text="")
+            # Remove button
             remove_op = row.operator("mesh.remove_target_object", text="", icon='X')
             remove_op.index = i
     
-    if not props.shapekey_target_objects:
-        targets_box.label(text="Click + to add target meshes", icon='INFO')
+    # Always show empty drag & drop field at bottom (like source mesh)
+    empty_row = targets_box.row()
+    empty_row.prop(props, "temp_target_object", text="")
+    # Plus button for multi-select
+    empty_row.operator("mesh.add_target_object", text="", icon='ADD')
     
-    layout.separator()
+    # Compact tip
+    if len(props.shapekey_target_objects) == 0:
+        tip_row = targets_box.row()
+        tip_row.scale_y = 0.7
+        tip_row.label(text="💡 Multi-select meshes + click plus", icon='INFO')
+    
+    layout.separator(factor=0.5)
     
     # Shape key selection section
     keys_box = layout.box()
@@ -140,11 +169,19 @@ def draw_multi_target_ui(layout, context, props):
                 col = keys_box.column(align=True)
                 for key_item in props.shapekey_selected_keys:
                     row = col.row()
+                    
+                    # Check if shape key exists on any target mesh
+                    shape_key_exists = _check_shape_key_exists_on_targets(props, key_item.name)
+                    
+                    if not shape_key_exists:
+                        # Make the row red for non-transferred shape keys
+                        row.alert = True
+                    
                     row.prop(key_item, "selected", text=key_item.name)
         else:
             keys_box.label(text="Click refresh button to load shape keys", icon='INFO')
     
-    layout.separator()
+    layout.separator(factor=0.5)
     
     # Batch transfer section
     batch_box = layout.box()
@@ -168,7 +205,7 @@ def draw_multi_target_ui(layout, context, props):
         batch_op.skip_existing = props.shapekey_skip_existing
         
         # Transfer options below the batch button
-        layout.separator()
+        layout.separator(factor=0.3)
         options_box = layout.box()
         options_box.label(text="Transfer Options:", icon='PREFERENCES')
         
@@ -183,10 +220,6 @@ def draw_multi_target_ui(layout, context, props):
         
     else:
         batch_box.label(text="Add targets and select shape keys to enable batch transfer", icon='INFO')
-    
-    # Help section
-    layout.separator()
-    draw_help_section(layout, context, multi_mode=True)
 
 
 def draw_help_section(layout, context, multi_mode=False):

@@ -6,7 +6,7 @@ import bpy
 
 def draw_live_preview_ui(layout, context, props):
     """Draw the live preview and synchronization UI section"""
-    layout.separator()
+    layout.separator(factor=0.5)
     
     # Collapsible preview section
     preview_box = layout.box()
@@ -58,10 +58,14 @@ def draw_live_preview_ui(layout, context, props):
         else:
             status_row.label(text=f"Syncing: Source + {len(target_objects)} target(s)", icon='LINKED')
         
-        # Show helpful note if there are targets without transferred shape keys
+        # Show helpful notes
         if targets_without_keys > 0:
             info_row = preview_box.row()
             info_row.label(text="💡 Transfer shape keys first to enable full live sync on all targets", icon='LIGHTBULB')
+        
+        if not props.shapekey_sync_enabled:
+            disabled_info_row = preview_box.row()
+            disabled_info_row.label(text="ℹ️ Enable Live Sync to activate shape key sliders", icon='INFO')
         
         # Dynamic sliders for each shape key
         if props.shapekey_multi_mode:
@@ -93,11 +97,11 @@ def draw_live_preview_ui(layout, context, props):
                         # Small indicator that live sync is active
                         row.label(text="", icon='LINKED')
                     else:
-                        # Interactive slider with manual sync button when live sync is off
+                        # Grayed out slider when live sync is disabled (indicates non-functional sync)
+                        slider_row.enabled = False  # Gray out the slider
                         slider_row.prop(key_block, "value", text="", slider=True)
-                        sync_btn = row.operator("mesh.sync_shape_key_value", text="↻", icon='FILE_REFRESH')
-                        sync_btn.shape_key_name = key_name
-                        sync_btn.shape_key_value = key_block.value
+                        # Info icon to indicate sync is disabled
+                        row.label(text="", icon='UNLINKED')
         else:
             # In single target mode, show slider for selected shape key
             preview_box.label(text=f"Single mode - Selected: {props.shapekey_shape_key}", icon='INFO')
@@ -120,11 +124,11 @@ def draw_live_preview_ui(layout, context, props):
                         # Small indicator that live sync is active
                         row.label(text="", icon='LINKED')
                     else:
-                        # Interactive slider with manual sync button when live sync is off
+                        # Grayed out slider when live sync is disabled (indicates non-functional sync)
+                        slider_row.enabled = False  # Gray out the slider
                         slider_row.prop(key_block, "value", text="", slider=True)
-                        sync_btn = row.operator("mesh.sync_shape_key_value", text="↻", icon='FILE_REFRESH')
-                        sync_btn.shape_key_name = key_name
-                        sync_btn.shape_key_value = key_block.value
+                        # Info icon to indicate sync is disabled
+                        row.label(text="", icon='UNLINKED')
             else:
                 preview_box.label(text="Select a shape key to preview", icon='INFO')
 
