@@ -73,6 +73,12 @@ class NyarcToolsProperties(PropertyGroup):
         default=False
     )
     
+    bone_diff_enable_xz_scaling: BoolProperty(
+        name="Enable X/Z Scaling Analysis (WIP)",
+        description="Enable experimental X/Z scaling analysis via mesh vertices. When disabled, only Y-axis scaling is exported for armatures (recommended)",
+        default=False
+    )
+    
     def shapekey_source_update_callback(self, context):
         """Called when source object changes - update shape key selections"""
         try:

@@ -448,7 +448,7 @@ def convert_head_tail_to_pose_transforms(original_transforms, modified_transform
     
     return pose_transforms
 
-def convert_head_tail_to_pose_transforms_filtered(original_transforms, modified_transforms, original_meshes=None, modified_meshes=None):
+def convert_head_tail_to_pose_transforms_filtered(original_transforms, modified_transforms, original_meshes=None, modified_meshes=None, enable_xz_scaling=False):
     """
     Convert head/tail differences between armatures into standard pose transform format
     REVERTED TO OLD LOGIC: Focus on fixing foot bone positioning issue only
@@ -509,9 +509,18 @@ def convert_head_tail_to_pose_transforms_filtered(original_transforms, modified_
                     bone_tail_pos = target_abs_matrix @ Vector((0, target_length, 0, 1))
                     bone_tail_pos = bone_tail_pos.xyz
                     
-                    mesh_x_scale, mesh_z_scale, mesh_analysis_success = analyze_bone_xyz_scaling_from_mesh(
-                        original_meshes, modified_meshes, bone_name, bone_head_pos, bone_tail_pos
-                    )
+                    # Check if XZ scaling analysis is enabled
+                    if enable_xz_scaling and original_meshes and modified_meshes:
+                        mesh_x_scale, mesh_z_scale, mesh_analysis_success = analyze_bone_xyz_scaling_from_mesh(
+                            original_meshes, modified_meshes, bone_name, bone_head_pos, bone_tail_pos
+                        )
+                    else:
+                        # Skip mesh analysis, use default values
+                        mesh_x_scale, mesh_z_scale, mesh_analysis_success = 1.0, 1.0, False
+                        if not enable_xz_scaling:
+                            print(f"SCALING MODE: XZ scaling disabled - using Y-only scaling for '{bone_name}'")
+                        else:
+                            print(f"SCALING MODE: No meshes provided - using Y-only scaling for '{bone_name}'")
                     
                     if mesh_analysis_success:
                         print(f"MESH ANALYSIS SUCCESS (Pure Length): '{bone_name}' - X: {mesh_x_scale:.3f}, Y: {length_ratio:.3f}, Z: {mesh_z_scale:.3f}")
@@ -567,7 +576,7 @@ def convert_head_tail_to_pose_transforms_filtered(original_transforms, modified_
                 
                 # MESH VERTEX ANALYSIS: Try to get accurate XYZ scaling from mesh deformation
                 mesh_x_scale, mesh_z_scale, mesh_analysis_success = 1.0, 1.0, False
-                if original_meshes and modified_meshes:
+                if enable_xz_scaling and original_meshes and modified_meshes:
                     bone_head_pos = target_transform['absolute_matrix'].translation
                     bone_tail_pos = target_transform['absolute_matrix'] @ Vector((0, target_length, 0, 1))
                     bone_tail_pos = bone_tail_pos.xyz
@@ -590,6 +599,12 @@ def convert_head_tail_to_pose_transforms_filtered(original_transforms, modified_
                             matrix_corrected_scale = [1.0, pose_transform['scale'][1], 1.0]
                             pose_transform['scale'] = matrix_corrected_scale
                             print(f"DEBUG: Forced Y-only scaling for '{bone_name}': {matrix_corrected_scale}")
+                elif not enable_xz_scaling:
+                    print(f"SCALING MODE: XZ scaling disabled - using Y-only scaling for '{bone_name}'")
+                    # Force X/Z to 1.0 when XZ scaling is disabled
+                    y_only_scale = [1.0, pose_transform['scale'][1], 1.0]
+                    pose_transform['scale'] = y_only_scale
+                    print(f"DEBUG: Applied Y-only scaling for '{bone_name}': {y_only_scale}")
                 else:
                     print(f"DEBUG: No meshes provided for '{bone_name}' - using matrix-based scaling only")
                 

@@ -146,10 +146,24 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
             pose_matrix = pose_bone.matrix_basis.copy()
             
             # Determine if this bone needs inheritance flattening
-            # - Statistical bones (sources) get their transforms as-is
-            # - Inheritance bones get parent scaling applied
+            # CORRECTED LOGIC: A bone can be BOTH a statistical bone AND need inheritance flattening
+            # - Bones with inherit_scale=FULL need parent scaling applied, regardless of having own changes
+            # - Only skip inheritance if bone has no scaled ancestors in the inheritance chain
             is_statistical_bone = bone_name in statistical_bone_names
-            is_inheritance_child = (bone_name in all_bones_to_flatten and not is_statistical_bone)
+            
+            # Check if this bone is in an inheritance chain by finding scaled ancestors
+            has_scaled_ancestor = False
+            current_bone = pose_bone
+            while current_bone.parent and not has_scaled_ancestor:
+                parent = current_bone.parent
+                if parent.name in statistical_bone_names:
+                    has_scaled_ancestor = True
+                    break
+                current_bone = parent
+            
+            is_inheritance_child = (bone_name in all_bones_to_flatten and has_scaled_ancestor)
+            
+            print(f"FLATTEN DEBUG: Bone '{bone_name}' - statistical: {is_statistical_bone}, has_scaled_ancestor: {has_scaled_ancestor}, inheritance_child: {is_inheritance_child}")
             
             if is_inheritance_child:
                 # Find the source bone (target bone) that this child inherits from

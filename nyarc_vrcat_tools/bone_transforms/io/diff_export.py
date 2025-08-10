@@ -112,12 +112,17 @@ class ARMATURE_OT_export_armature_diff(Operator):
             for mesh in modified_meshes:
                 print(f"  Modified mesh: {mesh.name}")
             
-            # Calculate differences using pose transform method with mesh analysis for accurate XYZ scaling
+            # Get XZ scaling option from UI
+            enable_xz_scaling = getattr(props, 'bone_diff_enable_xz_scaling', False)
+            print(f"DIFF EXPORT: XZ scaling analysis {'ENABLED' if enable_xz_scaling else 'DISABLED (Y-only mode)'}")
+            
+            # Calculate differences using pose transform method with optional mesh analysis for XYZ scaling
             diff_data = convert_head_tail_to_pose_transforms_filtered(
                 original_transforms, 
                 modified_transforms, 
                 original_meshes, 
-                modified_meshes
+                modified_meshes,
+                enable_xz_scaling=enable_xz_scaling
             )
             bones_with_differences = len(diff_data)
             

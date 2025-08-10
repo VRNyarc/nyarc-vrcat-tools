@@ -31,13 +31,14 @@ def draw_ui(layout, context):
         
         layout.separator()
         
-        # 3. Armature Diff Export (collapsible)
-        draw_diff_export_ui(layout, context, props)
-        
-        layout.separator()
-        
-        # 4. Usage instructions (Details moved to top-level module)
-        draw_usage_info(layout)
+    
+    # Armature Diff Export (always visible - works with any armatures)
+    layout.separator()
+    draw_diff_export_ui(layout, context, props)
+    
+    # Quick Start Guide (always at the very bottom)
+    layout.separator()
+    draw_usage_info(layout)
 
 def draw_diff_export_ui(layout, context, props):
     """Draw the Armature Diff Export section"""
@@ -99,6 +100,26 @@ def draw_diff_export_ui(layout, context, props):
             diff_box.label(text="Diff Preset Name:")
             diff_box.prop(props, "bone_diff_preset_name", text="")
             
+            diff_box.separator()
+            
+            # XZ Scaling option
+            xz_scaling_row = diff_box.row()
+            xz_scaling_row.prop(props, "bone_diff_enable_xz_scaling", text="Enable X/Z Scaling Analysis (WIP)")
+            
+            # Warning about XZ scaling
+            if props.bone_diff_enable_xz_scaling:
+                xz_warning_sub = diff_box.box()
+                xz_warning_sub.alert = True
+                xz_warning_sub.scale_y = 0.8
+                xz_warning_sub.label(text="⚠️ Experimental feature - may have coordinate space issues", icon='ERROR')
+                xz_warning_sub.label(text="Recommended: Keep disabled for Y-only scaling (more reliable)")
+            else:
+                info_sub = diff_box.row()
+                info_sub.scale_y = 0.8
+                info_sub.label(text="ℹ️ Y-only scaling mode (recommended)", icon='INFO')
+            
+            diff_box.separator()
+            
             # Export button
             export_row = diff_box.row()
             export_row.scale_y = 1.3
@@ -137,8 +158,27 @@ def draw_usage_info(layout):
     
     col = info_box.column(align=True)
     col.scale_y = 0.9
+    
+    # Pose Mode workflow
+    col.label(text="Pose Mode Workflow:")
     col.label(text="1. ► Select armature → Start Pose Mode")
     col.label(text="2. ⚙ Toggle Inherit Scale if needed")
     col.label(text="3. ✋ Edit bone transforms manually")
-    col.label(text="4. 💾 Save as preset for reuse")
+    col.label(text="4. 💾 Save as Transform Preset for reuse")
     col.label(text="5. ✓ Apply as Rest Pose when done")
+    
+    col.separator()
+    
+    # Transform Presets info
+    col.label(text="Transform Presets:")
+    col.label(text="• Save/load bone scaling & positioning")
+    col.label(text="• Works across different armatures")
+    col.label(text="• Automatic inheritance flattening")
+    
+    col.separator()
+    
+    # Armature Diff Export info  
+    col.label(text="Armature Diff Export:")
+    col.label(text="• Compare two armatures (original vs modified)")
+    col.label(text="• Extract only the differences as preset")
+    col.label(text="• Y-only scaling mode recommended")
