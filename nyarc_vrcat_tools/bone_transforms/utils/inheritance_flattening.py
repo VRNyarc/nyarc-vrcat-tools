@@ -125,6 +125,33 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
         bpy.context.view_layer.update()
         bpy.context.view_layer.depsgraph.update()
         
+        # Read current inherit_scale settings first
+        inherit_scale_settings = {}
+        current_mode = bpy.context.mode
+        
+        # Switch to edit mode to read inherit_scale settings
+        if not current_mode.startswith('EDIT'):
+            try:
+                bpy.ops.object.mode_set(mode='EDIT')
+                for edit_bone in armature.data.edit_bones:
+                    inherit_scale_settings[edit_bone.name] = edit_bone.inherit_scale
+                # Switch back to original mode
+                if current_mode.startswith('POSE'):
+                    bpy.ops.object.mode_set(mode='POSE')
+                elif current_mode.startswith('OBJECT'):
+                    bpy.ops.object.mode_set(mode='OBJECT')
+            except Exception as e:
+                print(f"FLATTEN SAVE: Could not read inherit_scale settings: {e}")
+                # Fallback - assume all bones inherit scale
+                for bone_name in target_bone_names:
+                    inherit_scale_settings[bone_name] = 'FULL'
+        else:
+            # Already in edit mode
+            for edit_bone in armature.data.edit_bones:
+                inherit_scale_settings[edit_bone.name] = edit_bone.inherit_scale
+        
+        print(f"FLATTEN SAVE: Read inherit_scale settings for {len(inherit_scale_settings)} bones")
+        
         # Get all bones that need flattening context (target bones + children)
         all_bones_to_flatten = get_bones_requiring_flatten_context(armature, target_bone_names)
         print(f"FLATTEN SAVE: Total bones requiring context: {len(all_bones_to_flatten)}")
@@ -146,10 +173,11 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
             pose_matrix = pose_bone.matrix_basis.copy()
             
             # Determine if this bone needs inheritance flattening
-            # CORRECTED LOGIC: A bone can be BOTH a statistical bone AND need inheritance flattening
-            # - Bones with inherit_scale=FULL need parent scaling applied, regardless of having own changes
-            # - Only skip inheritance if bone has no scaled ancestors in the inheritance chain
+            # FIXED LOGIC: Only apply inheritance if bone actually inherits (inherit_scale != 'NONE')
             is_statistical_bone = bone_name in statistical_bone_names
+            
+            # Get the bone's current inherit_scale setting
+            bone_inherit_scale = inherit_scale_settings.get(bone_name, 'FULL')
             
             # Check if this bone is in an inheritance chain by finding scaled ancestors
             has_scaled_ancestor = False
@@ -161,9 +189,11 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
                     break
                 current_bone = parent
             
-            is_inheritance_child = (bone_name in all_bones_to_flatten and has_scaled_ancestor)
+            # CRITICAL FIX: Only apply inheritance if bone actually inherits scale
+            should_inherit_scaling = (bone_inherit_scale != 'NONE' and has_scaled_ancestor)
+            is_inheritance_child = (bone_name in all_bones_to_flatten and should_inherit_scaling)
             
-            print(f"FLATTEN DEBUG: Bone '{bone_name}' - statistical: {is_statistical_bone}, has_scaled_ancestor: {has_scaled_ancestor}, inheritance_child: {is_inheritance_child}")
+            print(f"FLATTEN DEBUG: Bone '{bone_name}' - statistical: {is_statistical_bone}, inherit_scale: {bone_inherit_scale}, has_scaled_ancestor: {has_scaled_ancestor}, should_inherit: {should_inherit_scaling}")
             
             if is_inheritance_child:
                 # Find the source bone (target bone) that this child inherits from
@@ -194,12 +224,18 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
                     print(f"FLATTEN DEBUG: Child '{bone_name}' current scale: ({current_scale.x:.3f}, {current_scale.y:.3f}, {current_scale.z:.3f})")
                     
                     # Apply source bone's scaling to current bone's scaling to flatten inheritance
-                    flattened_scale = Vector((
-                        current_scale.x * source_scale.x,
-                        current_scale.y * source_scale.y, 
-                        current_scale.z * source_scale.z
-                    ))
-                    print(f"FLATTEN DEBUG: Child '{bone_name}' calculated flattened scale: ({flattened_scale.x:.3f}, {flattened_scale.y:.3f}, {flattened_scale.z:.3f})")
+                    # Only if the bone actually inherits (inherit_scale != 'NONE')
+                    if bone_inherit_scale != 'NONE':
+                        flattened_scale = Vector((
+                            current_scale.x * source_scale.x,
+                            current_scale.y * source_scale.y, 
+                            current_scale.z * source_scale.z
+                        ))
+                        print(f"FLATTEN DEBUG: Child '{bone_name}' (inherit_scale={bone_inherit_scale}) calculated flattened scale: ({flattened_scale.x:.3f}, {flattened_scale.y:.3f}, {flattened_scale.z:.3f})")
+                    else:
+                        # Bone doesn't inherit - keep current scale as-is
+                        flattened_scale = current_scale
+                        print(f"FLATTEN DEBUG: Child '{bone_name}' (inherit_scale=NONE) keeping original scale: ({flattened_scale.x:.3f}, {flattened_scale.y:.3f}, {flattened_scale.z:.3f})")
                     
                     # Reconstruct matrix with flattened scaling but same location/rotation
                     import mathutils
@@ -209,6 +245,8 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
                     flattened_matrix = pose_matrix
             else:
                 # No inheritance or root bone - use pose matrix as-is
+                # Also applies to bones with inherit_scale=NONE
+                print(f"FLATTEN DEBUG: Bone '{bone_name}' using pose matrix as-is (no inheritance needed)")
                 flattened_matrix = pose_matrix
             
             # Decompose the flattened matrix into location, rotation, scale
