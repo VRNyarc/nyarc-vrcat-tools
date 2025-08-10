@@ -9,89 +9,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.1.0 (2025-08-10)
 
-### New Features
-* feat: initial project structure and professional Blender addon
-* docs: add comprehensive version management documentation for /clear recovery
-* feat: improve UI layout and add optional XZ scaling analysis
+### 🎨 UI Improvements
+* **Always-visible Armature Diff Export** - No longer hidden when no bones selected
+* **Improved Quick Start Guide** - Now explains Transform Presets and Armature Diff Export
+* **Better UI layout** - Quick Start Guide moved to bottom for consistent placement
 
-### Bug Fixes
-* docs: improve README feature descriptions and fix typos
-* docs: fix Bone Transform Saver description to accurately reflect CATS-like functionality
+### ✨ New Features  
+* **Optional X/Z Scaling Analysis** - New checkbox for experimental mesh vertex analysis
+* **Y-only Scaling Mode** - Now the recommended default (more reliable than X/Z analysis)
+* **Enhanced preset system** - Better inheritance handling and scaling detection
 
-### Other Changes
-* Initial commit
-* docs: update Blender requirement to 4.2+ and remove Discord references
-* docs: remove internal GitHub workflow documentation from public repo
-* Update README.md
-* Update README.md
-* Major bone mapping improvements for VRChat compatibility
-* Update companion module for first release preparation
-* Merge branch 'main' of https://github.com/VRNyarc/nyarc-vrcat-tools
-* Setup automated version management and release system
-* remove: VERSION_MANAGEMENT.md from repo (belongs in project root)
-* release: v0.0.1
+### 🐛 Critical Bug Fixes
+* **Fixed elbow bone inheritance** - Bones with inherit_scale=FULL now save correctly in presets
+* **Resolved preset saving issues** - Inherited scaling from parent bones properly captured
+* **Improved inheritance flattening** - Better detection of bones needing dual processing
+
+### 🔧 Technical Improvements
+* Enhanced debug logging for scaling analysis decisions
+* Better error handling in armature diff export
+* Improved bone mapping compatibility for VRChat avatars
 
 
-## v0.0.1 (2025-08-08)
+## v0.0.1 (2025-08-08) - Initial Release
 
-### New Features
-* feat: initial project structure and professional Blender addon
-* docs: add comprehensive version management documentation for /clear recovery
-
-### Bug Fixes
-* docs: improve README feature descriptions and fix typos
-* docs: fix Bone Transform Saver description to accurately reflect CATS-like functionality
-
-### Other Changes
-* Initial commit
-* docs: update Blender requirement to 4.2+ and remove Discord references
-* docs: remove internal GitHub workflow documentation from public repo
-* Update README.md
-* Update README.md
-* Major bone mapping improvements for VRChat compatibility
-* Update companion module for first release preparation
-* Merge branch 'main' of https://github.com/VRNyarc/nyarc-vrcat-tools
-* Setup automated version management and release system
-* remove: VERSION_MANAGEMENT.md from repo (belongs in project root)
-
-
-## [Unreleased]
-
-### Added
-- Initial public release preparation
-- Comprehensive documentation
-- Automated release workflow
-
-## [1.0.0] - Initial Release
-
-### ✨ New Features
-- **Advanced Bone Transform System** with precision correction engine
-- **Intelligent Bone Mapping** with fuzzy matching capabilities
-- **Advanced Preset Management** with scrollable UI and organization
-- **Pose History Tracking** with rollback and metadata storage
-- **VRChat Compatibility System** with full bone validation
-- **Shape Key Transfer Tools** with Surface Deform integration
-- **Live Synchronization** for real-time shape key value sync
-- **Batch Operations** for multi-target, multi-shape key workflows
-- **Mirror Flip Utilities** with smart detection and .L/.R naming
-- **Bone Symmetrization** with advanced chain analysis
-- **Armature Diff Export** with professional difference calculation
-- **Modular Architecture** with graceful fallbacks and dynamic loading
+### 🚀 Core Features
+* **Pose Mode Bone Editor** - CATS-like functionality for bone transform editing
+* **Transform Presets** - Save and load bone scaling/positioning across armatures  
+* **Shape Key Transfer** - Surface Deform-based shape key transfer with live sync
+* **Mirror Flip Tools** - Smart bone and mesh mirroring with auto-detection
+* **Armature Diff Export** - Compare armatures and export only the differences
+* **VRChat Compatibility** - Full bone mapping and validation system
 
 ### 🎯 Key Capabilities
-- **Precision Correction**: Amateur diff export with coordinate space accuracy
-- **Professional Workflows**: Complete VRChat avatar creation pipeline
-- **Team Collaboration**: Preset sharing and version tracking
-- **Cross-Platform**: Windows, macOS, Linux support
-- **Blender Integration**: Native 3.0+ compatibility with 4.2+ enhancements
+* Intelligent bone name mapping with fuzzy matching
+* Pose history tracking with rollback functionality
+* Advanced preset management with scrollable UI
+* Inheritance flattening for mathematical consistency
+* Professional workflow integration
+* Modular architecture with graceful fallbacks
 
-### 🏗️ Architecture
-- **Modular Design**: Independent modules with clean separation
-- **Dynamic Registration**: Graceful handling of missing components  
-- **Extensible Framework**: Plugin architecture for future expansion
-- **Performance Optimized**: Efficient algorithms for complex avatars
-- **Memory Management**: Smart resource handling for large projects
 
 ---
 
-*This changelog is automatically updated by our release automation system.*
+*This changelog focuses on user-facing changes. For detailed technical changes, see the git commit history.*
