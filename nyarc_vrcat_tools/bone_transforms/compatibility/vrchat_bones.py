@@ -9,7 +9,7 @@ VRCHAT_STANDARD_BONES = {
         # Core body bones (most critical) - Enhanced from Avatar Toolkit with Valve/Source engine support
         
         # Hips/Pelvis variations - Standard, Valve, Mixamo, Japanese, IK
-        'hips', 'hip', 'pelvis', 'root', '腰', 'ik_腰', 'ik_hips',
+        'hips', 'hip', 'pelvis', '腰', 'ik_腰', 'ik_hips',
         'valvebipedbip01pelvis', 'valvebipedbip01hip', 'mixamorig:hips', 'mixamorig_hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis',
         
         # Spine variations - Standard, Valve, Mixamo, Japanese, IK
@@ -743,7 +743,7 @@ BONE_LOGICAL_GROUPS = {
     # Core bone sub-groups (while keeping main 'core' category for mirror tool)
     'core_hips': [
         # Hips/Pelvis variations - Standard, Valve, Mixamo, Japanese, IK
-        'hips', 'hip', 'pelvis', 'root', '腰', 'ik_腰', 'ik_hips',
+        'hips', 'hip', 'pelvis', '腰', 'ik_腰', 'ik_hips',
         'valvebipedbip01pelvis', 'valvebipedbip01hip', 'hips', 'hip', 'pelvis', 'root',
         'mixamorig:hips', 'mixamorig_hips', 'mixamorighips', 'bip01pelvis', 'bip01_pelvis'
     ],

@@ -55,9 +55,7 @@ def auto_detect_flip_candidates():
     
     for mesh_obj in selected_meshes:
         candidates['meshes'].append(mesh_obj.name)
-        print(f"DETECTION: Added mesh '{mesh_obj.name}' to candidates")
     
     # Note: Bone detection is now handled by chain_analysis.py
-    print(f"DETECTION: Found {len(candidates['meshes'])} mesh candidates")
     
     return candidates

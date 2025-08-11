@@ -4,6 +4,45 @@
 from ...bone_transforms.compatibility.vrchat_bones import VRCHAT_STANDARD_BONES
 
 
+def _is_meaningful_substring_match(bone_lower, standard_lower):
+    """Check if substring match is meaningful and not a false positive"""
+    # Avoid false positives for very short standard names
+    if len(standard_lower) < 4:
+        # For short names like "hip", "leg", require exact match or word boundary
+        return (bone_lower == standard_lower or 
+                f" {standard_lower} " in f" {bone_lower} " or
+                bone_lower.startswith(f"{standard_lower} ") or
+                bone_lower.endswith(f" {standard_lower}"))
+    
+    # For longer names, allow standard substring matching but with safeguards
+    if standard_lower in bone_lower:
+        # Avoid false positives where the standard name is part of a longer word
+        # e.g., "root" shouldn't match "HairPin_Root" 
+        start_idx = bone_lower.find(standard_lower)
+        
+        # Check if it's a whole word or separated by common delimiters
+        before_char = bone_lower[start_idx - 1] if start_idx > 0 else ' '
+        after_char = bone_lower[start_idx + len(standard_lower)] if start_idx + len(standard_lower) < len(bone_lower) else ' '
+        
+        # Allow match if preceded/followed by space, underscore, dot, or string boundary
+        delimiters = [' ', '_', '.', '-']
+        if before_char in delimiters or after_char in delimiters:
+            return True
+            
+        # Special case: if the standard name is at the very beginning or end
+        if start_idx == 0 or start_idx + len(standard_lower) == len(bone_lower):
+            return True
+            
+        # Avoid false positive for embedded words
+        return False
+    
+    # Check reverse (bone name in standard name) - usually safe
+    if bone_lower in standard_lower:
+        return True
+        
+    return False
+
+
 def is_vrchat_base_bone(bone_name):
     """Check if bone name matches any VRChat standard bone"""
     if not bone_name:
@@ -29,8 +68,8 @@ def is_vrchat_base_bone(bone_name):
                 print(f"BONE_CLASSIFICATION: '{bone_name}' is VRChat base bone (normalized match: {standard_name})")
                 return True
             
-            # Check if bone name contains the standard name (e.g., "Right knee" contains "knee")
-            if standard_lower in bone_lower or bone_lower in standard_lower:
+            # Check for meaningful substring matches (avoid false positives)
+            if _is_meaningful_substring_match(bone_lower, standard_lower):
                 print(f"BONE_CLASSIFICATION: '{bone_name}' is VRChat base bone (substring match: {standard_name})")
                 return True
     
@@ -107,6 +146,26 @@ def _find_opposite_in_category(bone_name, category, matched_standard):
         'legs_right': 'legs_left',
         'fingers_left': 'fingers_right',
         'fingers_right': 'fingers_left',
+        
+        # LEG CATEGORY MAPPINGS (FIXED - was missing!)
+        'upper_leg_left': 'upper_leg_right',
+        'upper_leg_right': 'upper_leg_left',
+        'lower_leg_left': 'lower_leg_right', 
+        'lower_leg_right': 'lower_leg_left',
+        'foot_left': 'foot_right',
+        'foot_right': 'foot_left',
+        'toe_left': 'toe_right',
+        'toe_right': 'toe_left',
+        
+        # SHOULDER/ARM CATEGORY MAPPINGS
+        'shoulder_left': 'shoulder_right',
+        'shoulder_right': 'shoulder_left',
+        'upper_arm_left': 'upper_arm_right',
+        'upper_arm_right': 'upper_arm_left',
+        'forearm_left': 'forearm_right',
+        'forearm_right': 'forearm_left',
+        'hand_left': 'hand_right',
+        'hand_right': 'hand_left',
         
         # Detailed toe bone opposites
         'toe_little_proximal_left': 'toe_little_proximal_right',
@@ -266,8 +325,9 @@ def is_core_bone(bone_name):
         core_lower = core_bone.lower()
         core_normalized = core_lower.replace(' ', '').replace('_', '').replace('.', '')
         
-        # Exact match or substring match
-        if bone_normalized == core_normalized or core_normalized in bone_normalized:
+        # Exact match or meaningful substring match
+        if (bone_normalized == core_normalized or 
+            _is_meaningful_substring_match(bone_lower, core_lower)):
             print(f"BONE_CLASSIFICATION: '{bone_name}' is core bone (matched: '{core_bone}')")
             return True
     

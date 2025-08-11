@@ -80,13 +80,10 @@ class OBJECT_OT_flip_mesh_and_bones_combined(Operator):
     
     @classmethod
     def poll(cls, context):
-        import datetime
-        timestamp = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
-        result = (context.mode == 'OBJECT' and 
+        # POLL methods are called constantly - never add print statements here
+        return (context.mode == 'OBJECT' and 
                 context.selected_objects and
                 any(obj.type == 'MESH' for obj in context.selected_objects))
-        print(f"🔍 POLL_CHECK [{timestamp}] - Combined operator poll result: {result}")
-        return result
     
     def execute(self, context):
         """Main execution - clean and simple"""

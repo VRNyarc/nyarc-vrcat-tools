@@ -374,9 +374,7 @@ def get_pose_history_list(armature):
         # DO NOT re-sort by timestamp - this causes UI flipping!
         sorted_entries = history_data["entries"]  # Already sorted by ID in metadata_storage.py
         
-        entry_ids = [f"#{e['id']}" for e in sorted_entries]
-        print(f"UI LIST: Keeping sequential order: {entry_ids}")
-        
+        # Build UI list entries without debug spam
         for entry in sorted_entries:
             entries.append((
                 entry["id"],
@@ -384,9 +382,6 @@ def get_pose_history_list(armature):
                 entry["timestamp"],
                 entry.get("type", "manual")
             ))
-        
-        entry_summary = [(e[0], e[1][:10]) for e in entries]
-        print(f"UI LIST: Final list order: {entry_summary}")
         
         return entries
         

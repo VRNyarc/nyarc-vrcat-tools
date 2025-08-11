@@ -414,14 +414,25 @@ def mirror_core_bone_chain(bone_chain, armature_obj, axis='X'):
                 accessory_bones.append(bone_name)
                 print(f"🔧 CORE_BONE: '{bone_name}' is accessory - will mirror")
         
-        # Keep track of last core bone for parenting
-        last_core_bone = core_bones[-1] if core_bones else bone_chain.root
-        print(f"🔧 CORE_BONE: Last core bone is '{last_core_bone}' - accessory chain will parent to this")
+        # Find the actual parent of the first accessory bone (preserve original hierarchy)
+        first_accessory_parent = None
+        if accessory_bones:
+            first_accessory_bone = armature_obj.data.edit_bones.get(accessory_bones[0])
+            if first_accessory_bone and first_accessory_bone.parent:
+                first_accessory_parent = first_accessory_bone.parent.name
+                print(f"🔧 CORE_BONE: First accessory '{accessory_bones[0]}' has original parent '{first_accessory_parent}'")
+            else:
+                # Fallback to last core bone if no parent found
+                first_accessory_parent = core_bones[-1] if core_bones else bone_chain.root
+                print(f"🔧 CORE_BONE: No original parent found, using fallback '{first_accessory_parent}'")
+        else:
+            first_accessory_parent = core_bones[-1] if core_bones else bone_chain.root
+            print(f"🔧 CORE_BONE: No accessory bones, using core bone '{first_accessory_parent}'")
         
-        # Get the original core bone as reference for parenting
-        original_parent = armature_obj.data.edit_bones.get(last_core_bone)
+        # Get the parent bone as reference
+        original_parent = armature_obj.data.edit_bones.get(first_accessory_parent)
         if not original_parent:
-            print(f"🔧 CORE_BONE: ERROR - Core bone '{last_core_bone}' not found!")
+            print(f"🔧 CORE_BONE: ERROR - Parent bone '{first_accessory_parent}' not found!")
             return []
         
         # Mirror only the accessory bones
@@ -456,9 +467,9 @@ def mirror_core_bone_chain(bone_chain, armature_obj, axis='X'):
             
             # Set parenting
             if i == 0:
-                # First accessory bone parents to the last core bone
+                # First accessory bone parents to its original parent (preserves hierarchy)
                 mirrored_bone.parent = original_parent
-                print(f"🔧 CORE_BONE: Parented '{mirrored_name}' to core bone '{last_core_bone}'")
+                print(f"🔧 CORE_BONE: Parented '{mirrored_name}' to original parent '{first_accessory_parent}'")
             else:
                 # Subsequent bones parent to previous mirrored bone
                 prev_mirrored_name = accessory_bones[i-1] + suffix
