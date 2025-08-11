@@ -5,6 +5,22 @@ All notable changes to NYARC VRChat Tools will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.3 (2025-08-11) - Console Spam & Mirror Tool Fixes
+
+### 🐛 Bug Fixes
+* **Removed Console Spam** - Fixed excessive debug output flooding Blender console
+  * Eliminated POLL_CHECK messages appearing every frame  
+  * Removed UI LIST debug prints from pose history operations
+  * Fixed DETECTION spam from UI panel redraws
+* **Mirror Tool Improvements** - Fixed core bone parenting and VRChat bone classification  
+  * Core bone chains now preserve original parent relationships (tail → hips stays hips, not spine)
+  * Added missing leg category mappings for VRChat bone opposite detection
+  * Removed 'root' from VRChat bone list to prevent false positive classifications
+
+### 🔧 Technical
+* Poll methods and UI draw functions now properly silent for optimal performance
+* Better VRChat standard bone compatibility with improved opposite bone detection
+
 ## v0.1.2 (2025-08-10) - Shape Key Transfer UX Improvements
 
 ### ✨ New Features
