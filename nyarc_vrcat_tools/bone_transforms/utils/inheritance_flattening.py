@@ -31,6 +31,12 @@ def get_bones_requiring_flatten_context(armature, target_bone_names):
     # Get current inherit_scale settings for analysis
     inherit_scale_settings = {}
     original_mode = bpy.context.mode
+    original_active = bpy.context.active_object
+    
+    # Ensure the armature is the active object
+    if bpy.context.active_object != armature:
+        bpy.context.view_layer.objects.active = armature
+        bpy.context.view_layer.update()
     
     # Switch to edit mode to read inherit_scale
     if bpy.context.mode != 'EDIT':
@@ -44,6 +50,10 @@ def get_bones_requiring_flatten_context(armature, target_bone_names):
         bpy.ops.object.mode_set(mode='POSE')
     elif original_mode == 'OBJECT':
         bpy.ops.object.mode_set(mode='OBJECT')
+    
+    # Restore original active object
+    if original_active and original_active != armature:
+        bpy.context.view_layer.objects.active = original_active
     
     # Analyze inheritance chains from each scaled bone
     for bone_name in target_bone_names:
@@ -116,8 +126,15 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
     try:
         print(f"FLATTEN SAVE: Mathematically flattening inheritance for {len(target_bone_names)} bones")
         
-        # Ensure we're in pose mode for matrix calculations
+        # Ensure armature is active and we're in pose mode for matrix calculations
         original_mode = bpy.context.mode
+        original_active = bpy.context.active_object
+        
+        # Ensure the armature is the active object
+        if bpy.context.active_object != armature:
+            bpy.context.view_layer.objects.active = armature
+            bpy.context.view_layer.update()
+        
         if bpy.context.mode != 'POSE':
             bpy.ops.object.mode_set(mode='POSE')
         
@@ -260,11 +277,15 @@ def flatten_bone_transforms_for_save(armature, target_bone_names, statistical_bo
             
             print(f"FLATTEN SAVE: {bone_name} calculated flattened scale: ({scale.x:.3f}, {scale.y:.3f}, {scale.z:.3f})")
         
-        # Restore original mode
+        # Restore original mode and active object
         if original_mode == 'OBJECT':
             bpy.ops.object.mode_set(mode='OBJECT')
         elif original_mode == 'EDIT':
             bpy.ops.object.mode_set(mode='EDIT')
+        
+        # Restore original active object
+        if original_active and original_active != armature:
+            bpy.context.view_layer.objects.active = original_active
         
         print(f"FLATTEN SAVE: Calculated {len(flattened_data)} flattened bone transforms mathematically")
         return flattened_data
@@ -321,6 +342,12 @@ def prepare_bones_for_flattened_load(armature, target_bone_names):
         # Get current inherit_scale settings for analysis
         inherit_scale_settings = {}
         original_mode = bpy.context.mode
+        original_active = bpy.context.active_object
+        
+        # Ensure the armature is the active object
+        if bpy.context.active_object != armature:
+            bpy.context.view_layer.objects.active = armature
+            bpy.context.view_layer.update()
         
         # Switch to edit mode to read inherit_scale
         if bpy.context.mode != 'EDIT':
@@ -388,6 +415,12 @@ def restore_original_inherit_scales(armature, original_inherit_scales):
         print(f"FLATTEN RESTORE: Restoring inherit_scale for {len(original_inherit_scales)} bones")
         
         original_mode = bpy.context.mode
+        original_active = bpy.context.active_object
+        
+        # Ensure the armature is the active object
+        if bpy.context.active_object != armature:
+            bpy.context.view_layer.objects.active = armature
+            bpy.context.view_layer.update()
         
         # Switch to edit mode to restore inherit_scale
         if bpy.context.mode != 'EDIT':
@@ -403,6 +436,10 @@ def restore_original_inherit_scales(armature, original_inherit_scales):
             bpy.ops.object.mode_set(mode='POSE')
         elif original_mode == 'OBJECT':
             bpy.ops.object.mode_set(mode='OBJECT')
+        
+        # Restore original active object
+        if original_active and original_active != armature:
+            bpy.context.view_layer.objects.active = original_active
         
         # Force scene update
         bpy.context.view_layer.update()
@@ -427,6 +464,12 @@ def apply_flattened_transforms(armature, flattened_data):
     try:
         print(f"FLATTEN APPLY: Applying {len(flattened_data)} flattened transforms")
         
+        # Ensure the armature is the active object
+        original_active = bpy.context.active_object
+        if bpy.context.active_object != armature:
+            bpy.context.view_layer.objects.active = armature
+            bpy.context.view_layer.update()
+        
         # Ensure we're in pose mode
         if bpy.context.mode != 'POSE':
             bpy.ops.object.mode_set(mode='POSE')
@@ -445,6 +488,10 @@ def apply_flattened_transforms(armature, flattened_data):
         
         # Force scene update
         bpy.context.view_layer.update()
+        
+        # Restore original active object
+        if original_active and original_active != armature:
+            bpy.context.view_layer.objects.active = original_active
         
         print(f"FLATTEN APPLY: Applied transforms to {applied_count} bones")
         
