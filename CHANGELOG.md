@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+
+## v0.1.0 (2025-08-12)
+
+### New Features
+* feat: initial project structure and professional Blender addon
+* docs: add comprehensive version management documentation for /clear recovery
+* feat: improve UI layout and add optional XZ scaling analysis
+* docs: clean up changelog - remove duplicates and add v0.1.2 changes
+
+### Bug Fixes
+* docs: improve README feature descriptions and fix typos
+* docs: fix Bone Transform Saver description to accurately reflect CATS-like functionality
+* fix: resolve inherit scale mixed case overscaling and mode switching errors
+* fix: remove console spam from poll methods and UI operations
+* hotfix: fix apply rest pose context error with inherit_scale settings
+
+### Other Changes
+* Initial commit
+* docs: update Blender requirement to 4.2+ and remove Discord references
+* docs: remove internal GitHub workflow documentation from public repo
+* Update README.md
+* Update README.md
+* Major bone mapping improvements for VRChat compatibility
+* Update companion module for first release preparation
+* Merge branch 'main' of https://github.com/VRNyarc/nyarc-vrcat-tools
+* Setup automated version management and release system
+* remove: VERSION_MANAGEMENT.md from repo (belongs in project root)
+* release: v0.0.1
+* release: v0.1.0
+* docs: improve changelog with user-focused content
+* release: v0.1.1
+* release: v0.1.0
+* release: v0.0.1
+* release: v0.1.2
+* release: v0.1.3
+* release: v0.0.1
+
+
 ## v0.0.1 (2025-08-12)
 
 ### New Features

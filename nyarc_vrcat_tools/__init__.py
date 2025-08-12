@@ -2,7 +2,7 @@ bl_info = {
     "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
     "category": "3D View", 
-    "version": (0, 1, 4),
+    "version": (0, 1, 0),
     "author": "Nyarc",
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
@@ -29,11 +29,23 @@ def mesh_poll(self, obj):
 
 class ShapeKeyTargetItem(PropertyGroup):
     """Individual target object for shape key transfer"""
+    
+    def target_object_update_callback(self, context):
+        """Called when individual target object changes - force UI refresh for red/white markings"""
+        try:
+            # Force UI redraw to update red/white shape key markings
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    area.tag_redraw()
+        except Exception as e:
+            print(f"Error refreshing UI after target item change: {e}")
+    
     target_object: PointerProperty(
         name="Target Mesh",
         description="Mesh to transfer shape keys to",
         type=Object,
-        poll=mesh_poll
+        poll=mesh_poll,
+        update=target_object_update_callback
     )
 
 
@@ -86,6 +98,16 @@ class NyarcToolsProperties(PropertyGroup):
         except Exception as e:
             print(f"Error updating shape key selections: {e}")
     
+    def shapekey_target_update_callback(self, context):
+        """Called when target object changes - force UI refresh for red/white markings"""
+        try:
+            # Force UI redraw to update red/white shape key markings
+            for area in context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    area.tag_redraw()
+        except Exception as e:
+            print(f"Error refreshing UI after target change: {e}")
+    
     # Shape Key Transfer Properties (prefixed to avoid conflicts)
     shapekey_source_object: PointerProperty(
         name="Source Mesh",
@@ -99,7 +121,8 @@ class NyarcToolsProperties(PropertyGroup):
         name="Target Mesh", 
         description="Mesh to transfer shape keys to (drag from Outliner)",
         type=Object,
-        poll=mesh_poll
+        poll=mesh_poll,
+        update=shapekey_target_update_callback
     )
     
     # Temporary target object for the empty drag & drop field
@@ -461,7 +484,7 @@ class VIEW3D_PT_nyarc_tools_manager(Panel):
         # Header info
         header_box = layout.box()
         header_row = header_box.row()
-        header_row.label(text="Nyarc VRCat Tools v0.1.4", icon='TOOL_SETTINGS')
+        header_row.label(text="Nyarc VRCat Tools v0.1.0", icon='TOOL_SETTINGS')
         header_row.label(text="🐱 Meow!")
         
         # Separator
