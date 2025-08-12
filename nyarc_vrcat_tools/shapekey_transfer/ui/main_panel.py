@@ -5,10 +5,16 @@ import bpy
 from .preview_ui import draw_live_preview_ui
 
 
-def _check_shape_key_exists_on_targets(props, shape_key_name):
-    """Check if shape key exists on any target mesh"""
+def _get_shape_key_status_on_targets(props, shape_key_name):
+    """Get detailed status of shape key across all target meshes
+    
+    Returns:
+        "all" - All target meshes have this shape key
+        "some" - Some target meshes have it, others don't  
+        "none" - No target meshes have this shape key
+    """
     if not props:
-        return False
+        return "none"
     
     # Get all target objects
     target_objects = []
@@ -16,14 +22,25 @@ def _check_shape_key_exists_on_targets(props, shape_key_name):
         target_objects.append(props.shapekey_target_object)
     target_objects.extend(props.get_target_objects_list())
     
-    # Check if shape key exists on any target
+    if not target_objects:
+        return "none"
+    
+    # Count how many targets have the shape key
+    targets_with_key = 0
     for target_obj in target_objects:
         if (target_obj and target_obj.data.shape_keys and 
             target_obj.data.shape_keys.key_blocks and
             shape_key_name in target_obj.data.shape_keys.key_blocks):
-            return True
+            targets_with_key += 1
     
-    return False
+    total_targets = len(target_objects)
+    
+    if targets_with_key == 0:
+        return "none"
+    elif targets_with_key == total_targets:
+        return "all"
+    else:
+        return "some"
 
 
 def draw_ui(layout, context):
@@ -142,6 +159,13 @@ def draw_multi_target_ui(layout, context, props):
     keys_header = keys_box.row()
     keys_header.label(text="Shape Keys to Transfer:", icon='SHAPEKEY_DATA')
     
+    # Legend for visual indicators (when there are targets to check against)
+    target_objects = props.get_target_objects_list()
+    if len(target_objects) > 1:  # Only show legend for multi-target scenarios
+        legend_row = keys_box.row()
+        legend_row.scale_y = 0.7
+        legend_row.label(text="Normal=All have it  Color icon=Some have it  Red=None have it", icon='INFO')
+    
     # Selection controls
     if len(props.shapekey_selected_keys) > 0:
         select_row = keys_header.row()
@@ -170,14 +194,27 @@ def draw_multi_target_ui(layout, context, props):
                 for key_item in props.shapekey_selected_keys:
                     row = col.row()
                     
-                    # Check if shape key exists on any target mesh
-                    shape_key_exists = _check_shape_key_exists_on_targets(props, key_item.name)
+                    # Check detailed status of shape key on targets
+                    shape_key_status = _get_shape_key_status_on_targets(props, key_item.name)
                     
-                    if not shape_key_exists:
-                        # Make the row red for non-transferred shape keys
+                    # Visual indicators based on target status  
+                    if shape_key_status == "all":
+                        # Normal white text - all targets have it
+                        row.prop(key_item, "selected", text=key_item.name)
+                    elif shape_key_status == "some":
+                        # Yellow warning triangle for partial coverage
+                        # Split the row to show checkbox + yellow warning icon + text separately
+                        row.prop(key_item, "selected", text="")
+                        icon_row = row.row()
+                        # Test different sequence colors to find yellow
+                        # icon_row.label(text=key_item.name, icon='INFO')        # Yellow triangle with !
+                        # icon_row.label(text=key_item.name, icon='SEQUENCE_COLOR_01')  # Try color 1
+                        icon_row.label(text=key_item.name, icon='SEQUENCE_COLOR_02')  # Try color 2 (might be yellow)
+                        # icon_row.label(text=key_item.name, icon='SEQUENCE_COLOR_04')  # Try color 4
+                    else:  # "none"
+                        # Red text - no targets have it
                         row.alert = True
-                    
-                    row.prop(key_item, "selected", text=key_item.name)
+                        row.prop(key_item, "selected", text=key_item.name)
         else:
             keys_box.label(text="Click refresh button to load shape keys", icon='INFO')
     

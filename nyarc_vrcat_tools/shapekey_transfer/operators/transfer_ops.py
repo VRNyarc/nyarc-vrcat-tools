@@ -207,14 +207,22 @@ class MESH_OT_transfer_shape_key(Operator):
             self.report({'ERROR'}, "Please select source object, target object, and shape key")
             return {'CANCELLED'}
         
-        # Prepare target mesh for compatibility BEFORE starting transfer operations
+        # Prepare BOTH source and target meshes for compatibility BEFORE starting transfer operations
         try:
             # Store current context to isolate preparation
             current_active = bpy.context.active_object
             current_selected = bpy.context.selected_objects.copy()
             current_mode = bpy.context.mode
             
-            # Run mesh preparation in isolated context
+            # Prepare SOURCE mesh (fixes "Target contains concave polygons" warnings)
+            source_compatible, source_issues = validate_mesh_for_surface_deform(source_obj)
+            if not source_compatible:
+                self.report({'INFO'}, f"Preparing source mesh '{source_obj.name}' for compatibility...")
+                source_modified = ensure_surface_deform_compatibility(source_obj)
+                if source_modified:
+                    self.report({'INFO'}, f"Source mesh '{source_obj.name}' prepared successfully")
+            
+            # Prepare TARGET mesh
             target_compatible, target_issues = validate_mesh_for_surface_deform(target_obj)
             if not target_compatible:
                 self.report({'INFO'}, f"Preparing target mesh '{target_obj.name}' for compatibility...")
@@ -296,11 +304,23 @@ class MESH_OT_batch_transfer_shape_keys(Operator):
             self.report({'ERROR'}, "No shape keys selected")
             return {'CANCELLED'}
         
-        # Prepare target meshes for compatibility BEFORE starting batch transfer
+        # Prepare source and target meshes for compatibility BEFORE starting batch transfer
         current_active = bpy.context.active_object
         current_selected = bpy.context.selected_objects.copy()  
         current_mode = bpy.context.mode
         
+        # Prepare SOURCE mesh once (used for all transfers)
+        try:
+            source_compatible, source_issues = validate_mesh_for_surface_deform(source_obj)
+            if not source_compatible:
+                self.report({'INFO'}, f"Preparing source mesh '{source_obj.name}' for compatibility...")
+                source_modified = ensure_surface_deform_compatibility(source_obj)
+                if source_modified:
+                    self.report({'INFO'}, f"Source mesh '{source_obj.name}' prepared successfully")
+        except Exception as e:
+            self.report({'WARNING'}, f"Could not prepare source '{source_obj.name}': {str(e)[:50]}")
+        
+        # Prepare all TARGET meshes
         for target_obj in target_objects:
             try:
                 target_compatible, target_issues = validate_mesh_for_surface_deform(target_obj)
