@@ -73,10 +73,10 @@ def draw_details_ui(layout, context, props):
             # Available Modules Overview
             modules_box = details_box.box()
             modules_box.label(text="📦 Available Modules", icon='OUTLINER_OB_GROUP_INSTANCE')
-            
+
             modules_col = modules_box.column(align=True)
             modules_col.scale_y = 0.85
-            
+
             # Shape Key Transfer
             shapekey_row = modules_col.row()
             shapekey_row.label(text="🔄 Shape Key Transfer", icon='SHAPEKEY_DATA')
@@ -85,9 +85,9 @@ def draw_details_ui(layout, context, props):
             shapekey_info.label(text="  • Transfer shape keys between different mesh topologies")
             shapekey_info.label(text="  • Uses Surface Deform for accurate deformation mapping")
             shapekey_info.label(text="  • Supports drag-and-drop object selection")
-            
+
             modules_col.separator(factor=0.5)
-            
+
             # Pose Mode Bone Editor
             pose_row = modules_col.row()
             pose_row.label(text="🦴 Pose Mode Bone Editor", icon='POSE_HLT')
@@ -97,44 +97,43 @@ def draw_details_ui(layout, context, props):
             pose_info.label(text="  • Professional-grade precision correction")
             pose_info.label(text="  • Armature diff export for change tracking")
             pose_info.label(text="  • Pose history and undo system")
+
+            modules_col.separator(factor=0.5)
+
+            # Mirror Flip Tools
+            mirror_row = modules_col.row()
+            mirror_row.label(text="🪞 Mirror Flip Tools", icon='MOD_MIRROR')
+            mirror_info = modules_col.column(align=True)
+            mirror_info.scale_y = 0.8
+            mirror_info.label(text="  • Flip bones and meshes across armature axes")
+            mirror_info.label(text="  • Intelligent bone chain detection and naming")
+            mirror_info.label(text="  • Combined bone + mesh flipping for full avatars")
             
             details_box.separator()
             
             # Companion Tools Section - Updated for broader compatibility
             companion_box = details_box.box()
             companion_box.label(text="🛠️ Recommended Companion Tools", icon='TOOL_SETTINGS')
-            
-            # CATS Plugin
-            cats_row = companion_box.row()
-            cats_row.scale_y = 1.1
-            cats_row.label(text="🐱 CATS Blender Plugin (Unofficial)", icon='ARMATURE_DATA')
-            
-            cats_info = companion_box.column(align=True)
-            cats_info.scale_y = 0.8
-            cats_info.label(text="  ✓ Use for: Armature fixing, bone merging, basic pose controls")
-            cats_info.label(text="  ✓ GitHub: github.com/teamneoneko/Cats-Blender-Plugin-Unofficial")
-            cats_info.label(text="  ✓ Works alongside: All Nyarc VRCat Tools modules")
-            
+
+            # CATS / Avatar Toolkit (merged)
+            cats_toolkit_row = companion_box.row()
+            cats_toolkit_row.scale_y = 1.1
+            cats_toolkit_row.label(text="🐱 CATS Blender Plugin / Avatar Toolkit", icon='ARMATURE_DATA')
+
+            cats_toolkit_info = companion_box.column(align=True)
+            cats_toolkit_info.scale_y = 0.8
+            cats_toolkit_info.label(text="  ✓ Use for: Armature fixing, bone merging, avatar optimization")
+            cats_toolkit_info.label(text="  ✓ CATS (Original): github.com/teamneoneko/Cats-Blender-Plugin-Unofficial")
+            cats_toolkit_info.label(text="  ✓ Avatar Toolkit (Newer): github.com/teamneoneko/Avatar-Toolkit")
+            cats_toolkit_info.label(text="  ✓ Works alongside: All Nyarc VRCat Tools modules")
+
             companion_box.separator()
-            
-            # Avatar Toolkit
-            toolkit_row = companion_box.row()
-            toolkit_row.scale_y = 1.1
-            toolkit_row.label(text="🔧 Avatar Toolkit", icon='MODIFIER_DATA')
-            
-            toolkit_info = companion_box.column(align=True)
-            toolkit_info.scale_y = 0.8
-            toolkit_info.label(text="  ✓ Use for: Advanced avatar optimization and utilities")
-            toolkit_info.label(text="  ✓ GitHub: github.com/teamneoneko/Avatar-Toolkit")
-            toolkit_info.label(text="  ✓ Complements: Shape key transfer and bone tools")
-            
-            companion_box.separator()
-            
+
             # VRM Tools
             vrm_row = companion_box.row()
             vrm_row.scale_y = 1.1
             vrm_row.label(text="🤖 VRM Import/Export Tools", icon='IMPORT')
-            
+
             vrm_info = companion_box.column(align=True)
             vrm_info.scale_y = 0.8
             vrm_info.label(text="  ✓ Use for: VRM avatar format support")
@@ -155,20 +154,7 @@ def draw_details_ui(layout, context, props):
             workflow_col.label(text="5. Export final transforms and finish with companion tools")
             
             details_box.separator()
-            
-            # Tool Categories - New section describing tool types
-            categories_box = details_box.box()
-            categories_box.label(text="📋 Tool Categories", icon='OUTLINER_COLLECTION')
-            
-            categories_col = categories_box.column(align=True)
-            categories_col.scale_y = 0.85
-            categories_col.label(text="🔄 Mesh Tools: Shape key transfer, deformation mapping")
-            categories_col.label(text="🦴 Armature Tools: Bone transforms, presets, diff export")
-            categories_col.label(text="⚙️ Workflow Tools: Integration helpers, companion tool support")
-            categories_col.label(text="🎯 Quality Tools: Precision correction, compatibility checking")
-            
-            details_box.separator()
-            
+
             # Quick Action Buttons
             actions_box = details_box.box()
             actions_box.label(text="🚀 Quick Actions", icon='TOOL_SETTINGS')
@@ -196,12 +182,23 @@ def draw_details_ui(layout, context, props):
             dev_box = details_box.box()
             dev_box.scale_y = 0.8
             dev_box.label(text="👥 Development Team", icon='COMMUNITY')
-            
+
             dev_col = dev_box.column(align=True)
             dev_col.scale_y = 0.75
             dev_col.label(text="🎯 Nyarc - Project Maintainer & Lead Developer")
             dev_col.label(text="🤖 Claude Code - AI Coding Agent & Architecture Assistant")
-            dev_col.label(text="🌟 VRChat Community - Feature requests & testing")
+
+            # Community Contributors
+            community_box = details_box.box()
+            community_box.scale_y = 0.8
+            community_box.label(text="🌟 VRChat Community", icon='COMMUNITY')
+
+            community_col = community_box.column(align=True)
+            community_col.scale_y = 0.75
+            community_col.label(text="Thanks to these people for helping with the project:")
+            community_col.label(text="  • FluffyHellWan")
+            community_col.label(text="  • Aistify")
+            community_col.label(text="  • Rappy - Bugfix Helper")
     
     except Exception as e:
         # Fallback UI if there's an error

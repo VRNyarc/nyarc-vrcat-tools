@@ -29,13 +29,21 @@ def draw_live_preview_ui(layout, context, props):
             preview_box.label(text="No shape keys found in source mesh", icon='INFO')
             return
         
-        # Get target objects for validation
+        # Get target objects for validation (including viewport selection)
         target_objects = []
         if props.shapekey_target_object:
             target_objects.append(props.shapekey_target_object)
+        else:
+            # Fallback: Check for viewport-selected mesh
+            if context.selected_objects:
+                for obj in context.selected_objects:
+                    if obj.type == 'MESH' and obj != source_obj:
+                        target_objects.append(obj)
+                        break  # Only use first valid selection
+
         target_objects.extend(props.get_target_objects_list())
         target_objects = list(set(target_objects))  # Remove duplicates
-        
+
         if not target_objects:
             preview_box.label(text="No target meshes selected", icon='INFO')
             return

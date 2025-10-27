@@ -85,14 +85,15 @@ class MESH_OT_prepare_mesh_compatibility(Operator):
         
         # Attempt to fix
         try:
-            was_modified = ensure_surface_deform_compatibility(active_obj)
-            
-            if was_modified:
+            result = ensure_surface_deform_compatibility(active_obj)
+
+            if result['modified']:
                 # Re-validate
                 is_now_compatible, new_issues = validate_mesh_for_surface_deform(active_obj)
-                
+
                 if is_now_compatible:
-                    self.report({'INFO'}, f"✓ Mesh '{active_obj.name}' prepared successfully")
+                    modifier_info = f" ({len(result['modifiers_added'])} modifier(s) added)" if result['modifiers_added'] else ""
+                    self.report({'INFO'}, f"Mesh '{active_obj.name}' prepared successfully{modifier_info}")
                     return {'FINISHED'}
                 else:
                     self.report({'WARNING'}, f"Partial fix: {', '.join(new_issues[:2])}")

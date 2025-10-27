@@ -1,8 +1,8 @@
 bl_info = {
     "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
-    "category": "3D View", 
-    "version": (0, 1, 0),
+    "category": "3D View",
+    "version": (0, 1, 6),
     "author": "Nyarc",
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
@@ -10,7 +10,7 @@ bl_info = {
 }
 
 import bpy
-from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty
+from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
 
 # Import all modules
@@ -162,18 +162,161 @@ class NyarcToolsProperties(PropertyGroup):
     )
     
     # Transfer options
+    shapekey_skip_existing: BoolProperty(
+        name="Skip Existing",
+        description="Skip transfer if shape key already exists on target",
+        default=True  # Default to True - most common use case
+    )
+
     shapekey_override_existing: BoolProperty(
         name="Override Existing",
         description="Replace existing shape keys with the same name",
         default=False
     )
-    
-    shapekey_skip_existing: BoolProperty(
-        name="Skip Existing",
-        description="Skip transfer if shape key already exists on target",
+
+    # Advanced Options toggle
+    shapekey_show_advanced: BoolProperty(
+        name="Show Advanced Options",
+        description="Show advanced transfer options including Surface Deform parameters and pre-processing",
         default=False
     )
-    
+
+    # Surface Deform parameters (Advanced Options)
+    shapekey_surface_deform_strength: FloatProperty(
+        name="Surface Deform Strength",
+        description="Surface Deform modifier strength - controls transfer intensity",
+        default=1.0,
+        min=0.0,
+        max=1.0
+    )
+
+    shapekey_surface_deform_falloff: FloatProperty(
+        name="Surface Deform Falloff",
+        description="Surface Deform falloff distance - lower values = smoother transitions on clothing edges",
+        default=2.5,
+        min=0.1,
+        max=16.0
+    )
+
+    # Post-transfer cleanup (Advanced Options)
+    shapekey_partial_island_mode: EnumProperty(
+        name="Partial Island Handling",
+        description="[WIP] How to handle small mesh islands that are partially deformed (buttons, belts, etc.)",
+        items=[
+            ('NONE', "None", "Don't modify partially moved islands"),
+            ('EXCLUDE', "Exclude", "Reset partially moved islands to basis (no deformation)"),
+            ('AVERAGE', "Average", "Apply average displacement to entire island (move together uniformly)"),
+        ],
+        default='NONE'
+    )
+
+    shapekey_partial_island_threshold: FloatProperty(
+        name="Island Size Threshold",
+        description="Maximum percentage of total mesh for an island to be considered 'small' (0.005 = 0.5%)",
+        default=0.05,
+        min=0.005,
+        max=0.20,
+        precision=3
+    )
+
+    # Post-transfer smoothing (Advanced Options)
+    shapekey_smooth_boundary: BoolProperty(
+        name="Smooth Cutoff Lines",
+        description="Automatically smooth hard cutoff lines after transfer (post-processing)",
+        default=False
+    )
+
+    shapekey_smooth_iterations: IntProperty(
+        name="Smoothing Iterations",
+        description="Number of smoothing passes to apply to boundary region (each button click applies this many iterations)",
+        default=5,
+        min=1,
+        max=10
+    )
+
+    shapekey_smooth_boundary_width: IntProperty(
+        name="Boundary Width",
+        description="Number of vertex rings around cutoff line to smooth (larger = wider transition)",
+        default=2,
+        min=1,
+        max=10
+    )
+
+    shapekey_auto_blur_mask: BoolProperty(
+        name="Auto-Blur Mask",
+        description="Automatically blur the generated smoothing mask for softer transitions (recommended)",
+        default=True
+    )
+
+    shapekey_blur_iterations: IntProperty(
+        name="Blur Iterations",
+        description="Number of blur passes to apply to smoothing mask",
+        default=2,
+        min=1,
+        max=5
+    )
+
+    # Pre-processing options (quality enhancement)
+    shapekey_use_subdivision: BoolProperty(
+        name="Use Subdivision",
+        description="Add subdivision to source mesh for better transfer quality (works on temporary copy)",
+        default=False
+    )
+
+    shapekey_subdivision_levels: IntProperty(
+        name="Subdivision Levels",
+        description="Number of subdivision levels to apply",
+        default=1,
+        min=0,
+        max=6
+    )
+
+    shapekey_subdivision_simple: BoolProperty(
+        name="Simple Subdivision",
+        description="Use simple subdivision instead of Catmull-Clark",
+        default=False
+    )
+
+    shapekey_use_displace: BoolProperty(
+        name="Use Displace",
+        description="Displace source geometry to get closer to target (works on temporary copy)",
+        default=False
+    )
+
+    shapekey_displace_strength: FloatProperty(
+        name="Displace Strength",
+        description="Strength of displacement",
+        default=0.01,
+        min=0.0,
+        max=1.0
+    )
+
+    shapekey_displace_midlevel: FloatProperty(
+        name="Displace Midlevel",
+        description="Midlevel for displacement",
+        default=0.8,
+        min=0.0,
+        max=1.0
+    )
+
+    shapekey_displace_direction: EnumProperty(
+        name="Displace Direction",
+        description="Direction of displacement",
+        items=[
+            ('X', "X", "Displace along X-axis"),
+            ('Y', "Y", "Displace along Y-axis"),
+            ('Z', "Z", "Displace along Z-axis"),
+            ('NORMAL', "Normal", "Displace along vertex normals")
+        ],
+        default='NORMAL'
+    )
+
+    shapekey_show_preprocessing: BoolProperty(
+        name="Show Pre-processing",
+        description="Show pre-processing options panel",
+        default=False
+    )
+
     # Active index for scrollable shape key list
     shapekey_active_index: IntProperty(
         name="Active Shape Key Index",

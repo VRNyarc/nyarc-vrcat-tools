@@ -47,10 +47,18 @@ class MESH_OT_sync_shape_key_value(Operator):
         # Update the viewport immediately for source changes
         bpy.context.view_layer.update()
         
-        # Get all target objects (both single and multi-target)
+        # Get all target objects (both single, multi-target, and viewport selection)
         target_objects = []
         if props.shapekey_target_object:
             target_objects.append(props.shapekey_target_object)
+        else:
+            # Fallback: Check for viewport-selected mesh
+            if context.selected_objects:
+                for obj in context.selected_objects:
+                    if obj.type == 'MESH' and obj != source_obj:
+                        target_objects.append(obj)
+                        break  # Only use first valid selection
+
         target_objects.extend(props.get_target_objects_list())
         target_objects = list(set(target_objects))  # Remove duplicates
         
@@ -95,10 +103,18 @@ class MESH_OT_reset_shape_key_values(Operator):
             if key_block.name != "Basis":
                 key_block.value = 0.0
         
-        # Reset target objects
+        # Reset target objects (including viewport selection)
         target_objects = []
         if props.shapekey_target_object:
             target_objects.append(props.shapekey_target_object)
+        else:
+            # Fallback: Check for viewport-selected mesh
+            if context.selected_objects:
+                for obj in context.selected_objects:
+                    if obj.type == 'MESH' and obj != source_obj:
+                        target_objects.append(obj)
+                        break
+
         target_objects.extend(props.get_target_objects_list())
         target_objects = list(set(target_objects))
         
@@ -125,10 +141,19 @@ class MESH_OT_clear_live_preview_modifiers(Operator):
             self.report({'ERROR'}, "Properties not found")
             return {'CANCELLED'}
         
-        # Get all target objects
+        # Get all target objects (including viewport selection)
         target_objects = []
         if props.shapekey_target_object:
             target_objects.append(props.shapekey_target_object)
+        else:
+            # Fallback: Check for viewport-selected mesh
+            if context.selected_objects:
+                source_obj = props.shapekey_source_object
+                for obj in context.selected_objects:
+                    if obj.type == 'MESH' and obj != source_obj:
+                        target_objects.append(obj)
+                        break
+
         target_objects.extend(props.get_target_objects_list())
         target_objects = list(set(target_objects))
         
@@ -178,10 +203,19 @@ def shape_key_sync_handler(scene):
         if not source_obj or not source_obj.data.shape_keys:
             return
         
-        # Get target objects
+        # Get target objects (including viewport selection fallback)
         target_objects = []
         if props.shapekey_target_object:
             target_objects.append(props.shapekey_target_object)
+        else:
+            # Fallback: Check for viewport-selected mesh (matching transfer operator logic)
+            import bpy
+            if bpy.context.selected_objects:
+                for obj in bpy.context.selected_objects:
+                    if obj.type == 'MESH' and obj != source_obj:
+                        target_objects.append(obj)
+                        break  # Only use first valid selection
+
         target_objects.extend(props.get_target_objects_list())
         target_objects = list(set(target_objects))
         

@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## v0.1.6 (2025-10-27) - Advanced Shape Key Transfer & Post-Processing
+
+### ✨ Major New Features
+* **Advanced Surface Deform Controls** - Fine-tune transfer quality with strength and falloff parameters
+  * Strength slider (0.0-1.0) controls transfer intensity
+  * Falloff distance (0.1-16.0) for smoother transitions on clothing edges
+* **Boundary Smoothing System** - Professional post-processing workflow for hard cutoff lines
+  * Automatic vertex group mask generation for boundary vertices
+  * Configurable smoothing iterations and boundary width
+  * Auto-blur mask option for softer transitions
+  * Weight Paint mode integration for manual mask editing
+* **Partial Island Handling (WIP)** - Experimental handling for small mesh details (buttons, patches, belts)
+  * EXCLUDE mode: Reset partially moved islands to basis
+  * AVERAGE mode: Apply uniform displacement to entire island
+  * Configurable island size threshold
+  * *Note: This feature is still work-in-progress and may need further refinement*
+* **Pre-processing Options** - Modify source mesh before transfer (non-destructive)
+  * Subdivision support (simple or Catmull-Clark)
+  * Displace modifier with configurable strength and direction
+  * All pre-processing works on temporary copy, original mesh unchanged
+* **Companion Smoothing Tool** - Dedicated panel for post-transfer smoothing workflow
+  * Apply smoothing to existing shape keys using vertex group masks
+  * Generate/regenerate smoothing masks after transfer
+  * Manual smoothing control for iterative refinement
+
+### 🐛 Critical Bug Fixes
+* **Fixed Triangulation Modifier Bug** - Triangulation modifiers are now properly removed instead of being permanently applied
+  * Previously, compatibility triangulation was being baked into the mesh
+  * Now correctly cleans up temporary modifiers after transfer
+* **Viewport Selection Fallback** - Transfer now works with viewport-selected mesh when no target is set in UI
+* **Better Modifier Cleanup** - All temporary modifiers (triangulation, edge split) properly removed after transfer
+
+### 🎨 UI/UX Improvements
+* **Advanced Options Panel** - Collapsible section for advanced parameters
+  * Surface Deform strength and falloff controls
+  * Post-processing options (smoothing, island handling)
+  * Pre-processing options (subdivision, displace)
+* **Expanded Help Documentation** - Detailed tooltips and help text for all new features
+* **Skip Existing Option** - Skip transfer if shape key already exists on target
+
+### 🔧 Technical Improvements
+* Modular post-processing utilities (`smooth_boundary.py`, `preprocessing.py`)
+* Better error handling and recovery for modifier operations
+* Improved mesh validation and compatibility preparation
+* Enhanced debug output for troubleshooting
+
+## v0.1.5 (2025-08-12) - Surface Deform & Multi-Target Fixes
+
 ## v0.1.0 (2025-08-12)
 
 ### New Features
