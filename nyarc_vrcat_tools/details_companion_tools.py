@@ -65,7 +65,7 @@ def draw_details_ui(layout, context, props):
             info_col.scale_y = 0.9
             
             info_col.label(text="🎯 Purpose:", icon='FILE_TICK')
-            info_col.label(text="Comprehensive toolkit for VRChat avatar editing workflows")
+            info_col.label(text="Comprehensive toolkit for VRCat avatar editing workflows")
             info_col.label(text="providing shape key transfer, bone transform tools, and more.")
             
             details_box.separator()
@@ -174,9 +174,9 @@ def draw_details_ui(layout, context, props):
             
             credits_col = credits_box.column(align=True)
             credits_col.scale_y = 0.75
-            credits_col.label(text="Part of the VRChat community's open-source toolkit")
+            credits_col.label(text="Part of the VRCat community's open-source toolkit")
             credits_col.label(text="Works best when combined with other community plugins")
-            credits_col.label(text="Built for professional and amateur VRChat avatar workflows")
+            credits_col.label(text="Built for professional and amateur VRCat avatar workflows")
             
             # Development Credits
             dev_box = details_box.box()

@@ -1,5 +1,5 @@
 """
-Core utilities for NYARC VRChat Tools.
+Core utilities for NYARC VRCat Tools.
 
 This package contains shared utilities used across all modules:
 - validation: Input validation and error checking
