@@ -78,10 +78,11 @@ Advanced armature difference calculation and export system:
 
 ## 📚 Documentation
 
-- **[User Guide](docs/user-guide.md)**: Complete feature documentation
-- **[Installation Guide](docs/installation.md)**: Detailed setup instructions  
-- **[Developer Documentation](docs/development.md)**: Architecture and contribution guide
 - **[Changelog](CHANGELOG.md)**: Version history and updates
+- **[Contributing Guidelines](CONTRIBUTING.md)**: Development guidelines and contribution process
+- **[License](LICENSE)**: MIT License details
+
+For detailed usage instructions, see the feature descriptions above and the in-addon help panels.
 
 ## 🤝 Contributing
 

@@ -627,7 +627,7 @@ class VIEW3D_PT_nyarc_tools_manager(Panel):
         # Header info
         header_box = layout.box()
         header_row = header_box.row()
-        header_row.label(text="Nyarc VRCat Tools v0.1.0", icon='TOOL_SETTINGS')
+        header_row.label(text="Nyarc VRCat Tools v0.1.6", icon='TOOL_SETTINGS')
         header_row.label(text="🐱 Meow!")
         
         # Separator
