@@ -13,7 +13,7 @@ class VIEW3D_PT_mirror_flip_tools(Panel):
     bl_idname = "VIEW3D_PT_mirror_flip_tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Nyarc VRChat Tools"
+    bl_category = "Nyarc VRCat Tools"
     bl_options = {'DEFAULT_CLOSED'}
     
     def draw_header(self, context):
@@ -181,7 +181,7 @@ class VIEW3D_PT_mirror_flip_detection(Panel):
     bl_idname = "VIEW3D_PT_mirror_flip_detection"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Nyarc VRChat Tools"
+    bl_category = "Nyarc VRCat Tools"
     bl_parent_id = "VIEW3D_PT_mirror_flip_tools"
     bl_options = {'DEFAULT_CLOSED'}
     

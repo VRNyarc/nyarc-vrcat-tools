@@ -64,7 +64,7 @@ def draw_details_ui(layout, context, props):
             workflow_col = integration_box.column(align=True)
             workflow_col.scale_y = 0.85
             workflow_col.label(text="1. Import avatar and fix with CATS or Avatar Toolkit")
-            workflow_col.label(text="2. Use Nyarc VRChat Tools for bone transform presets")
+            workflow_col.label(text="2. Use Nyarc VRCat Tools for bone transform presets")
             workflow_col.label(text="3. Save/load different pose configurations easily")
             workflow_col.label(text="4. Export differences between armature states")
             workflow_col.label(text="5. Apply final transforms and finish with companion tools")
@@ -94,7 +94,7 @@ def draw_details_ui(layout, context, props):
             credits_col.scale_y = 0.75
             credits_col.label(text="Part of the VRChat community's open-source toolkit")
             credits_col.label(text="Works best when combined with other community plugins")
-            credits_col.label(text="Built for heavy VRChat avatar editing workflows")
+            credits_col.label(text="Built for heavy VRCat avatar editing workflows")
             
             details_box.separator()
             

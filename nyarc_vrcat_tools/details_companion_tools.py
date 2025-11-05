@@ -13,7 +13,7 @@ class INFO_OT_open_documentation(Operator):
     
     def execute(self, context):
         import webbrowser
-        # Open Nyarc VRChat Tools documentation/README
+        # Open Nyarc VRCat Tools documentation/README
         webbrowser.open("https://github.com/VRNyarc/nyarc-vrcat-tools#readme")
         self.report({'INFO'}, "Documentation opened in web browser")
         return {'FINISHED'}
@@ -35,10 +35,10 @@ class INFO_OT_open_support(Operator):
 
 
 class INFO_OT_open_nyarc_github(Operator):
-    """Open Nyarc VRChat Tools GitHub repository"""
+    """Open Nyarc VRCat Tools GitHub repository"""
     bl_idname = "info.open_nyarc_github"
     bl_label = "GitHub Repository"
-    bl_description = "Open the Nyarc VRChat Tools GitHub repository"
+    bl_description = "Open the Nyarc VRCat Tools GitHub repository"
     bl_options = {'REGISTER'}
     
     def execute(self, context):
@@ -125,7 +125,7 @@ def draw_details_ui(layout, context, props):
             cats_toolkit_info.label(text="  ✓ Use for: Armature fixing, bone merging, avatar optimization")
             cats_toolkit_info.label(text="  ✓ CATS (Original): github.com/teamneoneko/Cats-Blender-Plugin-Unofficial")
             cats_toolkit_info.label(text="  ✓ Avatar Toolkit (Newer): github.com/teamneoneko/Avatar-Toolkit")
-            cats_toolkit_info.label(text="  ✓ Works alongside: All Nyarc VRChat Tools modules")
+            cats_toolkit_info.label(text="  ✓ Works alongside: All Nyarc VRCat Tools modules")
 
             companion_box.separator()
 

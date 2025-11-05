@@ -1,11 +1,11 @@
 bl_info = {
-    "name": "Nyarc VRChat Tools",
+    "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
     "category": "3D View",
     "version": (0, 1, 6),
     "author": "Nyarc",
-    "description": "Small quality-of-life addons for heavy VRChat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
-    "location": "View3D > Sidebar > Nyarc VRChat Tools",
+    "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
+    "location": "View3D > Sidebar > Nyarc VRCat Tools",
     "support": "COMMUNITY",
 }
 
@@ -612,12 +612,12 @@ def _delayed_message_bus_setup():
 
 
 class VIEW3D_PT_nyarc_tools_manager(Panel):
-    """Main panel for Nyarc VRChat Tools"""
-    bl_label = "Nyarc VRChat Tools"
+    """Main panel for Nyarc VRCat Tools"""
+    bl_label = "Nyarc VRCat Tools"
     bl_idname = "VIEW3D_PT_nyarc_tools_manager"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Nyarc VRChat Tools"
+    bl_category = "Nyarc VRCat Tools"
     
     def draw_header(self, context):
         layout = self.layout
@@ -630,7 +630,7 @@ class VIEW3D_PT_nyarc_tools_manager(Panel):
         # Header info
         header_box = layout.box()
         header_row = header_box.row()
-        header_row.label(text="Nyarc VRChat Tools v0.1.6", icon='TOOL_SETTINGS')
+        header_row.label(text="Nyarc VRCat Tools v0.1.6", icon='TOOL_SETTINGS')
         header_row.label(text="🐱 Meow!")
         
         # Separator

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Automated Release Script for Nyarc VRChat Tools
+Automated Release Script for Nyarc VRCat Tools
 Handles version bumping, changelog generation, and release tagging
 """
 
@@ -117,8 +117,8 @@ def update_version_files(new_version):
     
     # Update UI display version
     content = re.sub(
-        r'header_row\.label\(text="Nyarc VRChat Tools v[\d.]+",',
-        f'header_row.label(text="Nyarc VRChat Tools v{version_str}",',
+        r'header_row\.label\(text="Nyarc VRCat Tools v[\d.]+",',
+        f'header_row.label(text="Nyarc VRCat Tools v{version_str}",',
         content
     )
     
@@ -236,7 +236,7 @@ def update_changelog_file(new_version, changelog_content):
             new_content = new_entry + existing_content
     else:
         # Create new changelog file
-        new_content = f"# Changelog\n\nAll notable changes to Nyarc VRChat Tools will be documented in this file.\n\n{new_entry}"
+        new_content = f"# Changelog\n\nAll notable changes to Nyarc VRCat Tools will be documented in this file.\n\n{new_entry}"
     
     with open(changelog_file, 'w', encoding='utf-8') as f:
         f.write(new_content)
@@ -265,7 +265,7 @@ def create_release_commit_and_tag(new_version, changelog_content):
     return True
 
 def main():
-    parser = argparse.ArgumentParser(description="Automated release script for Nyarc VRChat Tools")
+    parser = argparse.ArgumentParser(description="Automated release script for Nyarc VRCat Tools")
     parser.add_argument("bump_type", choices=["major", "minor", "patch"], 
                        help="Type of version bump")
     parser.add_argument("--dry-run", action="store_true", 

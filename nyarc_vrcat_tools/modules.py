@@ -16,7 +16,7 @@ mirror_flip_module, MIRROR_FLIP_AVAILABLE = try_import_module('nyarc_vrcat_tools
 
 def register_modules():
     """Register all available modules"""
-    print("[REGISTER] Registering Nyarc VRChat Tools modules...")
+    print("[REGISTER] Registering Nyarc VRCat Tools modules...")
     
     # Register core modules
     if SHAPEKEY_AVAILABLE and hasattr(shapekey_module, 'register'):
@@ -77,7 +77,7 @@ def register_modules():
 
 def unregister_modules():
     """Unregister all modules"""
-    print("[UNREGISTER] Unregistering Nyarc VRChat Tools modules...")
+    print("[UNREGISTER] Unregistering Nyarc VRCat Tools modules...")
     
     # NOTE: Bone Transform Saver unregistration disabled - handled by bone_transforms module
     print("[DEBUG] Bone Transform Saver unregistration disabled")
