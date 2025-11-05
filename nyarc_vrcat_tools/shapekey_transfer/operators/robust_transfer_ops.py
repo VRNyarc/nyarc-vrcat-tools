@@ -101,17 +101,17 @@ class MESH_OT_transfer_shape_key_robust(Operator):
         try:
             from ..robust.core import transfer_shape_key_robust
 
-            # Run robust transfer
+            # Run robust transfer using scene properties
             success = transfer_shape_key_robust(
                 source_obj=source_obj,
                 target_obj=target_obj,
                 shape_key_name=shape_key_name,
-                distance_threshold=self.distance_threshold,
-                normal_threshold=self.normal_threshold,
-                use_pointcloud=self.use_pointcloud,
-                smooth_iterations=self.smooth_iterations,
-                show_debug=self.show_debug,
-                handle_islands=self.handle_islands,
+                distance_threshold=props.robust_distance_threshold,
+                normal_threshold=props.robust_normal_threshold,
+                use_pointcloud=props.robust_use_pointcloud,
+                smooth_iterations=props.robust_smooth_iterations,
+                show_debug=props.robust_show_debug,
+                handle_islands=props.robust_handle_islands,
                 operator=self
             )
 

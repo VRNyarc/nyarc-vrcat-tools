@@ -40,7 +40,9 @@ def transfer_shape_key_robust(
         use_pointcloud: Use point cloud Laplacian (slower, more robust)
         smooth_iterations: Additional smoothing passes (0 recommended)
         show_debug: Create vertex colors showing match quality
-        handle_islands: Auto-handle disconnected islands with poor matches (default: True)
+        handle_islands: Auto-enable Point Cloud Laplacian for islands with poor matches (default: True)
+                        When enabled, detects disconnected islands and automatically uses
+                        Point Cloud mode if they lack geometric correspondence
         operator: Blender operator for reporting (optional)
 
     Returns:
@@ -103,48 +105,53 @@ def transfer_shape_key_robust(
             create_match_quality_debug(target_obj, matched_indices, distances, distance_threshold)
 
         # STAGE 1.5: Handle disconnected islands with poor matches
-        island_overrides = {}
+        # Use Point Cloud Laplacian for islands instead of hard displacement override
+        use_pointcloud_for_islands = use_pointcloud  # Start with user setting
         if handle_islands:
             report('INFO', "\n=== STAGE 1.5: MESH ISLAND HANDLING ===")
             try:
-                from .island_handling import handle_unmatched_islands
+                from .island_handling import detect_mesh_islands, get_island_match_coverage
 
-                island_overrides = handle_unmatched_islands(
-                    target_verts,
-                    target_faces,
-                    matched_indices,
-                    matched_displacements,
-                    min_match_coverage=0.1  # Islands with <10% matches get special handling
-                )
+                islands = detect_mesh_islands(target_faces, len(target_verts))
+                report('INFO', f"Found {len(islands)} mesh component(s)")
 
-                if island_overrides:
-                    report('INFO', f"Applied special handling to {len(island_overrides)} vertices in small islands")
+                # Check if any islands have poor coverage
+                has_poor_islands = False
+                for island in islands:
+                    coverage = get_island_match_coverage(island, matched_indices)
+                    if coverage < 0.1:
+                        has_poor_islands = True
+                        report('INFO', f"  Island with {len(island)} verts has {coverage*100:.1f}% matches")
+
+                # Enable point cloud mode for disconnected components
+                if has_poor_islands:
+                    use_pointcloud_for_islands = True
+                    report('INFO', "Enabling Point Cloud Laplacian for island handling")
                 else:
-                    report('INFO', "No small islands need special handling")
+                    report('INFO', "All islands have adequate match coverage")
 
             except Exception as e:
-                report('WARNING', f"Island handling failed: {e}, continuing with normal inpainting")
+                report('WARNING', f"Island detection failed: {e}, continuing without island handling")
                 import traceback
                 traceback.print_exc()
 
         report('INFO', "\n=== STAGE 2: HARMONIC INPAINTING ===")
 
-        # Inpaint missing displacements
-        report('INFO', "Running harmonic inpainting...")
+        # Inpaint missing displacements (use point cloud if islands need it)
+        if use_pointcloud_for_islands and not use_pointcloud:
+            report('INFO', "Using Point Cloud Laplacian for disconnected islands...")
+        else:
+            report('INFO', "Running harmonic inpainting...")
+
         full_displacements = inpaint_displacements(
             target_verts, target_faces,
             matched_indices, matched_displacements,
-            use_pointcloud
+            use_pointcloud_for_islands
         )
 
         if full_displacements is None:
             report('ERROR', "Harmonic inpainting failed")
             return False
-
-        # Apply island overrides (after inpainting, so they take priority)
-        if island_overrides:
-            for vert_idx, displacement in island_overrides.items():
-                full_displacements[vert_idx] = displacement
 
         # Optional post-smoothing
         if smooth_iterations > 0:

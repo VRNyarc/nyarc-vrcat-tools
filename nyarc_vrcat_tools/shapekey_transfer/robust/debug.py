@@ -28,14 +28,16 @@ def create_match_quality_debug(target_obj, matched_indices, distances, distance_
 
     # Build color map
     N = len(mesh.vertices)
-    matched_mask = np.zeros(N, dtype=bool)
-    matched_mask[matched_indices] = True
-
     color_map = np.zeros((N, 4))
 
+    # Build lookup dictionary for matched vertices
+    matched_lookup = {}
+    for idx, vert_idx in enumerate(matched_indices):
+        matched_lookup[vert_idx] = distances[idx]
+
     for i in range(N):
-        if matched_mask[i]:
-            dist = distances[matched_indices.tolist().index(i)]
+        if i in matched_lookup:
+            dist = matched_lookup[i]
 
             if dist < 0.001:
                 # Perfect match: Blue
