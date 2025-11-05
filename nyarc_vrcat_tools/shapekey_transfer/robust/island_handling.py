@@ -144,55 +144,52 @@ def copy_nearest_displacement_to_island(
     return island_list, island_displacements
 
 
-def handle_small_islands(
+def handle_unmatched_islands(
     target_verts,
     target_faces,
     matched_indices,
     matched_displacements,
-    small_island_threshold=0.05,
     min_match_coverage=0.1
 ):
     """
-    Detect and handle small mesh islands with poor match coverage.
+    Automatically detect and handle mesh islands with poor match coverage.
 
     This is the main entry point for island handling. It:
-    1. Detects disconnected mesh components
-    2. Identifies small islands with low match coverage
+    1. Detects ALL disconnected mesh components
+    2. Identifies islands with low match coverage (regardless of size)
     3. Copies nearest matched displacement to those islands
+
+    This is fully automatic - no size thresholds or manual configuration needed.
+    Any island with <10% matches gets nearest displacement copied.
 
     Args:
         target_verts: Target mesh vertices (Nx3)
         target_faces: Target mesh faces (Fx3)
         matched_indices: Indices of matched vertices
         matched_displacements: Displacements for matched vertices
-        small_island_threshold: Max % to qualify as small island (default: 5%)
         min_match_coverage: Min % matches to avoid special handling (default: 10%)
 
     Returns:
         Dictionary mapping vertex indices to displacement vectors for
-        small islands that need special handling
+        islands that need special handling
     """
     num_vertices = len(target_verts)
 
     # Detect all mesh islands
     islands = detect_mesh_islands(target_faces, num_vertices)
 
-    # Classify by size
-    small_islands, large_islands = classify_islands(
-        islands, num_vertices, small_island_threshold
-    )
+    print(f"ISLAND DETECTION: Found {len(islands)} mesh component(s)")
 
-    print(f"ISLAND DETECTION: Found {len(islands)} components "
-          f"({len(small_islands)} small, {len(large_islands)} large)")
-
-    # Find small islands with poor match coverage
+    # Find ANY island with poor match coverage (regardless of size)
     island_displacements = {}
+    islands_handled = 0
 
-    for island in small_islands:
+    for island in islands:
         coverage = get_island_match_coverage(island, matched_indices)
 
         if coverage < min_match_coverage:
-            print(f"  Small island ({len(island)} verts) with {coverage*100:.1f}% matches "
+            islands_handled += 1
+            print(f"  Island {islands_handled}: {len(island)} verts with {coverage*100:.1f}% matches "
                   f"- copying nearest displacement")
 
             # Copy displacement from nearest matched vertex
@@ -203,5 +200,8 @@ def handle_small_islands(
             # Add to result dictionary
             for vert_idx, displacement in zip(island_verts, displacements):
                 island_displacements[vert_idx] = displacement
+
+    if islands_handled == 0:
+        print(f"  All {len(islands)} component(s) have adequate match coverage (>{min_match_coverage*100:.0f}%)")
 
     return island_displacements

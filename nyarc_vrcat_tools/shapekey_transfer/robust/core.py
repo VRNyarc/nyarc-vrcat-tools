@@ -26,7 +26,6 @@ def transfer_shape_key_robust(
     smooth_iterations=0,
     show_debug=False,
     handle_islands=True,
-    island_size_threshold=0.05,
     operator=None
 ):
     """
@@ -41,8 +40,7 @@ def transfer_shape_key_robust(
         use_pointcloud: Use point cloud Laplacian (slower, more robust)
         smooth_iterations: Additional smoothing passes (0 recommended)
         show_debug: Create vertex colors showing match quality
-        handle_islands: Auto-handle small disconnected mesh islands (default: True)
-        island_size_threshold: Max % of mesh to qualify as small island (default: 5%)
+        handle_islands: Auto-handle disconnected islands with poor matches (default: True)
         operator: Blender operator for reporting (optional)
 
     Returns:
@@ -104,19 +102,18 @@ def transfer_shape_key_robust(
             report('INFO', "Creating match quality debug visualization...")
             create_match_quality_debug(target_obj, matched_indices, distances, distance_threshold)
 
-        # STAGE 1.5: Handle small disconnected islands
+        # STAGE 1.5: Handle disconnected islands with poor matches
         island_overrides = {}
         if handle_islands:
             report('INFO', "\n=== STAGE 1.5: MESH ISLAND HANDLING ===")
             try:
-                from .island_handling import handle_small_islands
+                from .island_handling import handle_unmatched_islands
 
-                island_overrides = handle_small_islands(
+                island_overrides = handle_unmatched_islands(
                     target_verts,
                     target_faces,
                     matched_indices,
                     matched_displacements,
-                    small_island_threshold=island_size_threshold,
                     min_match_coverage=0.1  # Islands with <10% matches get special handling
                 )
 

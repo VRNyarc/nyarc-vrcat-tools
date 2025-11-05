@@ -202,27 +202,22 @@ def draw_single_target_ui(layout, context, props):
             
             # Distance threshold with auto-tune
             dist_row = robust_col.row(align=True)
-            dist_row.prop(props, "robust_distance_threshold", text="Distance Threshold")
+            dist_row.prop(props, "robust_distance_threshold", text="Distance Threshold", slider=True)
             dist_row.operator("mesh.auto_tune_distance_threshold", text="", icon='AUTO')
-            
+
             # Normal threshold
-            robust_col.prop(props, "robust_normal_threshold", text="Normal Threshold")
-            
+            robust_col.prop(props, "robust_normal_threshold", text="Normal Threshold", slider=True)
+
             # Point cloud option
             robust_col.prop(props, "robust_use_pointcloud", text="Use Point Cloud Laplacian")
-            
+
             # Post-smoothing
-            robust_col.prop(props, "robust_smooth_iterations", text="Post-Smooth Iterations")
+            robust_col.prop(props, "robust_smooth_iterations", text="Post-Smooth Iterations", slider=True)
 
             robust_col.separator()
 
-            # Island handling
-            robust_col.prop(props, "robust_handle_islands", text="Auto-Handle Small Islands (Buttons, Patches)")
-
-            if props.robust_handle_islands:
-                island_row = robust_col.row()
-                island_row.scale_y = 0.8
-                island_row.prop(props, "robust_island_size_threshold", text="Island Size Threshold")
+            # Island handling (fully automatic, just a checkbox)
+            robust_col.prop(props, "robust_handle_islands", text="Auto-Handle Unmatched Islands (Buttons, Patches)")
 
             robust_col.separator()
 

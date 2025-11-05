@@ -376,7 +376,8 @@ class NyarcToolsProperties(PropertyGroup):
         default=0.01,
         min=0.0001,
         max=0.1,
-        precision=4
+        precision=4,
+        subtype='DISTANCE'
     )
 
     robust_normal_threshold: FloatProperty(
@@ -385,7 +386,8 @@ class NyarcToolsProperties(PropertyGroup):
         default=0.5,
         min=0.0,
         max=1.0,
-        precision=3
+        precision=3,
+        subtype='FACTOR'
     )
 
     robust_use_pointcloud: BoolProperty(
@@ -409,18 +411,9 @@ class NyarcToolsProperties(PropertyGroup):
     )
 
     robust_handle_islands: BoolProperty(
-        name="Handle Small Islands",
-        description="Automatically handle small disconnected mesh parts (buttons, patches, etc.)",
+        name="Handle Unmatched Islands",
+        description="Automatically handle disconnected mesh parts with poor matches (buttons, patches, etc.)",
         default=True
-    )
-
-    robust_island_size_threshold: FloatProperty(
-        name="Island Size Threshold",
-        description="Maximum % of mesh to qualify as small island (0.05 = 5%)",
-        default=0.05,
-        min=0.001,
-        max=0.2,
-        precision=3
     )
 
     # Bone Transform Saver Properties (prefixed to avoid conflicts)  
