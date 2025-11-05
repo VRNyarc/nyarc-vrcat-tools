@@ -108,8 +108,9 @@ def check_all_bones_inherit_scale_none(armature_obj):
                 safe_mode_set(target_mode)
             if current_active and current_active != armature_obj:
                 bpy.context.view_layer.objects.active = current_active
-        except:
-            pass
+        except (RuntimeError, TypeError, AttributeError) as e:
+            # Best effort cleanup - mode/active object restoration may fail
+            print(f"Warning: Failed to restore mode/active object: {e}")
         
         # Fallback - assume not all none to be safe
         return False, 0, len(armature_obj.data.bones) if armature_obj.data.bones else 0
@@ -195,8 +196,8 @@ def set_all_bones_inherit_scale_none(armature_obj):
                 bpy.ops.object.mode_set(mode='POSE')
             elif original_mode == 'OBJECT':
                 bpy.ops.object.mode_set(mode='OBJECT')
-        except:
-            pass
+        except (RuntimeError, TypeError) as e:
+            print(f"Warning: Failed to restore mode to {original_mode}: {e}")
         return False
 
 
@@ -575,8 +576,8 @@ def execute_flattened_apply_rest_pose(context, armature, operator_self=None):
             if 'original_inherit_settings' in locals():
                 restore_inherit_scale_settings(armature, original_inherit_settings)
                 print("Restored inherit_scale settings after error")
-        except:
-            pass
+        except (RuntimeError, AttributeError, KeyError) as e:
+            print(f"Warning: Failed to restore inherit_scale settings: {e}")
         
         if operator_self:
             operator_self.report({'ERROR'}, f"Failed to apply as rest pose with flattening: {str(e)}")
@@ -784,5 +785,6 @@ def unregister():
     for cls in reversed(classes):
         try:
             bpy.utils.unregister_class(cls)
-        except:
+        except (RuntimeError, ValueError):
+            # Class not registered - safe to ignore
             pass

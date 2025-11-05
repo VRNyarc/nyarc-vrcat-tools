@@ -166,8 +166,8 @@ class ARMATURE_OT_toggle_inherit_scale(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 class ARMATURE_OT_set_inherit_scale_all_none(Operator):
@@ -245,8 +245,8 @@ class ARMATURE_OT_set_inherit_scale_all_none(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 class ARMATURE_OT_set_inherit_scale_all_full(Operator):
@@ -324,8 +324,8 @@ class ARMATURE_OT_set_inherit_scale_all_full(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 class ARMATURE_OT_set_inherit_scale_selected_none(Operator):
@@ -406,8 +406,8 @@ class ARMATURE_OT_set_inherit_scale_selected_none(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 class ARMATURE_OT_set_inherit_scale_selected_full(Operator):
@@ -488,8 +488,8 @@ class ARMATURE_OT_set_inherit_scale_selected_full(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 class ARMATURE_OT_toggle_inherit_scale_selected(Operator):
@@ -577,8 +577,8 @@ class ARMATURE_OT_toggle_inherit_scale_selected(Operator):
                 for obj in original_selected:
                     obj.select_set(True)
                 context.view_layer.objects.active = original_active
-            except:
-                pass
+            except (RuntimeError, AttributeError) as e:
+                print(f"Warning: Failed to restore selection: {e}")
 
 
 # Registration
@@ -602,5 +602,6 @@ def unregister():
     for cls in reversed(classes):
         try:
             bpy.utils.unregister_class(cls)
-        except:
+        except (RuntimeError, ValueError):
+            # Class not registered - safe to ignore
             pass
