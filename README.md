@@ -1,4 +1,4 @@
-# NYARC VRChat Tools
+# NYARC VRCat Tools
 
 **Professional Blender addon for VRChat avatar creation workflows**
 
@@ -46,7 +46,7 @@ Advanced armature difference calculation and export system:
 1. Download the latest release ZIP: [Releases](https://github.com/VRNyarc/nyarc-vrcat-tools/releases)
 2. In Blender: `Edit` → `Preferences` → `Add-ons` → `Install...`
 3. Select the downloaded ZIP file
-4. Enable "NYARC VRChat Tools" in the add-ons list
+4. Enable "NYARC VRCat Tools" in the add-ons list
 
 ### **Manual Installation** 
 1. Clone or download this repository

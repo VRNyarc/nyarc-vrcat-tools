@@ -5,10 +5,10 @@ import bpy
 from bpy.types import Operator
 
 class INFO_OT_open_documentation(Operator):
-    """Open VRChat Avatar Tools documentation"""
+    """Open VRCat Avatar Tools documentation"""
     bl_idname = "info.open_documentation"
     bl_label = "Open Documentation"
-    bl_description = "Open VRChat Avatar Tools documentation in web browser"
+    bl_description = "Open VRCat Avatar Tools documentation in web browser"
     bl_options = {'REGISTER'}
     
     def execute(self, context):

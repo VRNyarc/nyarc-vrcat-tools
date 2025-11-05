@@ -1,6 +1,6 @@
-# Contributing to NYARC VRChat Tools
+# Contributing to NYARC VRCat Tools
 
-Thank you for your interest in contributing! This document outlines how to contribute to the NYARC VRChat Tools project.
+Thank you for your interest in contributing! This document outlines how to contribute to the NYARC VRCat Tools project.
 
 ## 🚀 Quick Start
 
@@ -248,4 +248,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-**Thank you for contributing to NYARC VRChat Tools!** 🎉
+**Thank you for contributing to NYARC VRCat Tools!** 🎉
