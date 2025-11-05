@@ -16,6 +16,9 @@ from bpy.types import Panel, PropertyGroup, Object
 # Import all modules
 from . import modules
 
+# Module-level message bus owner for proper cleanup
+_msgbus_owner = object()
+
 
 def armature_poll(self, obj):
     """Poll function to filter armature objects"""
@@ -596,7 +599,7 @@ def _delayed_message_bus_setup():
         # Subscribe to bone property changes
         bpy.msgbus.subscribe_rna(
             key=(bpy.types.Bone, "inherit_scale"),
-            owner=object(),  # Unique owner for this subscription
+            owner=_msgbus_owner,  # Module-level owner for proper cleanup
             args=(),
             notify=update_inherit_scale_warning_from_context,
         )
@@ -686,7 +689,7 @@ def unregister():
     
     # Clear message bus subscriptions
     try:
-        bpy.msgbus.clear_by_owner(object())
+        bpy.msgbus.clear_by_owner(_msgbus_owner)
         print("Nyarc Tools: Cleared message bus subscriptions")
     except Exception as e:
         print(f"Nyarc Tools: Error clearing message bus: {e}")
