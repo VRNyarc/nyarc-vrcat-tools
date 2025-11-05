@@ -6,6 +6,9 @@ from bpy.types import Operator
 from mathutils import Vector, Quaternion
 import time
 
+# Import core validation utilities
+from ...core import validate_scene_props, validate_armature
+
 # Import pose history system
 try:
     from ..pose_history import save_pose_history_snapshot
@@ -108,8 +111,9 @@ def check_all_bones_inherit_scale_none(armature_obj):
                 safe_mode_set(target_mode)
             if current_active and current_active != armature_obj:
                 bpy.context.view_layer.objects.active = current_active
-        except:
-            pass
+        except (RuntimeError, TypeError, AttributeError) as e:
+            # Best effort cleanup - mode/active object restoration may fail
+            print(f"Warning: Failed to restore mode/active object: {e}")
         
         # Fallback - assume not all none to be safe
         return False, 0, len(armature_obj.data.bones) if armature_obj.data.bones else 0
@@ -195,8 +199,8 @@ def set_all_bones_inherit_scale_none(armature_obj):
                 bpy.ops.object.mode_set(mode='POSE')
             elif original_mode == 'OBJECT':
                 bpy.ops.object.mode_set(mode='OBJECT')
-        except:
-            pass
+        except (RuntimeError, TypeError) as e:
+            print(f"Warning: Failed to restore mode to {original_mode}: {e}")
         return False
 
 
@@ -575,8 +579,8 @@ def execute_flattened_apply_rest_pose(context, armature, operator_self=None):
             if 'original_inherit_settings' in locals():
                 restore_inherit_scale_settings(armature, original_inherit_settings)
                 print("Restored inherit_scale settings after error")
-        except:
-            pass
+        except (RuntimeError, AttributeError, KeyError) as e:
+            print(f"Warning: Failed to restore inherit_scale settings: {e}")
         
         if operator_self:
             operator_self.report({'ERROR'}, f"Failed to apply as rest pose with flattening: {str(e)}")
@@ -589,8 +593,17 @@ class ARMATURE_OT_apply_as_rest_pose(Operator):
     bl_label = "Apply as Rest Pose"
     bl_description = "Apply current pose transforms as the new rest pose"
     bl_options = {'REGISTER', 'UNDO'}
-    
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
@@ -711,73 +724,16 @@ class ARMATURE_OT_apply_rest_continue_anyway(Operator):
     bl_label = "Continue Anyway"
     bl_description = "Apply as rest pose without changing inherit scale settings"
     bl_options = {'REGISTER', 'UNDO'}
-    
-    def execute(self, context):
-        # Call the main apply rest pose logic, bypassing the inherit scale check
-        props = getattr(context.scene, 'nyarc_tools_props', None)
-        if not props or not props.bone_armature_object:
-            self.report({'ERROR'}, "Please select an armature first")
-            return {'CANCELLED'}
-        
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
         armature = props.bone_armature_object
-        
-        # Call the standalone function directly
-        return execute_apply_rest_pose_core(context, armature, self, skip_inherit_check=True)
+        return validate_armature(armature, check_valid=True, check_bones=True)
 
-
-class ARMATURE_OT_apply_rest_set_none_first(Operator):
-    """Set all bones to inherit scale None, then apply as rest pose"""
-    bl_idname = "armature.apply_rest_set_none_first"
-    bl_label = "Set All to None First"
-    bl_description = "Set all bones inherit scale to 'None', then apply as rest pose"
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    def execute(self, context):
-        # First set all bones to None
-        bpy.ops.armature.set_inherit_scale_all_none()
-        
-        # Then apply as rest pose
-        props = getattr(context.scene, 'nyarc_tools_props', None)
-        if not props or not props.bone_armature_object:
-            self.report({'ERROR'}, "Please select an armature first")
-            return {'CANCELLED'}
-        
-        armature = props.bone_armature_object
-        
-        # Call the standalone function directly
-        return execute_apply_rest_pose_core(context, armature, self, skip_inherit_check=True)
-
-
-class ARMATURE_OT_apply_rest_with_flattening(Operator):
-    """Apply pose as rest with temporary inheritance flattening to prevent matrix shearing cascades"""
-    bl_idname = "armature.apply_rest_with_flattening"
-    bl_label = "Apply as Rest (Flattened)"
-    bl_description = "Temporarily flatten inheritance, apply pose as rest, then restore inheritance settings to prevent matrix shearing cascades"
-    bl_options = {'REGISTER', 'UNDO'}
-    
-    def execute(self, context):
-        if not FLATTENING_AVAILABLE:
-            self.report({'ERROR'}, "Inheritance flattening system not available")
-            return {'CANCELLED'}
-            
-        props = getattr(context.scene, 'nyarc_tools_props', None)
-        if not props or not props.bone_armature_object:
-            self.report({'ERROR'}, "Please select an armature first")
-            return {'CANCELLED'}
-        
-        armature = props.bone_armature_object
-        
-        # Call the shared flattened function
-        return execute_flattened_apply_rest_pose(context, armature, self)
-
-
-class ARMATURE_OT_apply_rest_continue_anyway(Operator):
-    """Continue with apply as rest pose without changing inherit scale settings"""
-    bl_idname = "armature.apply_rest_continue_anyway"
-    bl_label = "Continue Anyway"
-    bl_description = "Apply as rest pose without changing inherit scale settings"
-    bl_options = {'REGISTER', 'UNDO'}
-    
     def execute(self, context):
         # Call the main apply rest pose logic, bypassing the inherit scale check
         props = getattr(context.scene, 'nyarc_tools_props', None)
@@ -797,7 +753,16 @@ class ARMATURE_OT_apply_rest_set_none_first(Operator):
     bl_label = "Set All to None"
     bl_description = "Set all bones inherit scale to 'None' (does not apply rest pose)"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
@@ -821,7 +786,16 @@ class ARMATURE_OT_apply_rest_with_flattening(Operator):
     bl_label = "Apply as Rest (Flattened)"
     bl_description = "Temporarily flatten inheritance, apply pose as rest, then restore inheritance settings to prevent matrix shearing cascades"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
@@ -850,5 +824,6 @@ def unregister():
     for cls in reversed(classes):
         try:
             bpy.utils.unregister_class(cls)
-        except:
+        except (RuntimeError, ValueError):
+            # Class not registered - safe to ignore
             pass

@@ -1,8 +1,8 @@
 schema_version = "0.1.0"
 
 id = "nyarc_vrcat_tools"
-version = "0.1.3"
-name = "NYARC VRChat Tools"
+version = "0.1.6"
+name = "NYARC VRCat Tools"
 tagline = "Professional Blender addon for VRChat avatar creation workflows"
 maintainer = "NYARC Labs <support@nyarc-labs.dev>"
 type = "add-on"

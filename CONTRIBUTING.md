@@ -1,6 +1,6 @@
-# Contributing to NYARC VRChat Tools
+# Contributing to NYARC VRCat Tools
 
-Thank you for your interest in contributing! This document outlines how to contribute to the NYARC VRChat Tools project.
+Thank you for your interest in contributing! This document outlines how to contribute to the NYARC VRCat Tools project.
 
 ## 🚀 Quick Start
 
@@ -60,19 +60,31 @@ refactor(presets): improve preset loading performance
 ### **Project Structure**
 ```
 nyarc_vrcat_tools/
-├── __init__.py                 # Main addon registration
-├── bone_transform_saver.py     # Legacy main bone tool
+├── __init__.py                 # Main addon registration & main panel
+├── modules.py                  # Module coordinator and registry
+├── core/                       # Shared utilities and registry
+│   ├── registry.py            # Module registration system
+│   └── data_structures.py     # Shared data structures
 ├── bone_transforms/            # Modular bone transform system
 │   ├── operators/             # Bone transformation operations
 │   ├── presets/               # Advanced preset management
 │   ├── precision/             # Precision correction engine
+│   ├── pose_history/          # Pose history and rollback
+│   ├── compatibility/         # VRChat compatibility checking
+│   ├── diff_export/           # Armature difference export
+│   ├── ui/                    # User interface panels
+│   ├── utils/                 # Utility functions
 │   └── io/                    # Import/export functionality
 ├── shapekey_transfer/         # Shape key transfer system
 │   ├── operators/             # Transfer operations
 │   ├── sync/                  # Live synchronization
-│   └── ui/                    # User interface components
+│   ├── ui/                    # User interface components
+│   └── utils/                 # Helper utilities
 ├── mirror_flip/               # Mirror flip utilities
-└── core/                      # Shared utilities and registry
+│   ├── operators/             # Flip operations
+│   ├── ui/                    # UI panels
+│   └── utils/                 # Detection and validation
+└── details_companion_tools.py # Details & Companion Tools panel
 ```
 
 ### **Key Principles**
@@ -236,4 +248,4 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-**Thank you for contributing to NYARC VRChat Tools!** 🎉
+**Thank you for contributing to NYARC VRCat Tools!** 🎉

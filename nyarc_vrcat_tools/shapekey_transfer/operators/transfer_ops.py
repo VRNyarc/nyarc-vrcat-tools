@@ -711,8 +711,9 @@ class MESH_OT_apply_smoothing_mask(Operator):
             if original_mode == 'PAINT_WEIGHT':
                 try:
                     bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
-                except:
-                    pass  # Stay in object mode if weight paint fails
+                except (RuntimeError, TypeError) as e:
+                    # Stay in object mode if weight paint fails
+                    print(f"Warning: Failed to restore weight paint mode: {e}")
 
             self.report({'INFO'}, f"Smoothing applied successfully with {props.shapekey_smooth_iterations} iterations")
             return {'FINISHED'}

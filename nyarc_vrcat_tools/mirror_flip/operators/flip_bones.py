@@ -220,8 +220,9 @@ class ARMATURE_OT_flip_bones(Operator):
                     safe_mode_switch('OBJECT')
                 elif original_mode == 'POSE':
                     safe_mode_switch('POSE')
-            except:
-                pass  # Mode switch failed, stay in current mode
+            except (RuntimeError, TypeError) as e:
+                # Mode switch failed, stay in current mode
+                print(f"Warning: Failed to restore mode to {original_mode}: {e}")
     
     def _determine_axis(self, selected_bones):
         """Determine which axis to use for mirroring"""
@@ -287,5 +288,6 @@ def unregister():
     for cls in reversed(classes):
         try:
             bpy.utils.unregister_class(cls)
-        except:
+        except (RuntimeError, ValueError):
+            # Class not registered - safe to ignore
             pass

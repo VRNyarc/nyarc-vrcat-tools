@@ -189,8 +189,8 @@ class OBJECT_OT_flip_mesh(Operator):
                 if obj and obj.name in bpy.data.objects:
                     try:
                         bpy.data.objects.remove(obj, do_unlink=True)
-                    except:
-                        pass
+                    except (RuntimeError, ReferenceError) as e:
+                        print(f"Warning: Failed to remove temp object: {e}")
             
             return {'CANCELLED'}
     
@@ -251,5 +251,6 @@ def unregister():
     for cls in reversed(classes):
         try:
             bpy.utils.unregister_class(cls)
-        except:
+        except (RuntimeError, ValueError):
+            # Class not registered - safe to ignore
             pass
