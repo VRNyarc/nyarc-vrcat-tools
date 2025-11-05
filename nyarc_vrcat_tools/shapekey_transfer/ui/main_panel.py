@@ -120,30 +120,37 @@ def draw_single_target_ui(layout, context, props):
         vgroup_name = f"Smooth_{shape_key_name}"
         mask_exists = vgroup_name in actual_target.vertex_groups if actual_target else False
 
-        # Transfer button row (with optional Delete Mask button)
+        # Transfer button row
         row = layout.row(align=True)
         row.scale_y = 1.5
 
-        # Main transfer button (75% width if mask exists)
-        if mask_exists and props.shapekey_smooth_boundary:
-            col = row.column(align=True)
-            col.scale_x = 3.0  # 75% width
-            transfer_op = col.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
-            transfer_op.override_existing = props.shapekey_override_existing
-            transfer_op.skip_existing = props.shapekey_skip_existing
-
-            # Delete Mask button (25% width)
-            col = row.column(align=True)
-            col.scale_x = 1.0  # 25% width
-            col.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
+        # Choose operator based on robust mode toggle
+        if props.shapekey_use_robust_transfer:
+            # ROBUST TRANSFER MODE
+            transfer_op = row.operator("mesh.transfer_shape_key_robust", text="Robust Transfer Shape Key", icon='SMOOTHCURVE')
+            # Properties are read from scene props directly in the operator
         else:
-            # Full width transfer button
-            if props.shapekey_smooth_boundary:
-                transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
+            # LEGACY TRANSFER MODE
+            # Main transfer button (75% width if mask exists)
+            if mask_exists and props.shapekey_smooth_boundary:
+                col = row.column(align=True)
+                col.scale_x = 3.0  # 75% width
+                transfer_op = col.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
+                transfer_op.override_existing = props.shapekey_override_existing
+                transfer_op.skip_existing = props.shapekey_skip_existing
+
+                # Delete Mask button (25% width)
+                col = row.column(align=True)
+                col.scale_x = 1.0  # 25% width
+                col.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
             else:
-                transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer Shape Key", icon='SHAPEKEY_DATA')
-            transfer_op.override_existing = props.shapekey_override_existing
-            transfer_op.skip_existing = props.shapekey_skip_existing
+                # Full width transfer button
+                if props.shapekey_smooth_boundary:
+                    transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
+                else:
+                    transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer Shape Key", icon='SHAPEKEY_DATA')
+                transfer_op.override_existing = props.shapekey_override_existing
+                transfer_op.skip_existing = props.shapekey_skip_existing
 
         # Show Apply Smoothing button after transfer if mask exists
         if mask_exists and props.shapekey_smooth_boundary:
@@ -157,16 +164,79 @@ def draw_single_target_ui(layout, context, props):
         options_box = layout.box()
         options_box.label(text="Transfer Options:", icon='PREFERENCES')
         
-        # Checkboxes for transfer behavior (Skip first, most common use case)
+        # Robust Transfer Toggle
         col = options_box.column()
-        col.prop(props, "shapekey_skip_existing", text="Skip Existing Shape Keys")
-        col.prop(props, "shapekey_override_existing", text="Override Existing Shape Keys")
+        col.prop(props, "shapekey_use_robust_transfer", text="Use Robust Transfer (Harmonic Inpainting)")
+        
+        # Conditional UI based on robust toggle
+        if props.shapekey_use_robust_transfer:
+            # Check if dependencies are available
+            from ..robust import DEPENDENCIES_AVAILABLE, get_missing_dependencies
+            
+            layout.separator(factor=0.3)
+            robust_box = layout.box()
+            robust_header = robust_box.row()
+            robust_header.label(text="Robust Transfer Settings", icon='SMOOTHCURVE')
+            
+            # Show installer if dependencies missing
+            if not DEPENDENCIES_AVAILABLE:
+                missing = get_missing_dependencies()
+                warning_box = robust_box.box()
+                warning_col = warning_box.column(align=True)
+                warning_col.alert = True
+                warning_col.label(text=f"Missing dependencies: {', '.join(missing)}", icon='ERROR')
+                warning_col.label(text="Install required libraries to use Robust Transfer")
+                warning_col.separator()
+                install_row = warning_col.row()
+                install_row.scale_y = 1.5
+                install_row.operator("mesh.install_robust_dependencies", text="Install Dependencies", icon='IMPORT')
+                warning_col.separator(factor=0.5)
+                info_col = warning_col.column(align=True)
+                info_col.scale_y = 0.7
+                info_col.label(text="This will download scipy and robust-laplacian", icon='INFO')
+                info_col.label(text="Takes ~30-60 seconds, restart Blender after")
+                return  # Don't show settings if deps missing
+            
+            robust_col = robust_box.column(align=True)
+            robust_col.scale_y = 0.9
+            
+            # Distance threshold with auto-tune
+            dist_row = robust_col.row(align=True)
+            dist_row.prop(props, "robust_distance_threshold", text="Distance Threshold")
+            dist_row.operator("mesh.auto_tune_distance_threshold", text="", icon='AUTO')
+            
+            # Normal threshold
+            robust_col.prop(props, "robust_normal_threshold", text="Normal Threshold")
+            
+            # Point cloud option
+            robust_col.prop(props, "robust_use_pointcloud", text="Use Point Cloud Laplacian")
+            
+            # Post-smoothing
+            robust_col.prop(props, "robust_smooth_iterations", text="Post-Smooth Iterations")
+            
+            robust_col.separator()
+            
+            # Debug visualization
+            robust_col.prop(props, "robust_show_debug", text="Show Match Quality Debug")
+            
+            # Info box
+            info_box = robust_box.box()
+            info_col = info_box.column(align=True)
+            info_col.scale_y = 0.7
+            info_col.label(text="Robust Transfer uses harmonic inpainting for smooth boundaries", icon='INFO')
+            info_col.label(text="Blue=perfect, Green=good, Yellow=acceptable, Red=inpainted")
+            
+        else:
+            # LEGACY MODE: Show skip/override options
+            col = options_box.column()
+            col.prop(props, "shapekey_skip_existing", text="Skip Existing Shape Keys")
+            col.prop(props, "shapekey_override_existing", text="Override Existing Shape Keys")
 
-        # Warning if both are selected
-        if props.shapekey_override_existing and props.shapekey_skip_existing:
-            col.label(text="⚠️ Both options selected - Skip takes priority", icon='ERROR')
+            # Warning if both are selected
+            if props.shapekey_override_existing and props.shapekey_skip_existing:
+                col.label(text="⚠️ Both options selected - Skip takes priority", icon='ERROR')
 
-        # Advanced Options (collapsible)
+            # Advanced Options (collapsible) - ONLY in legacy mode
         layout.separator(factor=0.3)
         advanced_box = layout.box()
         advanced_header = advanced_box.row()
