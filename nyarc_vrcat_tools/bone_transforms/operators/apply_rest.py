@@ -6,6 +6,9 @@ from bpy.types import Operator
 from mathutils import Vector, Quaternion
 import time
 
+# Import core validation utilities
+from ...core import validate_scene_props, validate_armature
+
 # Import pose history system
 try:
     from ..pose_history import save_pose_history_snapshot
@@ -590,8 +593,17 @@ class ARMATURE_OT_apply_as_rest_pose(Operator):
     bl_label = "Apply as Rest Pose"
     bl_description = "Apply current pose transforms as the new rest pose"
     bl_options = {'REGISTER', 'UNDO'}
-    
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
@@ -712,7 +724,16 @@ class ARMATURE_OT_apply_rest_continue_anyway(Operator):
     bl_label = "Continue Anyway"
     bl_description = "Apply as rest pose without changing inherit scale settings"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         # Call the main apply rest pose logic, bypassing the inherit scale check
         props = getattr(context.scene, 'nyarc_tools_props', None)
@@ -732,7 +753,16 @@ class ARMATURE_OT_apply_rest_set_none_first(Operator):
     bl_label = "Set All to None"
     bl_description = "Set all bones inherit scale to 'None' (does not apply rest pose)"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
@@ -756,7 +786,16 @@ class ARMATURE_OT_apply_rest_with_flattening(Operator):
     bl_label = "Apply as Rest (Flattened)"
     bl_description = "Temporarily flatten inheritance, apply pose as rest, then restore inheritance settings to prevent matrix shearing cascades"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
+    @classmethod
+    def poll(cls, context):
+        """Only available when valid armature is selected."""
+        props = validate_scene_props(context)
+        if not props:
+            return False
+        armature = props.bone_armature_object
+        return validate_armature(armature, check_valid=True, check_bones=True)
+
     def execute(self, context):
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props or not props.bone_armature_object:
