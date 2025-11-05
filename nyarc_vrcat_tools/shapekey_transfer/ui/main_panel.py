@@ -213,9 +213,19 @@ def draw_single_target_ui(layout, context, props):
             
             # Post-smoothing
             robust_col.prop(props, "robust_smooth_iterations", text="Post-Smooth Iterations")
-            
+
             robust_col.separator()
-            
+
+            # Island handling
+            robust_col.prop(props, "robust_handle_islands", text="Auto-Handle Small Islands (Buttons, Patches)")
+
+            if props.robust_handle_islands:
+                island_row = robust_col.row()
+                island_row.scale_y = 0.8
+                island_row.prop(props, "robust_island_size_threshold", text="Island Size Threshold")
+
+            robust_col.separator()
+
             # Debug visualization
             robust_col.prop(props, "robust_show_debug", text="Show Match Quality Debug")
             
@@ -237,196 +247,196 @@ def draw_single_target_ui(layout, context, props):
                 col.label(text="⚠️ Both options selected - Skip takes priority", icon='ERROR')
 
             # Advanced Options (collapsible) - ONLY in legacy mode
-        layout.separator(factor=0.3)
-        advanced_box = layout.box()
-        advanced_header = advanced_box.row()
-        advanced_header.prop(props, "shapekey_show_advanced",
-                            icon='TRIA_DOWN' if props.shapekey_show_advanced else 'TRIA_RIGHT',
-                            icon_only=True, emboss=False)
-        advanced_header.label(text="Advanced Options", icon='PREFERENCES')
+            layout.separator(factor=0.3)
+            advanced_box = layout.box()
+            advanced_header = advanced_box.row()
+            advanced_header.prop(props, "shapekey_show_advanced",
+                                icon='TRIA_DOWN' if props.shapekey_show_advanced else 'TRIA_RIGHT',
+                                icon_only=True, emboss=False)
+            advanced_header.label(text="Advanced Options", icon='PREFERENCES')
 
-        if props.shapekey_show_advanced:
-            advanced_col = advanced_box.column(align=True)
-            advanced_col.scale_y = 0.9
+            if props.shapekey_show_advanced:
+                advanced_col = advanced_box.column(align=True)
+                advanced_col.scale_y = 0.9
 
-            # Surface Deform Parameters Section
-            surface_deform_box = advanced_col.box()
-            surface_deform_box.label(text="Surface Deform Parameters", icon='MOD_MESHDEFORM')
+                # Surface Deform Parameters Section
+                surface_deform_box = advanced_col.box()
+                surface_deform_box.label(text="Surface Deform Parameters", icon='MOD_MESHDEFORM')
 
-            # Strength control
-            strength_col = surface_deform_box.column(align=True)
-            strength_label = strength_col.row()
-            strength_label.scale_y = 0.8
-            strength_label.label(text="Strength (0.0 - 1.0): Overall influence of deformation", icon='FORCE_FORCE')
-            strength_col.prop(props, "shapekey_surface_deform_strength", text="", slider=True)
+                # Strength control
+                strength_col = surface_deform_box.column(align=True)
+                strength_label = strength_col.row()
+                strength_label.scale_y = 0.8
+                strength_label.label(text="Strength (0.0 - 1.0): Overall influence of deformation", icon='FORCE_FORCE')
+                strength_col.prop(props, "shapekey_surface_deform_strength", text="", slider=True)
 
-            surface_deform_box.separator(factor=0.3)
+                surface_deform_box.separator(factor=0.3)
 
-            # Falloff control
-            falloff_col = surface_deform_box.column(align=True)
-            falloff_label = falloff_col.row()
-            falloff_label.scale_y = 0.8
-            falloff_label.label(text="Falloff (0.1 - 16.0): Interpolation smoothness (lower = smoother)", icon='SMOOTHCURVE')
-            falloff_col.prop(props, "shapekey_surface_deform_falloff", text="", slider=True)
+                # Falloff control
+                falloff_col = surface_deform_box.column(align=True)
+                falloff_label = falloff_col.row()
+                falloff_label.scale_y = 0.8
+                falloff_label.label(text="Falloff (0.1 - 16.0): Interpolation smoothness (lower = smoother)", icon='SMOOTHCURVE')
+                falloff_col.prop(props, "shapekey_surface_deform_falloff", text="", slider=True)
 
-            advanced_col.separator(factor=1.5)
+                advanced_col.separator(factor=1.5)
 
-            # Post-Transfer Smoothing Section (between Surface Deform and Pre-processing)
-            smoothing_box = advanced_col.box()
-            smoothing_box.label(text="Post-Transfer Smoothing", icon='MOD_SMOOTH')
+                # Post-Transfer Smoothing Section (between Surface Deform and Pre-processing)
+                smoothing_box = advanced_col.box()
+                smoothing_box.label(text="Post-Transfer Smoothing", icon='MOD_SMOOTH')
 
-            smoothing_col = smoothing_box.column(align=True)
-            smoothing_col.scale_y = 0.9
+                smoothing_col = smoothing_box.column(align=True)
+                smoothing_col.scale_y = 0.9
 
-            # Checkbox to enable smoothing
-            smoothing_col.prop(props, "shapekey_smooth_boundary", text="Auto-Generate Smoothing Mask")
+                # Checkbox to enable smoothing
+                smoothing_col.prop(props, "shapekey_smooth_boundary", text="Auto-Generate Smoothing Mask")
 
-            if props.shapekey_smooth_boundary:
-                smooth_settings = smoothing_col.box()
+                if props.shapekey_smooth_boundary:
+                    smooth_settings = smoothing_col.box()
 
-                # Boundary width slider
-                width_label = smooth_settings.row()
-                width_label.scale_y = 0.8
-                width_label.label(text="Boundary Width (1 - 10 rings):", icon='MESH_GRID')
-                smooth_settings.prop(props, "shapekey_smooth_boundary_width", text="", slider=True)
+                    # Boundary width slider
+                    width_label = smooth_settings.row()
+                    width_label.scale_y = 0.8
+                    width_label.label(text="Boundary Width (1 - 10 rings):", icon='MESH_GRID')
+                    smooth_settings.prop(props, "shapekey_smooth_boundary_width", text="", slider=True)
 
-                smooth_settings.separator(factor=0.3)
+                    smooth_settings.separator(factor=0.3)
 
-                # Iterations slider
-                iter_label = smooth_settings.row()
-                iter_label.scale_y = 0.8
-                iter_label.label(text="Smoothing Iterations (1 - 10):", icon='PREFERENCES')
-                smooth_settings.prop(props, "shapekey_smooth_iterations", text="", slider=True)
+                    # Iterations slider
+                    iter_label = smooth_settings.row()
+                    iter_label.scale_y = 0.8
+                    iter_label.label(text="Smoothing Iterations (1 - 10):", icon='PREFERENCES')
+                    smooth_settings.prop(props, "shapekey_smooth_iterations", text="", slider=True)
 
-                smooth_settings.separator(factor=0.3)
+                    smooth_settings.separator(factor=0.3)
 
-                # Auto-blur option
-                smooth_settings.prop(props, "shapekey_auto_blur_mask", text="Auto-Blur Mask (Recommended)")
+                    # Auto-blur option
+                    smooth_settings.prop(props, "shapekey_auto_blur_mask", text="Auto-Blur Mask (Recommended)")
 
-                if props.shapekey_auto_blur_mask:
-                    blur_label = smooth_settings.row()
-                    blur_label.scale_y = 0.8
-                    blur_label.label(text="Blur Iterations (1 - 5):", icon='SMOOTHCURVE')
-                    smooth_settings.prop(props, "shapekey_blur_iterations", text="", slider=True)
+                    if props.shapekey_auto_blur_mask:
+                        blur_label = smooth_settings.row()
+                        blur_label.scale_y = 0.8
+                        blur_label.label(text="Blur Iterations (1 - 5):", icon='SMOOTHCURVE')
+                        smooth_settings.prop(props, "shapekey_blur_iterations", text="", slider=True)
 
-                smooth_settings.separator(factor=0.5)
+                    smooth_settings.separator(factor=0.5)
 
-                # Workflow info
-                info_col = smooth_settings.column(align=True)
-                info_col.scale_y = 0.7
-                info_col.label(text="Workflow:", icon='INFO')
-                info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
-                info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
-                info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
+                    # Workflow info
+                    info_col = smooth_settings.column(align=True)
+                    info_col.scale_y = 0.7
+                    info_col.label(text="Workflow:", icon='INFO')
+                    info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
+                    info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
+                    info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
 
-            advanced_col.separator(factor=1.5)
+                advanced_col.separator(factor=1.5)
 
-            # Partial Island Handling Section (between smoothing and pre-processing)
-            island_box = advanced_col.box()
-            island_box.label(text="Partial Island Handling (WIP)", icon='MESH_CUBE')
+                # Partial Island Handling Section (between smoothing and pre-processing)
+                island_box = advanced_col.box()
+                island_box.label(text="Partial Island Handling (WIP)", icon='MESH_CUBE')
 
-            island_col = island_box.column(align=True)
-            island_col.scale_y = 0.9
+                island_col = island_box.column(align=True)
+                island_col.scale_y = 0.9
 
-            # Description
-            desc_col = island_col.column(align=True)
-            desc_col.scale_y = 0.8
-            desc_col.label(text="Handle small mesh islands that are partially deformed", icon='INFO')
-            desc_col.label(text="(buttons, belts, small details)")
+                # Description
+                desc_col = island_col.column(align=True)
+                desc_col.scale_y = 0.8
+                desc_col.label(text="Handle small mesh islands that are partially deformed", icon='INFO')
+                desc_col.label(text="(buttons, belts, small details)")
 
-            island_col.separator(factor=0.3)
-
-            # Mode dropdown
-            island_col.label(text="Mode:", icon='PREFERENCES')
-            island_col.prop(props, "shapekey_partial_island_mode", text="")
-
-            island_col.separator(factor=0.3)
-
-            # Island size threshold (always visible, controls both mask generation and island processing)
-            threshold_label = island_col.row()
-            threshold_label.scale_y = 0.8
-            threshold_label.label(text="Island Size Threshold (0.005 - 0.20):", icon='MESH_GRID')
-            island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
-
-            threshold_info = island_col.column(align=True)
-            threshold_info.scale_y = 0.6
-            threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
-
-            # Explain that this affects both systems when mode != NONE
-            if props.shapekey_partial_island_mode != 'NONE':
-                threshold_info.label(text="Affects: Smoothing mask generation + partial island processing", icon='LINKED')
-            else:
-                threshold_info.label(text="Island detection disabled when mode = NONE", icon='INFO')
-
-            # Mode-specific info
-            if props.shapekey_partial_island_mode != 'NONE':
                 island_col.separator(factor=0.3)
 
-                mode_info = island_col.box()
-                mode_info_col = mode_info.column(align=True)
-                mode_info_col.scale_y = 0.75
+                # Mode dropdown
+                island_col.label(text="Mode:", icon='PREFERENCES')
+                island_col.prop(props, "shapekey_partial_island_mode", text="")
 
-                if props.shapekey_partial_island_mode == 'EXCLUDE':
-                    mode_info_col.label(text="EXCLUDE Mode:", icon='PANEL_CLOSE')
-                    mode_info_col.label(text="• Resets partially moved islands to basis shape")
-                    mode_info_col.label(text="• Preserves original mesh for small details")
-                    mode_info_col.label(text="• Use when buttons/accessories get distorted")
-                elif props.shapekey_partial_island_mode == 'AVERAGE':
-                    mode_info_col.label(text="AVERAGE Mode:", icon='ORIENTATION_GLOBAL')
-                    mode_info_col.label(text="• Applies uniform displacement to entire island")
-                    mode_info_col.label(text="• Moves buttons/details together as a unit")
-                    mode_info_col.label(text="• Keeps mesh intact, may need manual adjustment")
+                island_col.separator(factor=0.3)
 
-            advanced_col.separator(factor=1.5)
+                # Island size threshold (always visible, controls both mask generation and island processing)
+                threshold_label = island_col.row()
+                threshold_label.scale_y = 0.8
+                threshold_label.label(text="Island Size Threshold (0.005 - 0.20):", icon='MESH_GRID')
+                island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
 
-            # Pre-processing Modifiers Section (at bottom)
-            preprocessing_box = advanced_col.box()
-            preprocessing_box.label(text="Pre-processing Modifiers (EXPERIMENTAL)", icon='ERROR')
+                threshold_info = island_col.column(align=True)
+                threshold_info.scale_y = 0.6
+                threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
 
-            preprocessing_col = preprocessing_box.column(align=True)
-            preprocessing_col.scale_y = 0.9
+                # Explain that this affects both systems when mode != NONE
+                if props.shapekey_partial_island_mode != 'NONE':
+                    threshold_info.label(text="Affects: Smoothing mask generation + partial island processing", icon='LINKED')
+                else:
+                    threshold_info.label(text="Island detection disabled when mode = NONE", icon='INFO')
 
-            # Info text
-            info_row = preprocessing_col.row()
-            info_row.scale_y = 0.8
-            info_row.label(text="Works on temporary copy - original mesh unchanged", icon='INFO')
+                # Mode-specific info
+                if props.shapekey_partial_island_mode != 'NONE':
+                    island_col.separator(factor=0.3)
 
-            preprocessing_col.separator(factor=0.5)
+                    mode_info = island_col.box()
+                    mode_info_col = mode_info.column(align=True)
+                    mode_info_col.scale_y = 0.75
 
-            # Subdivision options
-            subdiv_row = preprocessing_col.row()
-            subdiv_row.prop(props, "shapekey_use_subdivision", text="Subdivision Surface")
-            if props.shapekey_use_subdivision:
-                subdiv_settings = preprocessing_col.box()
-                subdiv_settings.prop(props, "shapekey_subdivision_levels", text="Levels", slider=True)
+                    if props.shapekey_partial_island_mode == 'EXCLUDE':
+                        mode_info_col.label(text="EXCLUDE Mode:", icon='PANEL_CLOSE')
+                        mode_info_col.label(text="• Resets partially moved islands to basis shape")
+                        mode_info_col.label(text="• Preserves original mesh for small details")
+                        mode_info_col.label(text="• Use when buttons/accessories get distorted")
+                    elif props.shapekey_partial_island_mode == 'AVERAGE':
+                        mode_info_col.label(text="AVERAGE Mode:", icon='ORIENTATION_GLOBAL')
+                        mode_info_col.label(text="• Applies uniform displacement to entire island")
+                        mode_info_col.label(text="• Moves buttons/details together as a unit")
+                        mode_info_col.label(text="• Keeps mesh intact, may need manual adjustment")
 
-                # Simple subdivision with explanation
-                simple_row = subdiv_settings.row()
-                simple_row.prop(props, "shapekey_subdivision_simple", text="Simple Subdivision")
-                simple_info = subdiv_settings.row()
-                simple_info.scale_y = 0.7
-                simple_info.label(text="(Use for hard edges/mechanical parts)", icon='INFO')
+                advanced_col.separator(factor=1.5)
 
-            preprocessing_col.separator(factor=0.3)
+                # Pre-processing Modifiers Section (at bottom)
+                preprocessing_box = advanced_col.box()
+                preprocessing_box.label(text="Pre-processing Modifiers (EXPERIMENTAL)", icon='ERROR')
 
-            # Displace options
-            displace_row = preprocessing_col.row()
-            displace_row.prop(props, "shapekey_use_displace", text="Displace")
-            if props.shapekey_use_displace:
-                displace_settings = preprocessing_col.box()
+                preprocessing_col = preprocessing_box.column(align=True)
+                preprocessing_col.scale_y = 0.9
 
-                # Strength with slider showing min/max
-                strength_row = displace_settings.row()
-                strength_row.label(text="Strength (0.0 - 1.0):")
-                displace_settings.prop(props, "shapekey_displace_strength", text="", slider=True)
+                # Info text
+                info_row = preprocessing_col.row()
+                info_row.scale_y = 0.8
+                info_row.label(text="Works on temporary copy - original mesh unchanged", icon='INFO')
 
-                # Midlevel with slider showing min/max
-                midlevel_row = displace_settings.row()
-                midlevel_row.label(text="Midlevel (0.0 - 1.0):")
-                displace_settings.prop(props, "shapekey_displace_midlevel", text="", slider=True)
+                preprocessing_col.separator(factor=0.5)
 
-                # Direction
-                displace_settings.prop(props, "shapekey_displace_direction", text="Direction")
+                # Subdivision options
+                subdiv_row = preprocessing_col.row()
+                subdiv_row.prop(props, "shapekey_use_subdivision", text="Subdivision Surface")
+                if props.shapekey_use_subdivision:
+                    subdiv_settings = preprocessing_col.box()
+                    subdiv_settings.prop(props, "shapekey_subdivision_levels", text="Levels", slider=True)
+
+                    # Simple subdivision with explanation
+                    simple_row = subdiv_settings.row()
+                    simple_row.prop(props, "shapekey_subdivision_simple", text="Simple Subdivision")
+                    simple_info = subdiv_settings.row()
+                    simple_info.scale_y = 0.7
+                    simple_info.label(text="(Use for hard edges/mechanical parts)", icon='INFO')
+
+                preprocessing_col.separator(factor=0.3)
+
+                # Displace options
+                displace_row = preprocessing_col.row()
+                displace_row.prop(props, "shapekey_use_displace", text="Displace")
+                if props.shapekey_use_displace:
+                    displace_settings = preprocessing_col.box()
+
+                    # Strength with slider showing min/max
+                    strength_row = displace_settings.row()
+                    strength_row.label(text="Strength (0.0 - 1.0):")
+                    displace_settings.prop(props, "shapekey_displace_strength", text="", slider=True)
+
+                    # Midlevel with slider showing min/max
+                    midlevel_row = displace_settings.row()
+                    midlevel_row.label(text="Midlevel (0.0 - 1.0):")
+                    displace_settings.prop(props, "shapekey_displace_midlevel", text="", slider=True)
+
+                    # Direction
+                    displace_settings.prop(props, "shapekey_displace_direction", text="Direction")
 
     else:
         layout.label(text="Select source, target, and shape key", icon='INFO')

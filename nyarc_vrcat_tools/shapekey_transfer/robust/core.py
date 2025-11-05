@@ -25,6 +25,8 @@ def transfer_shape_key_robust(
     use_pointcloud=False,
     smooth_iterations=0,
     show_debug=False,
+    handle_islands=True,
+    island_size_threshold=0.05,
     operator=None
 ):
     """
@@ -39,6 +41,8 @@ def transfer_shape_key_robust(
         use_pointcloud: Use point cloud Laplacian (slower, more robust)
         smooth_iterations: Additional smoothing passes (0 recommended)
         show_debug: Create vertex colors showing match quality
+        handle_islands: Auto-handle small disconnected mesh islands (default: True)
+        island_size_threshold: Max % of mesh to qualify as small island (default: 5%)
         operator: Blender operator for reporting (optional)
 
     Returns:
@@ -100,6 +104,32 @@ def transfer_shape_key_robust(
             report('INFO', "Creating match quality debug visualization...")
             create_match_quality_debug(target_obj, matched_indices, distances, distance_threshold)
 
+        # STAGE 1.5: Handle small disconnected islands
+        island_overrides = {}
+        if handle_islands:
+            report('INFO', "\n=== STAGE 1.5: MESH ISLAND HANDLING ===")
+            try:
+                from .island_handling import handle_small_islands
+
+                island_overrides = handle_small_islands(
+                    target_verts,
+                    target_faces,
+                    matched_indices,
+                    matched_displacements,
+                    small_island_threshold=island_size_threshold,
+                    min_match_coverage=0.1  # Islands with <10% matches get special handling
+                )
+
+                if island_overrides:
+                    report('INFO', f"Applied special handling to {len(island_overrides)} vertices in small islands")
+                else:
+                    report('INFO', "No small islands need special handling")
+
+            except Exception as e:
+                report('WARNING', f"Island handling failed: {e}, continuing with normal inpainting")
+                import traceback
+                traceback.print_exc()
+
         report('INFO', "\n=== STAGE 2: HARMONIC INPAINTING ===")
 
         # Inpaint missing displacements
@@ -113,6 +143,11 @@ def transfer_shape_key_robust(
         if full_displacements is None:
             report('ERROR', "Harmonic inpainting failed")
             return False
+
+        # Apply island overrides (after inpainting, so they take priority)
+        if island_overrides:
+            for vert_idx, displacement in island_overrides.items():
+                full_displacements[vert_idx] = displacement
 
         # Optional post-smoothing
         if smooth_iterations > 0:

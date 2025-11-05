@@ -53,6 +53,21 @@ class MESH_OT_transfer_shape_key_robust(Operator):
         default=False
     )
 
+    handle_islands: BoolProperty(
+        name="Handle Small Islands",
+        description="Automatically handle small disconnected mesh parts (buttons, patches)",
+        default=True
+    )
+
+    island_size_threshold: FloatProperty(
+        name="Island Size Threshold",
+        description="Max % of mesh to qualify as small island",
+        default=0.05,
+        min=0.001,
+        max=0.2,
+        precision=3
+    )
+
     def execute(self, context):
         # Check if dependencies are available
         from ..robust import DEPENDENCIES_AVAILABLE, get_missing_dependencies
@@ -105,6 +120,8 @@ class MESH_OT_transfer_shape_key_robust(Operator):
                 use_pointcloud=self.use_pointcloud,
                 smooth_iterations=self.smooth_iterations,
                 show_debug=self.show_debug,
+                handle_islands=self.handle_islands,
+                island_size_threshold=self.island_size_threshold,
                 operator=self
             )
 

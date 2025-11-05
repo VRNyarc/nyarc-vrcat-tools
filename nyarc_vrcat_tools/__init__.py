@@ -408,6 +408,21 @@ class NyarcToolsProperties(PropertyGroup):
         default=False
     )
 
+    robust_handle_islands: BoolProperty(
+        name="Handle Small Islands",
+        description="Automatically handle small disconnected mesh parts (buttons, patches, etc.)",
+        default=True
+    )
+
+    robust_island_size_threshold: FloatProperty(
+        name="Island Size Threshold",
+        description="Maximum % of mesh to qualify as small island (0.05 = 5%)",
+        default=0.05,
+        min=0.001,
+        max=0.2,
+        precision=3
+    )
+
     # Bone Transform Saver Properties (prefixed to avoid conflicts)  
     bone_armature_object: PointerProperty(
         name="Armature",
