@@ -7,6 +7,143 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## v0.2.0 (2025-11-06) - Robust Shape Key Transfer
+
+**MAJOR RELEASE:** This version introduces an entirely new shape key transfer system based on advanced mathematical techniques. Perfect for transferring shape keys to clothing that doesn't perfectly match the body topology!
+
+### 🎯 What's New: Robust Transfer Mode
+
+**The Problem It Solves:**
+- Ever tried to transfer breast shape keys to clothing and got weird distortions?
+- Buttons, patches, and small details moving incorrectly or clipping?
+- Shape keys that work fine on the body but break on mismatched clothing?
+
+**The Solution:** Robust Transfer uses harmonic inpainting and geometric correspondence to intelligently transfer shape keys even when meshes don't match perfectly.
+
+### ✨ Major New Features
+
+#### **Robust Shape Key Transfer** (The Star of the Show!)
+* **Intelligent Geometric Matching**
+  * Automatically finds corresponding vertices between mismatched meshes
+  * Works even when clothing topology is completely different from the body
+  * Configurable distance and normal thresholds for matching precision
+* **Harmonic Inpainting** - Mathematical magic for smooth displacement propagation
+  * Fills in gaps where no direct correspondence exists
+  * Creates natural, smooth transitions across the mesh
+  * No more weird artifacts or discontinuities!
+* **Point Cloud Laplacian** - Special handling for disconnected mesh parts
+  * Automatically detects buttons, patches, belts, and other small islands
+  * Prevents clipping by letting these parts participate naturally in the solve
+  * No hard-coded displacement copying that causes artifacts
+* **Auto-Handle Unmatched Islands** (checkbox)
+  * Enable this for automatic handling of disconnected mesh components
+  * Detects mesh islands with poor geometric correspondence
+  * Switches to Point Cloud mode automatically for those parts
+* **Match Quality Debug Visualization**
+  * Color-coded vertex colors showing match quality
+  * Blue = Perfect matches, Green = Good, Yellow = Acceptable, Red = Inpainted
+  * Helps you tune distance/normal thresholds for optimal results
+* **One-Click Dependency Installation**
+  * Installs scipy and robust-laplacian automatically
+  * No manual pip commands needed
+  * Works with Blender's Python environment
+
+#### **Transfer Mode Selection**
+* **Standard Transfer** - Original fast Surface Deform method (good for matching topology)
+* **Robust Transfer** - New advanced method (best for mismatched topology)
+* Modes are mutually exclusive - checkboxes automatically toggle
+
+#### **Advanced Tuning Controls** (for power users)
+* **Distance Threshold** (0.0001-0.1m) - Maximum spatial distance for valid matches
+* **Normal Threshold** (0.0-1.0) - Minimum normal alignment required
+* **Point Cloud Laplacian** (checkbox) - Manually enable distance-based smoothing
+* **Post-Smooth Iterations** (0-10) - Additional smoothing passes after transfer
+
+### 🎨 UI/UX Improvements
+
+* **Reorganized Shape Key Transfer Panel**
+  * Clear separation between Standard and Robust transfer modes
+  * Advanced options in collapsible sections for cleaner interface
+  * Helpful tooltips explaining each parameter
+* **Better Visual Feedback**
+  * Transfer progress shows which stage is running (correspondence, inpainting, etc.)
+  * Island detection reports how many mesh components found
+  * Match coverage percentages displayed for debugging
+* **Skip/Override Behavior**
+  * Skip button now properly skips when shape key exists
+  * Override works with both Standard and Robust modes
+
+### 🔧 Technical Improvements
+
+* **Core Utility Modules** - Better code organization
+  * New `core/bone_utils.py` - Bone manipulation helpers
+  * New `core/mode_utils.py` - Mode switching utilities
+  * New `core/validation.py` - Input validation helpers
+* **Cleaned Up Legacy Code**
+  * Removed OLD backup files (`flip_combined_OLD.py`, `detection_OLD.py`, etc.)
+  * Cleaner repository structure
+  * Reduced addon file size
+
+### 🐛 Bug Fixes
+
+* **Fixed: UI controls not reading scene properties**
+  * All robust transfer checkboxes and sliders now work correctly
+  * Previously settings were ignored and used defaults
+* **Fixed: Debug visualization crash**
+  * Color-coded match quality now displays properly
+  * No more index lookup errors
+* **Fixed: Island clipping issues**
+  * Buttons and patches no longer clip into main mesh
+  * Point Cloud Laplacian approach prevents displacement artifacts
+
+### 📚 Documentation
+
+* **Comprehensive Implementation Guides**
+  * `IMPLEMENTATION_STATUS.md` - Technical details of robust transfer
+  * `DEPENDENCY_BUNDLING.md` - How dependency installation works
+  * `PROJECT_STRUCTURE_REVIEW.md` - Overview of code organization
+* **Updated README** - Added Robust Transfer section with usage guide
+
+### 🎓 How to Use Robust Transfer
+
+1. **Install Dependencies** (first time only)
+   * Open Shape Key Transfer panel
+   * Click "Install Robust Dependencies" button
+   * Wait for scipy and robust-laplacian to install
+   * Restart Blender
+
+2. **Transfer Shape Keys**
+   * Select source object (body with shape keys)
+   * Select target object (clothing)
+   * Choose shape key to transfer
+   * Enable "Use Robust Transfer" checkbox
+   * Click "Transfer Selected Shape Key"
+
+3. **Tune If Needed** (optional)
+   * Enable "Show Match Quality Debug" to see color-coded matches
+   * Adjust Distance Threshold if too few/many matches
+   * Adjust Normal Threshold to require better alignment
+   * Enable "Auto-Handle Unmatched Islands" for disconnected parts
+
+### 💡 When to Use Each Mode
+
+**Use Standard Transfer when:**
+- Clothing has matching topology to body
+- You need fast transfer for many shape keys
+- Clothing was created by shrinkwrapping/duplicating body mesh
+
+**Use Robust Transfer when:**
+- Clothing topology doesn't match body
+- You're getting weird distortions with standard transfer
+- Clothing has buttons, patches, or disconnected parts
+- You need mathematically robust results for complex cases
+
+### 🙏 Credits
+
+Robust transfer implementation inspired by techniques from [sentfromspacevr/robust-weight-transfer](https://github.com/sentfromspacevr/robust-weight-transfer)
+
+---
+
 ## v0.1.6 (2025-10-27) - Advanced Shape Key Transfer & Post-Processing
 
 ### ✨ Major New Features
