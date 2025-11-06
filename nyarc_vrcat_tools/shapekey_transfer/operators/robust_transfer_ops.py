@@ -97,6 +97,16 @@ class MESH_OT_transfer_shape_key_robust(Operator):
 
         shape_key_name = props.shapekey_shape_key
 
+        # Check skip/override settings
+        if target_obj.data.shape_keys and shape_key_name in target_obj.data.shape_keys.key_blocks:
+            if props.shapekey_skip_existing:
+                self.report({'INFO'}, f"Skipped '{shape_key_name}' - already exists on {target_obj.name}")
+                return {'FINISHED'}
+            elif not props.shapekey_override_existing:
+                self.report({'WARNING'}, f"'{shape_key_name}' already exists on {target_obj.name}. Enable Override to replace it.")
+                return {'CANCELLED'}
+            # If override is enabled, continue with transfer (will replace existing)
+
         # Import robust transfer module
         try:
             from ..robust.core import transfer_shape_key_robust

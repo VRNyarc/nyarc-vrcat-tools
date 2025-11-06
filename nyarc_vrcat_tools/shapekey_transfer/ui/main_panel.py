@@ -167,7 +167,17 @@ def draw_single_target_ui(layout, context, props):
         # Robust Transfer Toggle
         col = options_box.column()
         col.prop(props, "shapekey_use_robust_transfer", text="Use Robust Transfer (Harmonic Inpainting)")
-        
+
+        # Skip/Override options (available in BOTH modes)
+        layout.separator(factor=0.2)
+        skip_override_col = options_box.column()
+        skip_override_col.prop(props, "shapekey_skip_existing", text="Skip Existing Shape Keys")
+        skip_override_col.prop(props, "shapekey_override_existing", text="Override Existing Shape Keys")
+
+        # Warning if both are selected (shouldn't happen with mutual exclusion, but just in case)
+        if props.shapekey_override_existing and props.shapekey_skip_existing:
+            skip_override_col.label(text="⚠️ Both enabled - Skip takes priority", icon='ERROR')
+
         # Conditional UI based on robust toggle
         if props.shapekey_use_robust_transfer:
             # Check if dependencies are available
@@ -230,18 +240,9 @@ def draw_single_target_ui(layout, context, props):
             info_col.scale_y = 0.7
             info_col.label(text="Robust Transfer uses harmonic inpainting for smooth boundaries", icon='INFO')
             info_col.label(text="Blue=perfect, Green=good, Yellow=acceptable, Red=inpainted")
-            
+
         else:
-            # LEGACY MODE: Show skip/override options
-            col = options_box.column()
-            col.prop(props, "shapekey_skip_existing", text="Skip Existing Shape Keys")
-            col.prop(props, "shapekey_override_existing", text="Override Existing Shape Keys")
-
-            # Warning if both are selected
-            if props.shapekey_override_existing and props.shapekey_skip_existing:
-                col.label(text="⚠️ Both options selected - Skip takes priority", icon='ERROR')
-
-            # Advanced Options (collapsible) - ONLY in legacy mode
+            # LEGACY MODE: Show Advanced Options (collapsible)
             layout.separator(factor=0.3)
             advanced_box = layout.box()
             advanced_header = advanced_box.row()

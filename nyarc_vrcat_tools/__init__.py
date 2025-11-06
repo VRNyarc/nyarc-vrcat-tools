@@ -30,6 +30,18 @@ def mesh_poll(self, obj):
     return obj and obj.type == 'MESH'
 
 
+def skip_existing_update(self, context):
+    """Make Skip and Override mutually exclusive"""
+    if self.shapekey_skip_existing and self.shapekey_override_existing:
+        self.shapekey_override_existing = False
+
+
+def override_existing_update(self, context):
+    """Make Skip and Override mutually exclusive"""
+    if self.shapekey_override_existing and self.shapekey_skip_existing:
+        self.shapekey_skip_existing = False
+
+
 class ShapeKeyTargetItem(PropertyGroup):
     """Individual target object for shape key transfer"""
     
@@ -164,17 +176,19 @@ class NyarcToolsProperties(PropertyGroup):
         default=False
     )
     
-    # Transfer options
+    # Transfer options (mutually exclusive)
     shapekey_skip_existing: BoolProperty(
         name="Skip Existing",
-        description="Skip transfer if shape key already exists on target",
-        default=True  # Default to True - most common use case
+        description="Skip transfer if shape key already exists on target (mutually exclusive with Override)",
+        default=True,  # Default to True - most common use case
+        update=skip_existing_update
     )
 
     shapekey_override_existing: BoolProperty(
         name="Override Existing",
-        description="Replace existing shape keys with the same name",
-        default=False
+        description="Replace existing shape keys with the same name (mutually exclusive with Skip)",
+        default=False,
+        update=override_existing_update
     )
 
     # Advanced Options toggle
