@@ -42,6 +42,22 @@ def override_existing_update(self, context):
         self.shapekey_skip_existing = False
 
 
+def robust_show_debug_update(self, context):
+    """Clean up debug visualization when checkbox is disabled"""
+    if not self.robust_show_debug:
+        # Import cleanup function
+        try:
+            from .shapekey_transfer.robust.debug import clear_match_quality_debug
+
+            # Clear debug visualization from all mesh objects that have it
+            for obj in context.scene.objects:
+                if obj.type == 'MESH' and obj.data.vertex_colors:
+                    if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
+                        clear_match_quality_debug(obj)
+        except Exception as e:
+            print(f"Error clearing debug visualization: {e}")
+
+
 class ShapeKeyTargetItem(PropertyGroup):
     """Individual target object for shape key transfer"""
     
@@ -386,7 +402,7 @@ class NyarcToolsProperties(PropertyGroup):
 
     robust_distance_threshold: FloatProperty(
         name="Distance Threshold",
-        description="Maximum spatial distance for valid match (meters). Lower = stricter matching, more inpainting",
+        description="Maximum allowed distance between source and destination vertex (meters). Lower values = stricter matching, smoother inpainting results. Use Auto-Tune button for optimal value",
         default=0.01,
         min=0.0001,
         max=0.1,
@@ -396,7 +412,7 @@ class NyarcToolsProperties(PropertyGroup):
 
     robust_normal_threshold: FloatProperty(
         name="Normal Threshold",
-        description="Minimum surface alignment (0=opposite, 1=parallel). 0.5 = 60-degree tolerance",
+        description="Minimum surface alignment between source and destination vertices (0=opposite directions, 1=parallel). Higher values = stricter angle matching. 0.5 allows up to 60° difference, 0.866 allows up to 30°",
         default=0.5,
         min=0.0,
         max=1.0,
@@ -406,13 +422,13 @@ class NyarcToolsProperties(PropertyGroup):
 
     robust_use_pointcloud: BoolProperty(
         name="Point Cloud Laplacian",
-        description="Use distance-based smoothing instead of mesh connectivity",
+        description="Use distance-based smoothing instead of mesh connectivity. Enable for disconnected mesh parts (buttons, patches) or if standard mode produces artifacts. Slower but more robust",
         default=False
     )
 
     robust_smooth_iterations: IntProperty(
         name="Post-Smooth Iterations",
-        description="Additional smoothing passes after inpainting (0 recommended)",
+        description="Additional smoothing passes after harmonic inpainting (0 recommended - harmonic inpainting already produces smooth results). Higher values may blur shape key details",
         default=0,
         min=0,
         max=10
@@ -420,13 +436,14 @@ class NyarcToolsProperties(PropertyGroup):
 
     robust_show_debug: BoolProperty(
         name="Show Match Quality Debug",
-        description="Visualize match quality with vertex colors",
-        default=False
+        description="Visualize match quality with vertex colors (Blue=perfect match, Green=good, Yellow=acceptable, Red=inpainted region). Auto-clears when disabled",
+        default=False,
+        update=robust_show_debug_update
     )
 
     robust_handle_islands: BoolProperty(
         name="Handle Unmatched Islands",
-        description="Automatically handle disconnected mesh parts with poor matches (buttons, patches, etc.)",
+        description="Automatically detect disconnected mesh parts (buttons, patches) with poor match coverage and enable Point Cloud Laplacian for them. Prevents clipping artifacts on small parts",
         default=True
     )
 

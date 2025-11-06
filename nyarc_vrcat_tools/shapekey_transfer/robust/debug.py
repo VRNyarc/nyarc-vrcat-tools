@@ -71,3 +71,29 @@ def create_match_quality_debug(target_obj, matched_indices, distances, distance_
 
     print(f"Created debug visualization: {vcol_name}")
     print("  Blue = perfect, Green = good, Yellow = acceptable, Red = inpainted")
+
+
+def clear_match_quality_debug(target_obj):
+    """
+    Remove match quality debug visualization from target object.
+
+    Called when user disables "Show Match Quality Debug" checkbox.
+    """
+    mesh = target_obj.data
+
+    vcol_name = "RobustTransfer_MatchQuality"
+
+    # Remove vertex color layer if it exists
+    if vcol_name in mesh.vertex_colors:
+        vcol_layer = mesh.vertex_colors[vcol_name]
+        mesh.vertex_colors.remove(vcol_layer)
+        print(f"Removed debug visualization: {vcol_name}")
+
+        # Switch viewport back to material shading if no other vertex colors exist
+        if len(mesh.vertex_colors) == 0:
+            for area in bpy.context.screen.areas:
+                if area.type == 'VIEW_3D':
+                    for space in area.spaces:
+                        if space.type == 'VIEW_3D':
+                            if space.shading.color_type == 'VERTEX':
+                                space.shading.color_type = 'MATERIAL'

@@ -21,6 +21,10 @@ The core module for CATS-like pose mode editing and bone transformation manageme
 
 ### 🔷 **Shape Key Transfer**
 Professional-grade shape key transfer system with real-time synchronization:
+- **Robust Harmonic Transfer**: Advanced harmonic inpainting algorithm for seamless transfer across topology mismatches
+  - Auto-detects disconnected mesh islands (buttons, patches) and prevents clipping artifacts
+  - Visual debug mode showing match quality with color-coded vertex visualization
+  - Auto-tune feature for optimal distance threshold calculation
 - **Surface Deform Transfer**: High-quality shape key transfer using Blender's Surface Deform modifier
 - **Live Synchronization**: Real-time shape key value sync between source and target meshes
 - **Batch Operations**: Multi-target, multi-shape key transfer workflows for efficient avatar creation
@@ -106,6 +110,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Blender Foundation** for the amazing 3D creation platform
 - **CATS Blender Plugin** for workflow inspiration
 - **Avatar Tools Community** for testing and validation
+- **[SENT Robust Weight Transfer](https://github.com/sentfromspacevr/robust-weight-transfer)** for harmonic inpainting-based robust shape key transfer algorithm
+- **[RinvosBlendshapeTransfer](https://github.com/neongm/RinvosBlendshapeTransfer)** for ideas and optimizations on standard blendshape transfer
 
 ## 📞 Support
 
