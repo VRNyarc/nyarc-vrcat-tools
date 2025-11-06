@@ -198,7 +198,7 @@ def draw_details_ui(layout, context, props):
             community_col.label(text="Thanks to these people for helping with the project:")
             community_col.label(text="  • FluffyHellWan")
             community_col.label(text="  • Aistify")
-            community_col.label(text="  • Rappy - Bugfix Helper")
+            community_col.label(text="  • Rappy")
     
     except Exception as e:
         # Fallback UI if there's an error
