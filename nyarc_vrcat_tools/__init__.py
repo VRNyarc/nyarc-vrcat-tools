@@ -7,6 +7,7 @@ bl_info = {
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
     "support": "COMMUNITY",
+    "license": "GPL-3.0",
 }
 
 import bpy
