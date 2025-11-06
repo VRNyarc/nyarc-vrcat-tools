@@ -96,14 +96,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Buttons and patches no longer clip into main mesh
   * Point Cloud Laplacian approach prevents displacement artifacts
 
-### 📚 Documentation
-
-* **Comprehensive Implementation Guides**
-  * `IMPLEMENTATION_STATUS.md` - Technical details of robust transfer
-  * `DEPENDENCY_BUNDLING.md` - How dependency installation works
-  * `PROJECT_STRUCTURE_REVIEW.md` - Overview of code organization
-* **Updated README** - Added Robust Transfer section with usage guide
-
 ### 🎓 How to Use Robust Transfer
 
 1. **Install Dependencies** (first time only)
@@ -127,16 +119,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 💡 When to Use Each Mode
 
-**Use Standard Transfer when:**
-- Clothing has matching topology to body
-- You need fast transfer for many shape keys
-- Clothing was created by shrinkwrapping/duplicating body mesh
+**⭐ Recommended: Use Robust Transfer** - In most cases, Robust Transfer will produce better results with fewer artifacts.
 
-**Use Robust Transfer when:**
-- Clothing topology doesn't match body
-- You're getting weird distortions with standard transfer
-- Clothing has buttons, patches, or disconnected parts
-- You need mathematically robust results for complex cases
+**Use Standard Transfer only when:**
+- You need very fast batch transfer of many shape keys
+- Clothing was created by exactly duplicating body topology (shrinkwrap with "Keep Above Surface")
 
 ### 🙏 Credits
 
