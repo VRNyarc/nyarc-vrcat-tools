@@ -4,7 +4,7 @@
 
 I am new to Github / Dev. Please go easy on me. This Project was Developed with help of Claude Code.
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Blender](https://img.shields.io/badge/Blender-4.2+-orange.svg)](https://www.blender.org/)
 [![Release](https://img.shields.io/github/v/release/VRNyarc/nyarc-vrcat-tools)](https://github.com/VRNyarc/nyarc-vrcat-tools/releases)
 
@@ -102,7 +102,10 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+This project incorporates code from [Robust Weight Transfer](https://github.com/sentfromspacevr/robust-weight-transfer) (GPL-3.0)
+and takes inspiration from [RinvosBlendshapeTransfer](https://github.com/neongm/RinvosBlendshapeTransfer).
 
 ## 🌟 Acknowledgments
 
