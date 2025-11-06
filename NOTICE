@@ -1,0 +1,17 @@
+NYARC VRChat Tools
+Copyright (C) 2025 NYARC VRChat Tools Contributors
+
+===============================================================================
+
+This project incorporates code from the following sources:
+
+1. Robust Weight Transfer
+   Copyright (c) 2024 sentfromspacevr
+   Licensed under GPL-3.0
+   Source: https://github.com/sentfromspacevr/robust-weight-transfer
+   Location: nyarc_vrcat_tools/shapekey_transfer/robust/
+
+2. RinvosBlendshapeTransfer
+   Copyright (c) neongm
+   Source: https://github.com/neongm/RinvosBlendshapeTransfer
+   Used for: Ideas and optimizations in normal blendshape transfer
