@@ -1,6 +1,6 @@
 # NYARC VRCat Tools
 
-**Professional Blender addon for VRChat avatar creation workflows**
+**"Professional" Blender addon for VRChat avatar creation workflows**
 
 I am new to Github / Dev. Please go easy on me. This Project was Developed with help of Claude Code.
 
@@ -75,10 +75,9 @@ Advanced armature difference calculation and export system:
 
 ## 🛠️ System Requirements
 
-- **Blender**: 4.2 or newer (required for full feature support)
+- **Blender**: 4.2 LTS or newer (required for full feature support)
 - **Platform**: Windows, macOS, Linux
 - **Memory**: 4GB RAM minimum, 8GB+ recommended for complex avatars
-- **VRChat SDK**: Compatible with VRChat Creator Companion workflow
 
 ## 📚 Documentation
 
