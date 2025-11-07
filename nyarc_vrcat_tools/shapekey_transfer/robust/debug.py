@@ -62,15 +62,23 @@ def create_match_quality_debug(target_obj, matched_indices, distances, distance_
     # Set as active for viewing
     mesh.vertex_colors.active = vcol_layer
 
-    # Switch viewport shading to show vertex colors
+    # Switch viewport shading to show vertex colors properly
     for area in bpy.context.screen.areas:
         if area.type == 'VIEW_3D':
             for space in area.spaces:
                 if space.type == 'VIEW_3D':
+                    # Store original shading type for potential restoration
+                    # Switch to solid shading with vertex color display
+                    if space.shading.type == 'WIREFRAME':
+                        space.shading.type = 'SOLID'
                     space.shading.color_type = 'VERTEX'
+
+                    # Ensure overlays don't hide vertex colors
+                    space.overlay.show_wireframes = False
 
     print(f"Created debug visualization: {vcol_name}")
     print("  Blue = perfect, Green = good, Yellow = acceptable, Red = inpainted")
+    print("  Switched to SOLID shading with vertex colors visible")
 
 
 def clear_match_quality_debug(target_obj):

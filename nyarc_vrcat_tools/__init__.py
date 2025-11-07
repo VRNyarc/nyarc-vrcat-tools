@@ -27,6 +27,7 @@ if "bpy" in locals():
 import bpy
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
+from bpy.app import timers
 
 # Import all modules
 from . import modules
@@ -57,20 +58,195 @@ def override_existing_update(self, context):
         self.shapekey_skip_existing = False
 
 
+def deferred_exit_weight_paint():
+    """
+    Timer callback to exit WEIGHT_PAINT mode.
+    Runs with full operator context, so mode_set works reliably.
+    """
+    try:
+        print(f"[Timer] Current mode: {bpy.context.mode}")
+        if bpy.context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+            print("[Timer] Exiting PAINT_WEIGHT mode...")
+            bpy.ops.object.mode_set(mode='OBJECT')
+            print("[Timer] Successfully exited to OBJECT mode")
+        else:
+            print(f"[Timer] Not in PAINT_WEIGHT mode, skipping (mode={bpy.context.mode})")
+    except Exception as e:
+        print(f"[Timer] Error exiting weight paint mode: {e}")
+        import traceback
+        traceback.print_exc()
+    return None  # Don't repeat timer
+
+
+def schedule_exit_weight_paint():
+    """
+    Schedule a deferred exit from WEIGHT_PAINT mode using a timer.
+    Safe to call from property update callbacks.
+    """
+    print(f"[Callback] Scheduling timer to exit WEIGHT_PAINT mode (current mode: {bpy.context.mode})")
+
+    # Unregister existing timer if present
+    if timers.is_registered(deferred_exit_weight_paint):
+        print("[Callback] Unregistering existing timer")
+        timers.unregister(deferred_exit_weight_paint)
+
+    # Schedule new timer to run after 0.01 seconds
+    timers.register(deferred_exit_weight_paint, first_interval=0.01)
+    print("[Callback] Timer registered to fire in 0.01s")
+
+
+def deferred_enter_weight_paint(target_obj_name, vgroup_name):
+    """
+    Timer callback to enter WEIGHT_PAINT mode with a specific vertex group active.
+    Runs with full operator context, so mode_set works reliably.
+    """
+    try:
+        print(f"[Timer] Entering WEIGHT_PAINT mode for {target_obj_name}")
+
+        # Get the target object
+        target_obj = bpy.data.objects.get(target_obj_name)
+        if not target_obj:
+            print(f"[Timer] Error: Object {target_obj_name} not found")
+            return None
+
+        # Ensure object mode first
+        if bpy.context.mode != 'OBJECT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Select and activate the object
+        bpy.ops.object.select_all(action='DESELECT')
+        target_obj.select_set(True)
+        bpy.context.view_layer.objects.active = target_obj
+
+        # Set active vertex group
+        vgroup = target_obj.vertex_groups.get(vgroup_name)
+        if vgroup:
+            target_obj.vertex_groups.active_index = vgroup.index
+            print(f"[Timer] Set active vertex group: {vgroup_name}")
+
+        # Enter WEIGHT_PAINT mode
+        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
+        print(f"[Timer] Successfully entered WEIGHT_PAINT mode")
+
+    except Exception as e:
+        print(f"[Timer] Error entering weight paint mode: {e}")
+        import traceback
+        traceback.print_exc()
+    return None  # Don't repeat timer
+
+
+def schedule_enter_weight_paint(target_obj, vgroup_name):
+    """
+    Schedule a deferred entry into WEIGHT_PAINT mode using a timer.
+    Safe to call from property update callbacks.
+    """
+    print(f"[Callback] Scheduling timer to enter WEIGHT_PAINT mode")
+
+    # Unregister existing timers if present
+    if timers.is_registered(deferred_exit_weight_paint):
+        print("[Callback] Unregistering exit timer")
+        timers.unregister(deferred_exit_weight_paint)
+
+    # Create a lambda that captures the object name (not the object itself)
+    timer_func = lambda: deferred_enter_weight_paint(target_obj.name, vgroup_name)
+
+    # Schedule new timer to run after 0.01 seconds
+    timers.register(timer_func, first_interval=0.01)
+    print("[Callback] Enter WEIGHT_PAINT timer registered to fire in 0.01s")
+
+
+def exit_weight_paint_mode_if_needed(context):
+    """
+    Exit WEIGHT_PAINT mode if currently in it.
+    Call this at the start of transfer operators to clear smoothing mask visualization.
+    """
+    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+
+def clear_debug_vertex_colors(context, target_obj=None):
+    """
+    Clear Match Quality Debug vertex colors from objects.
+    Safe to call from update callbacks.
+
+    Args:
+        context: Blender context
+        target_obj: Specific object to clear (if None, clears all scene objects)
+    """
+    try:
+        from .shapekey_transfer.robust.debug import clear_match_quality_debug
+
+        # Get objects to process
+        objects_to_clear = [target_obj] if target_obj else context.scene.objects
+
+        # Clear Match Quality Debug vertex colors
+        for obj in objects_to_clear:
+            if obj and obj.type == 'MESH' and obj.data.vertex_colors:
+                if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
+                    clear_match_quality_debug(obj)
+
+    except Exception as e:
+        print(f"Error clearing debug vertex colors: {e}")
+
+
 def robust_show_debug_update(self, context):
     """Clean up debug visualization when checkbox is disabled"""
     if not self.robust_show_debug:
-        # Import cleanup function
-        try:
-            from .shapekey_transfer.robust.debug import clear_match_quality_debug
+        clear_debug_vertex_colors(context)
 
-            # Clear debug visualization from all mesh objects that have it
-            for obj in context.scene.objects:
-                if obj.type == 'MESH' and obj.data.vertex_colors:
-                    if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
-                        clear_match_quality_debug(obj)
-        except Exception as e:
-            print(f"Error clearing debug visualization: {e}")
+
+def robust_transfer_toggle_update(self, context):
+    """Clear visualizations when toggling between robust and normal transfer"""
+    print(f"\n=== robust_transfer_toggle_update CALLED ===")
+    print(f"Current mode: {context.mode}")
+    print(f"use_robust_transfer value: {self.shapekey_use_robust_transfer}")
+
+    # Schedule deferred exit from weight paint mode (works reliably)
+    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+        schedule_exit_weight_paint()
+
+    # Clear debug colors
+    if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
+        clear_debug_vertex_colors(context, self.shapekey_target_object)
+    else:
+        clear_debug_vertex_colors(context)
+
+    print(f"=== robust_transfer_toggle_update DONE ===\n")
+
+
+def shapekey_changed_update(self, context):
+    """Clear visualizations when shape key selection changes"""
+    print(f"\n=== shapekey_changed_update CALLED ===")
+    print(f"Current mode: {context.mode}")
+    print(f"shape_key value: {self.shapekey_shape_key}")
+
+    # Check if target object has a smoothing mask for this shape key
+    target_obj = self.shapekey_target_object if hasattr(self, 'shapekey_target_object') else None
+    shape_key_name = self.shapekey_shape_key if hasattr(self, 'shapekey_shape_key') else None
+
+    has_smoothing_mask = False
+    if target_obj and shape_key_name and shape_key_name != "NONE":
+        vgroup_name = f"Smooth_{shape_key_name}"
+        if vgroup_name in target_obj.vertex_groups:
+            has_smoothing_mask = True
+            print(f"[Callback] Found smoothing mask: {vgroup_name}")
+
+    if has_smoothing_mask and context.mode != 'PAINT_WEIGHT':
+        # Auto-return to WEIGHT_PAINT mode for this shape key's mask
+        print(f"[Callback] Scheduling return to WEIGHT_PAINT mode for smoothing mask")
+        schedule_enter_weight_paint(target_obj, vgroup_name)
+    elif context.mode == 'PAINT_WEIGHT' and not has_smoothing_mask:
+        # Exit WEIGHT_PAINT mode if no mask exists for this shape key
+        print(f"[Callback] No smoothing mask found, scheduling exit from WEIGHT_PAINT mode")
+        schedule_exit_weight_paint()
+
+    # Clear debug colors
+    if target_obj:
+        clear_debug_vertex_colors(context, target_obj)
+    else:
+        clear_debug_vertex_colors(context)
+
+    print(f"=== shapekey_changed_update DONE ===\n")
 
 
 class ShapeKeyTargetItem(PropertyGroup):
@@ -145,14 +321,27 @@ class NyarcToolsProperties(PropertyGroup):
             print(f"Error updating shape key selections: {e}")
     
     def shapekey_target_update_callback(self, context):
-        """Called when target object changes - force UI refresh for red/white markings"""
+        """Called when target object changes - clear visualizations and refresh UI"""
+        print(f"\n=== shapekey_target_update_callback CALLED ===")
+        print(f"Current mode: {context.mode}")
+        print(f"target_object: {self.shapekey_target_object}")
+
         try:
+            # Schedule deferred exit from weight paint mode (works reliably)
+            if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+                schedule_exit_weight_paint()
+
+            # Clear debug colors from the old target (clear all to be safe)
+            clear_debug_vertex_colors(context)
+
             # Force UI redraw to update red/white shape key markings
             for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
                     area.tag_redraw()
         except Exception as e:
             print(f"Error refreshing UI after target change: {e}")
+
+        print(f"=== shapekey_target_update_callback DONE ===\n")
     
     # Shape Key Transfer Properties (prefixed to avoid conflicts)
     shapekey_source_object: PointerProperty(
@@ -184,7 +373,8 @@ class NyarcToolsProperties(PropertyGroup):
         name="Shape Key",
         description="Shape key to transfer",
         items=lambda self, context: self.get_shape_keys(context),
-        default=0
+        default=0,
+        update=shapekey_changed_update
     )
     
     # Multi-target and multi-shape key properties
@@ -437,7 +627,8 @@ class NyarcToolsProperties(PropertyGroup):
     shapekey_use_robust_transfer: BoolProperty(
         name="Use Robust Transfer",
         description="Use harmonic inpainting for smooth boundary transfer (replaces Advanced Options when enabled)",
-        default=False
+        default=False,
+        update=robust_transfer_toggle_update
     )
 
     robust_distance_threshold: FloatProperty(

@@ -60,6 +60,10 @@ class MESH_OT_transfer_shape_key_robust(Operator):
     )
 
     def execute(self, context):
+        # Ensure we're in Object mode before starting
+        if context.mode != 'OBJECT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
         # Check if dependencies are available
         from ..robust import DEPENDENCIES_AVAILABLE, get_missing_dependencies
 
