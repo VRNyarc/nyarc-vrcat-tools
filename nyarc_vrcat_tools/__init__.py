@@ -57,9 +57,19 @@ def override_existing_update(self, context):
         self.shapekey_skip_existing = False
 
 
-def clear_transfer_visualizations(context, target_obj=None):
+def exit_weight_paint_mode_if_needed(context):
     """
-    Clear all shape key transfer visualizations (Match Quality Debug and Smoothing Mask).
+    Exit WEIGHT_PAINT mode if currently in it.
+    Call this at the start of transfer operators to clear smoothing mask visualization.
+    """
+    if context.mode == 'WEIGHT_PAINT':
+        bpy.ops.object.mode_set(mode='OBJECT')
+
+
+def clear_debug_vertex_colors(context, target_obj=None):
+    """
+    Clear Match Quality Debug vertex colors from objects.
+    Safe to call from update callbacks.
 
     Args:
         context: Blender context
@@ -77,41 +87,44 @@ def clear_transfer_visualizations(context, target_obj=None):
                 if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
                     clear_match_quality_debug(obj)
 
-        # If in WEIGHT_PAINT mode (showing smoothing mask), switch to OBJECT mode
-        if context.mode == 'WEIGHT_PAINT':
-            try:
-                bpy.ops.object.mode_set(mode='OBJECT')
-            except Exception:
-                pass  # Context may not allow mode switching
-
     except Exception as e:
-        print(f"Error clearing transfer visualizations: {e}")
+        print(f"Error clearing debug vertex colors: {e}")
 
 
 def robust_show_debug_update(self, context):
     """Clean up debug visualization when checkbox is disabled"""
     if not self.robust_show_debug:
-        clear_transfer_visualizations(context)
+        clear_debug_vertex_colors(context)
 
 
 def robust_transfer_toggle_update(self, context):
     """Clear visualizations when toggling between robust and normal transfer"""
-    # Clear visualizations from target object when switching modes
+    # Exit weight paint mode if we're in it
+    try:
+        exit_weight_paint_mode_if_needed(context)
+    except:
+        pass  # May fail in update callback context
+
+    # Clear debug colors
     if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
-        clear_transfer_visualizations(context, self.shapekey_target_object)
+        clear_debug_vertex_colors(context, self.shapekey_target_object)
     else:
-        # Fallback: clear all objects
-        clear_transfer_visualizations(context)
+        clear_debug_vertex_colors(context)
 
 
 def shapekey_changed_update(self, context):
     """Clear visualizations when shape key selection changes"""
-    # Clear visualizations from target object when changing shape key
+    # Exit weight paint mode if we're in it
+    try:
+        exit_weight_paint_mode_if_needed(context)
+    except:
+        pass  # May fail in update callback context
+
+    # Clear debug colors
     if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
-        clear_transfer_visualizations(context, self.shapekey_target_object)
+        clear_debug_vertex_colors(context, self.shapekey_target_object)
     else:
-        # Fallback: clear all objects
-        clear_transfer_visualizations(context)
+        clear_debug_vertex_colors(context)
 
 
 class ShapeKeyTargetItem(PropertyGroup):
@@ -188,8 +201,14 @@ class NyarcToolsProperties(PropertyGroup):
     def shapekey_target_update_callback(self, context):
         """Called when target object changes - clear visualizations and refresh UI"""
         try:
-            # Clear visualizations from the old target (clear all to be safe)
-            clear_transfer_visualizations(context)
+            # Exit weight paint mode if we're in it
+            try:
+                exit_weight_paint_mode_if_needed(context)
+            except:
+                pass  # May fail in update callback context
+
+            # Clear debug colors from the old target (clear all to be safe)
+            clear_debug_vertex_colors(context)
 
             # Force UI redraw to update red/white shape key markings
             for area in context.screen.areas:

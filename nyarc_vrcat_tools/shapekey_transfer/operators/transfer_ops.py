@@ -251,6 +251,10 @@ class MESH_OT_transfer_shape_key(Operator):
     )
     
     def execute(self, context):
+        # Exit WEIGHT_PAINT mode if we're in it (clears smoothing mask visualization)
+        if context.mode == 'WEIGHT_PAINT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props:
             self.report({'ERROR'}, "Properties not found")
@@ -439,6 +443,10 @@ class MESH_OT_batch_transfer_shape_keys(Operator):
     )
     
     def execute(self, context):
+        # Exit WEIGHT_PAINT mode if we're in it (clears smoothing mask visualization)
+        if context.mode == 'WEIGHT_PAINT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props:
             self.report({'ERROR'}, "Properties not found")
@@ -600,6 +608,10 @@ class MESH_OT_generate_smoothing_mask(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        # Exit WEIGHT_PAINT mode if we're in it (we're about to create a new mask)
+        if context.mode == 'WEIGHT_PAINT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props:
             self.report({'ERROR'}, "Properties not found")
@@ -677,6 +689,10 @@ class MESH_OT_apply_smoothing_mask(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        # Note: We're already in WEIGHT_PAINT mode when this is called,
+        # and we need to stay in it to apply the smoothing
+        # So we don't exit the mode here
+
         props = getattr(context.scene, 'nyarc_tools_props', None)
         if not props:
             self.report({'ERROR'}, "Properties not found")
