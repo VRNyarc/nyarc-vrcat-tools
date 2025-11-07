@@ -260,6 +260,14 @@ class MESH_OT_transfer_shape_key(Operator):
         target_obj = props.shapekey_target_object
         shape_key_name = props.shapekey_shape_key
 
+        # Clean up debug visualization from robust transfer if present
+        if target_obj and target_obj.type == 'MESH':
+            try:
+                from ..robust.debug import clear_match_quality_debug
+                clear_match_quality_debug(target_obj)
+            except (ImportError, Exception):
+                pass  # Silently ignore if robust module not available or other errors
+
         # Fallback: Use selected mesh in viewport if no target is set in dropdown
         if not target_obj and context.selected_objects:
             # Find first selected mesh that isn't the source
@@ -435,17 +443,26 @@ class MESH_OT_batch_transfer_shape_keys(Operator):
         if not props:
             self.report({'ERROR'}, "Properties not found")
             return {'CANCELLED'}
-        
+
         source_obj = props.shapekey_source_object
         if not source_obj:
             self.report({'ERROR'}, "No source object selected")
             return {'CANCELLED'}
-        
+
         # Get target objects and selected shape keys
         target_objects = props.get_target_objects_list()
         if not target_objects:
             self.report({'ERROR'}, "No target objects found")
             return {'CANCELLED'}
+
+        # Clean up debug visualization from robust transfer on all target objects
+        try:
+            from ..robust.debug import clear_match_quality_debug
+            for target_obj in target_objects:
+                if target_obj and target_obj.type == 'MESH':
+                    clear_match_quality_debug(target_obj)
+        except (ImportError, Exception):
+            pass  # Silently ignore if robust module not available or other errors
         
         selected_shape_keys = props.get_selected_shape_keys()
         if not selected_shape_keys:
@@ -601,6 +618,14 @@ class MESH_OT_generate_smoothing_mask(Operator):
             self.report({'ERROR'}, "Please select target object and shape key")
             return {'CANCELLED'}
 
+        # Clean up debug visualization from robust transfer if present
+        if target_obj and target_obj.type == 'MESH':
+            try:
+                from ..robust.debug import clear_match_quality_debug
+                clear_match_quality_debug(target_obj)
+            except (ImportError, Exception):
+                pass  # Silently ignore if robust module not available or other errors
+
         # Generate smoothing weights
         vgroup_name = generate_smoothing_weights(
             target_obj,
@@ -668,6 +693,14 @@ class MESH_OT_apply_smoothing_mask(Operator):
         if not all([target_obj, shape_key_name, shape_key_name != "NONE"]):
             self.report({'ERROR'}, "Please select target object and shape key")
             return {'CANCELLED'}
+
+        # Clean up debug visualization from robust transfer if present
+        if target_obj and target_obj.type == 'MESH':
+            try:
+                from ..robust.debug import clear_match_quality_debug
+                clear_match_quality_debug(target_obj)
+            except (ImportError, Exception):
+                pass  # Silently ignore if robust module not available or other errors
 
         # Get vertex group name
         vgroup_name = f"Smooth_{shape_key_name}"
