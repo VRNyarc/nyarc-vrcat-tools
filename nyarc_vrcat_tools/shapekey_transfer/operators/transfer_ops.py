@@ -252,7 +252,7 @@ class MESH_OT_transfer_shape_key(Operator):
     
     def execute(self, context):
         # Exit WEIGHT_PAINT mode if we're in it (clears smoothing mask visualization)
-        if context.mode == 'WEIGHT_PAINT':
+        if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
             bpy.ops.object.mode_set(mode='OBJECT')
 
         props = getattr(context.scene, 'nyarc_tools_props', None)
@@ -444,7 +444,7 @@ class MESH_OT_batch_transfer_shape_keys(Operator):
     
     def execute(self, context):
         # Exit WEIGHT_PAINT mode if we're in it (clears smoothing mask visualization)
-        if context.mode == 'WEIGHT_PAINT':
+        if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
             bpy.ops.object.mode_set(mode='OBJECT')
 
         props = getattr(context.scene, 'nyarc_tools_props', None)
@@ -609,7 +609,7 @@ class MESH_OT_generate_smoothing_mask(Operator):
 
     def execute(self, context):
         # Exit WEIGHT_PAINT mode if we're in it (we're about to create a new mask)
-        if context.mode == 'WEIGHT_PAINT':
+        if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
             bpy.ops.object.mode_set(mode='OBJECT')
 
         props = getattr(context.scene, 'nyarc_tools_props', None)

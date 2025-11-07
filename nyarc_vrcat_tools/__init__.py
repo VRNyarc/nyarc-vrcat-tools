@@ -65,12 +65,12 @@ def deferred_exit_weight_paint():
     """
     try:
         print(f"[Timer] Current mode: {bpy.context.mode}")
-        if bpy.context.mode == 'WEIGHT_PAINT':
-            print("[Timer] Exiting WEIGHT_PAINT mode...")
+        if bpy.context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+            print("[Timer] Exiting PAINT_WEIGHT mode...")
             bpy.ops.object.mode_set(mode='OBJECT')
             print("[Timer] Successfully exited to OBJECT mode")
         else:
-            print(f"[Timer] Not in WEIGHT_PAINT mode, skipping (mode={bpy.context.mode})")
+            print(f"[Timer] Not in PAINT_WEIGHT mode, skipping (mode={bpy.context.mode})")
     except Exception as e:
         print(f"[Timer] Error exiting weight paint mode: {e}")
         import traceback
@@ -100,7 +100,7 @@ def exit_weight_paint_mode_if_needed(context):
     Exit WEIGHT_PAINT mode if currently in it.
     Call this at the start of transfer operators to clear smoothing mask visualization.
     """
-    if context.mode == 'WEIGHT_PAINT':
+    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
         bpy.ops.object.mode_set(mode='OBJECT')
 
 
@@ -142,7 +142,7 @@ def robust_transfer_toggle_update(self, context):
     print(f"use_robust_transfer value: {self.shapekey_use_robust_transfer}")
 
     # Schedule deferred exit from weight paint mode (works reliably)
-    if context.mode == 'WEIGHT_PAINT':
+    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
         schedule_exit_weight_paint()
 
     # Clear debug colors
@@ -161,7 +161,7 @@ def shapekey_changed_update(self, context):
     print(f"shape_key value: {self.shapekey_shape_key}")
 
     # Schedule deferred exit from weight paint mode (works reliably)
-    if context.mode == 'WEIGHT_PAINT':
+    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
         schedule_exit_weight_paint()
 
     # Clear debug colors
@@ -252,7 +252,7 @@ class NyarcToolsProperties(PropertyGroup):
 
         try:
             # Schedule deferred exit from weight paint mode (works reliably)
-            if context.mode == 'WEIGHT_PAINT':
+            if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
                 schedule_exit_weight_paint()
 
             # Clear debug colors from the old target (clear all to be safe)
