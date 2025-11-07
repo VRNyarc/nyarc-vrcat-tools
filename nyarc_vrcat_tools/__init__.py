@@ -215,6 +215,31 @@ class NyarcToolsProperties(PropertyGroup):
         default=False
     )
 
+    # Advanced Options subsection toggles
+    shapekey_show_surface_deform: BoolProperty(
+        name="Show Surface Deform Parameters",
+        description="Show Surface Deform modifier parameters",
+        default=False
+    )
+
+    shapekey_show_smoothing: BoolProperty(
+        name="Show Post-Transfer Smoothing",
+        description="Show post-transfer smoothing options",
+        default=False
+    )
+
+    shapekey_show_island_handling: BoolProperty(
+        name="Show Partial Island Handling",
+        description="Show partial island handling options",
+        default=False
+    )
+
+    shapekey_show_preprocessing: BoolProperty(
+        name="Show Pre-processing Modifiers",
+        description="Show pre-processing modifier options",
+        default=False
+    )
+
     # Surface Deform parameters (Advanced Options)
     shapekey_surface_deform_strength: FloatProperty(
         name="Surface Deform Strength",
