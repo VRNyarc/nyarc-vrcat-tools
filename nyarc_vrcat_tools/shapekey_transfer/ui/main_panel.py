@@ -332,11 +332,14 @@ def draw_single_target_ui(layout, context, props):
 
                         # Workflow info
                         info_col = smooth_settings.column(align=True)
-                        info_col.scale_y = 0.7
+                        info_col.scale_y = 0.8
                         info_col.label(text="Workflow:", icon='INFO')
-                        info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
-                        info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
-                        info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
+
+                        workflow_col = smooth_settings.column(align=True)
+                        workflow_col.scale_y = 0.75
+                        workflow_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
+                        workflow_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
+                        workflow_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
 
                 advanced_col.separator(factor=0.8)
 
@@ -364,7 +367,7 @@ def draw_single_target_ui(layout, context, props):
                     island_col.label(text="Mode:", icon='PREFERENCES')
                     island_col.prop(props, "shapekey_partial_island_mode", text="")
 
-                    island_col.separator(factor=0.3)
+                    island_col.separator(factor=0.5)
 
                     # Island size threshold (always visible, controls both mask generation and island processing)
                     threshold_label = island_col.row()
@@ -372,11 +375,13 @@ def draw_single_target_ui(layout, context, props):
                     threshold_label.label(text="Island Size Threshold (0.005 - 0.20):", icon='MESH_GRID')
                     island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
 
+                    island_col.separator(factor=0.4)
+
                     threshold_info = island_col.column(align=True)
                     threshold_info.scale_y = 0.75
                     threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
 
-                    threshold_info.separator(factor=0.3)
+                    threshold_info.separator(factor=0.4)
 
                     # Explain that this affects both systems when mode != NONE
                     if props.shapekey_partial_island_mode != 'NONE':
@@ -687,11 +692,14 @@ def draw_multi_target_ui(layout, context, props):
 
                     # Workflow info
                     info_col = smooth_settings.column(align=True)
-                    info_col.scale_y = 0.7
+                    info_col.scale_y = 0.8
                     info_col.label(text="Workflow:", icon='INFO')
-                    info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
-                    info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
-                    info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
+
+                    workflow_col = smooth_settings.column(align=True)
+                    workflow_col.scale_y = 0.75
+                    workflow_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
+                    workflow_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
+                    workflow_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
 
             advanced_col.separator(factor=0.8)
 
@@ -719,7 +727,7 @@ def draw_multi_target_ui(layout, context, props):
                 island_col.label(text="Mode:", icon='PREFERENCES')
                 island_col.prop(props, "shapekey_partial_island_mode", text="")
 
-                island_col.separator(factor=0.3)
+                island_col.separator(factor=0.5)
 
                 # Island size threshold (always visible, controls both mask generation and island processing)
                 threshold_label = island_col.row()
@@ -727,11 +735,13 @@ def draw_multi_target_ui(layout, context, props):
                 threshold_label.label(text="Island Size Threshold (0.005 - 0.20):", icon='MESH_GRID')
                 island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
 
+                island_col.separator(factor=0.4)
+
                 threshold_info = island_col.column(align=True)
                 threshold_info.scale_y = 0.75
                 threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
 
-                threshold_info.separator(factor=0.3)
+                threshold_info.separator(factor=0.4)
 
                 # Explain that this affects both systems when mode != NONE
                 if props.shapekey_partial_island_mode != 'NONE':
