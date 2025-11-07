@@ -4,20 +4,21 @@
 # Hot reload support - reload submodules when this module is reloaded
 if "bpy" in locals():
     import importlib
+    # CRITICAL: Assign return values to update module references
     if "operators" in locals():
-        importlib.reload(operators)
+        operators = importlib.reload(operators)
     if "ui" in locals():
-        importlib.reload(ui)
+        ui = importlib.reload(ui)
     if "utils" in locals():
-        importlib.reload(utils)
+        utils = importlib.reload(utils)
     if "sync" in locals():
-        importlib.reload(sync)
+        sync = importlib.reload(sync)
 
     # Reload robust module if it was previously imported (it's optional)
     import sys
     robust_module_name = f"{__name__}.robust"
     if robust_module_name in sys.modules:
-        importlib.reload(sys.modules[robust_module_name])
+        sys.modules[robust_module_name] = importlib.reload(sys.modules[robust_module_name])
 
 # Import all submodule components
 import bpy

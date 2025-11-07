@@ -18,8 +18,9 @@ if "bpy" in locals():
     print("Nyarc Tools: Hot reload detected - reloading all submodules...")
 
     # Reload the main modules package
+    # CRITICAL: Assign return value to update the module reference
     if "modules" in locals():
-        importlib.reload(modules)
+        modules = importlib.reload(modules)
 
     print("Nyarc Tools: Hot reload complete - all submodules reloaded")
 
