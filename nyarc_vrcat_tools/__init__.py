@@ -137,6 +137,10 @@ def robust_show_debug_update(self, context):
 
 def robust_transfer_toggle_update(self, context):
     """Clear visualizations when toggling between robust and normal transfer"""
+    print(f"\n=== robust_transfer_toggle_update CALLED ===")
+    print(f"Current mode: {context.mode}")
+    print(f"use_robust_transfer value: {self.shapekey_use_robust_transfer}")
+
     # Schedule deferred exit from weight paint mode (works reliably)
     if context.mode == 'WEIGHT_PAINT':
         schedule_exit_weight_paint()
@@ -146,10 +150,16 @@ def robust_transfer_toggle_update(self, context):
         clear_debug_vertex_colors(context, self.shapekey_target_object)
     else:
         clear_debug_vertex_colors(context)
+
+    print(f"=== robust_transfer_toggle_update DONE ===\n")
 
 
 def shapekey_changed_update(self, context):
     """Clear visualizations when shape key selection changes"""
+    print(f"\n=== shapekey_changed_update CALLED ===")
+    print(f"Current mode: {context.mode}")
+    print(f"shape_key value: {self.shapekey_shape_key}")
+
     # Schedule deferred exit from weight paint mode (works reliably)
     if context.mode == 'WEIGHT_PAINT':
         schedule_exit_weight_paint()
@@ -159,6 +169,8 @@ def shapekey_changed_update(self, context):
         clear_debug_vertex_colors(context, self.shapekey_target_object)
     else:
         clear_debug_vertex_colors(context)
+
+    print(f"=== shapekey_changed_update DONE ===\n")
 
 
 class ShapeKeyTargetItem(PropertyGroup):
@@ -234,6 +246,10 @@ class NyarcToolsProperties(PropertyGroup):
     
     def shapekey_target_update_callback(self, context):
         """Called when target object changes - clear visualizations and refresh UI"""
+        print(f"\n=== shapekey_target_update_callback CALLED ===")
+        print(f"Current mode: {context.mode}")
+        print(f"target_object: {self.shapekey_target_object}")
+
         try:
             # Schedule deferred exit from weight paint mode (works reliably)
             if context.mode == 'WEIGHT_PAINT':
@@ -248,6 +264,8 @@ class NyarcToolsProperties(PropertyGroup):
                     area.tag_redraw()
         except Exception as e:
             print(f"Error refreshing UI after target change: {e}")
+
+        print(f"=== shapekey_target_update_callback DONE ===\n")
     
     # Shape Key Transfer Properties (prefixed to avoid conflicts)
     shapekey_source_object: PointerProperty(
