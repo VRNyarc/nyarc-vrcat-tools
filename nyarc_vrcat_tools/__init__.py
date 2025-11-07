@@ -10,15 +10,9 @@ bl_info = {
     "license": "GPL-3.0",
 }
 
-import bpy
-from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
-from bpy.types import Panel, PropertyGroup, Object
-
-# Import all modules
-from . import modules
-
-# Module-level message bus owner for proper cleanup
-_msgbus_owner = object()
+# Hot reload support - must come before any imports
+import sys
+import importlib
 
 
 def cleanup_addon_modules():
@@ -29,26 +23,44 @@ def cleanup_addon_modules():
     the addon but still see old code because Python cached the modules.
 
     Called at:
+    - Module level: Runs BEFORE imports if addon is being reloaded
     - Start of register(): Ensures fresh import when enabling addon
     - End of unregister(): Cleans up after disabling addon
     """
-    import sys
-
     # Get addon package name (e.g., "nyarc_vrcat_tools")
-    addon_package = __name__.split('.')[0]
+    addon_package = __name__.split('.')[0] if '.' in __name__ else __name__
 
     # Find all modules belonging to this addon
-    modules_to_remove = []
-    for module_name in sys.modules.keys():
-        if module_name.startswith(addon_package):
-            modules_to_remove.append(module_name)
+    modules_to_remove = [
+        module_name for module_name in list(sys.modules.keys())
+        if module_name.startswith(addon_package + '.') or module_name == addon_package
+    ]
 
     # Remove them from sys.modules
     for module_name in modules_to_remove:
         del sys.modules[module_name]
 
+    # Invalidate import caches to ensure fresh imports
+    importlib.invalidate_caches()
+
     if modules_to_remove:
-        print(f"Nyarc Tools: Cleaned up {len(modules_to_remove)} cached modules for hot reload")
+        print(f"Nyarc Tools: Hot reload - cleaned {len(modules_to_remove)} cached modules")
+
+
+# Run cleanup immediately if this is a reload (addon already loaded)
+if __name__.split('.')[0] in sys.modules:
+    cleanup_addon_modules()
+
+# Now import everything - modules will be fresh after cleanup
+import bpy
+from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
+from bpy.types import Panel, PropertyGroup, Object
+
+# Import all modules
+from . import modules
+
+# Module-level message bus owner for proper cleanup
+_msgbus_owner = object()
 
 
 def armature_poll(self, obj):
