@@ -45,7 +45,7 @@ class MESH_OT_install_robust_dependencies(Operator):
                 ])
 
             self.report({'INFO'}, "Dependencies installed successfully!")
-            self.report({'INFO'}, "Please restart Blender to use Robust Transfer")
+            self.report({'INFO'}, "Please disable/re-enable addon (or F3 → Reload Scripts) to use Robust Transfer")
 
             return {'FINISHED'}
 

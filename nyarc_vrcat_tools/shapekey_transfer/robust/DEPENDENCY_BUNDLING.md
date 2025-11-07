@@ -10,7 +10,7 @@ Users don't need to do anything manually! When they:
 1. Enable "Use Robust Transfer"
 2. If dependencies missing → See "Install Dependencies" button
 3. Click button → Waits 30-60 seconds
-4. Restart Blender → Ready to use!
+4. Disable/re-enable addon (or F3 → Reload Scripts) → Ready to use!
 
 The installer downloads and bundles dependencies locally - no system-wide installation.
 
@@ -169,9 +169,9 @@ When packaging addon for release:
 
 ### "Import Error" after installation
 
-**Cause**: Blender needs restart to reload Python modules
+**Cause**: Blender needs to reload Python modules after dependency installation
 
-**Solution**: Tell user to restart Blender (installer already does this)
+**Solution**: Disable and re-enable the addon, or press F3 → "Reload Scripts" (installer already shows this message)
 
 ### "pip not found"
 
@@ -201,7 +201,7 @@ Users get zero-setup experience - just install addon and go!
 
 ## Summary
 
-**User Experience**: One-click install button, 30 seconds, restart Blender
+**User Experience**: One-click install button, 30 seconds, reload addon (disable/enable or F3 → Reload Scripts)
 **Developer Experience**: Either pre-bundle or let installer handle it
 **License**: All clear, free to bundle
 **Size**: ~30-35MB (reasonable for addon)
