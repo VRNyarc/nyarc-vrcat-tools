@@ -47,9 +47,12 @@ def blur_vertex_group_weights(target_obj, vertex_group_name, blur_iterations=2):
             # Calculate blurred weights
             blurred_weights = {}
             for vert in bm.verts:
-                current_weight = current_weights.get(vert.index, 0.0)
                 neighbor_sum = 0.0
                 neighbor_count = 0
+
+                # Include current vertex
+                neighbor_sum += current_weights.get(vert.index, 0.0)
+                neighbor_count += 1
 
                 # Add neighbors
                 for edge in vert.link_edges:
@@ -57,13 +60,9 @@ def blur_vertex_group_weights(target_obj, vertex_group_name, blur_iterations=2):
                     neighbor_sum += current_weights.get(neighbor.index, 0.0)
                     neighbor_count += 1
 
-                # Blend current with average of neighbors (60% current, 40% neighbors for smoother transitions)
+                # Average
                 if neighbor_count > 0:
-                    avg_neighbor = neighbor_sum / neighbor_count
-                    blurred_weights[vert.index] = current_weight * 0.6 + avg_neighbor * 0.4
-                else:
-                    # No neighbors (isolated vertex) - keep current weight
-                    blurred_weights[vert.index] = current_weight
+                    blurred_weights[vert.index] = neighbor_sum / neighbor_count
 
             # Apply blurred weights back to vertex group
             for vert_idx, weight in blurred_weights.items():
