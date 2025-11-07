@@ -10,6 +10,20 @@ bl_info = {
     "license": "GPL-3.0",
 }
 
+# Hot reload support - Blender standard pattern
+# When Blender reloads this file, "bpy" will already be in locals()
+# This tells us to manually reload all submodules to get fresh code
+if "bpy" in locals():
+    import importlib
+    print("Nyarc Tools: Hot reload detected - reloading all submodules...")
+
+    # Reload the main modules package
+    if "modules" in locals():
+        importlib.reload(modules)
+
+    print("Nyarc Tools: Hot reload complete - all submodules reloaded")
+
+# Normal imports (executed both on first load and reload)
 import bpy
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
@@ -215,6 +229,31 @@ class NyarcToolsProperties(PropertyGroup):
         default=False
     )
 
+    # Advanced Options subsection toggles
+    shapekey_show_surface_deform: BoolProperty(
+        name="Show Surface Deform Parameters",
+        description="Show Surface Deform modifier parameters",
+        default=False
+    )
+
+    shapekey_show_smoothing: BoolProperty(
+        name="Show Post-Transfer Smoothing",
+        description="Show post-transfer smoothing options",
+        default=False
+    )
+
+    shapekey_show_island_handling: BoolProperty(
+        name="Show Partial Island Handling",
+        description="Show partial island handling options",
+        default=False
+    )
+
+    shapekey_show_preprocessing: BoolProperty(
+        name="Show Pre-processing Modifiers",
+        description="Show pre-processing modifier options",
+        default=False
+    )
+
     # Surface Deform parameters (Advanced Options)
     shapekey_surface_deform_strength: FloatProperty(
         name="Surface Deform Strength",
@@ -263,7 +302,7 @@ class NyarcToolsProperties(PropertyGroup):
     shapekey_smooth_iterations: IntProperty(
         name="Smoothing Iterations",
         description="Number of smoothing passes to apply to boundary region (each button click applies this many iterations)",
-        default=5,
+        default=2,
         min=1,
         max=10
     )

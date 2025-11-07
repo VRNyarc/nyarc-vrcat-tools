@@ -756,9 +756,19 @@ class MESH_OT_delete_smoothing_mask(Operator):
             self.report({'WARNING'}, f"No mask found for '{shape_key_name}'")
             return {'CANCELLED'}
 
+        # Store current mode to check if we need to exit weight paint
+        current_mode = context.mode
+
         # Delete the vertex group
         target_obj.vertex_groups.remove(vgroup)
         self.report({'INFO'}, f"Deleted smoothing mask '{vgroup_name}'")
+
+        # Exit weight paint mode if currently in it (return to object mode)
+        if current_mode == 'PAINT_WEIGHT':
+            try:
+                bpy.ops.object.mode_set(mode='OBJECT')
+            except (RuntimeError, TypeError) as e:
+                print(f"Warning: Failed to exit weight paint mode: {e}")
 
         # Force UI refresh
         for area in context.screen.areas:

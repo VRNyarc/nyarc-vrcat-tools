@@ -386,13 +386,13 @@ def apply_vertex_group_smoothing(target_obj, shape_key_name, vertex_group_name, 
                     avg_neighbor = neighbor_sum / neighbor_count
                     current = displacement_vectors[vert_idx]
 
-                    # Blend ratio: 30% current, 70% neighbors (aggressive smoothing)
-                    smoothed = current * 0.3 + avg_neighbor * 0.7
+                    # Blend ratio: 20% current, 80% neighbors (aggressive smoothing for better results)
+                    smoothed = current * 0.2 + avg_neighbor * 0.8
 
                     # Interpolate between original and smoothed based on weight
                     # Weight 1.0 = full smoothing, Weight 0.0 = no change
-                    # Use power curve to make weights more effective
-                    effective_weight = weight ** 0.7  # Makes mid-range weights stronger
+                    # Use sqrt curve to make weights more effective while preserving control
+                    effective_weight = weight ** 0.5  # Less aggressive power curve
                     final_displacement = current.lerp(smoothed, effective_weight)
 
                     smoothed_displacements[vert_idx] = final_displacement
