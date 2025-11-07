@@ -10,6 +10,20 @@ bl_info = {
     "license": "GPL-3.0",
 }
 
+# Hot reload support - Blender standard pattern
+# When Blender reloads this file, "bpy" will already be in locals()
+# This tells us to manually reload all submodules to get fresh code
+if "bpy" in locals():
+    import importlib
+    print("Nyarc Tools: Hot reload detected - reloading all submodules...")
+
+    # Reload the main modules package
+    if "modules" in locals():
+        importlib.reload(modules)
+
+    print("Nyarc Tools: Hot reload complete - all submodules reloaded")
+
+# Normal imports (executed both on first load and reload)
 import bpy
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
