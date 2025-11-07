@@ -77,6 +77,7 @@ nyarc_vrcat_tools/
 │   └── io/                    # Import/export functionality
 ├── shapekey_transfer/         # Shape key transfer system
 │   ├── operators/             # Transfer operations
+│   ├── robust/                # Robust harmonic transfer (v0.2.0+)
 │   ├── sync/                  # Live synchronization
 │   ├── ui/                    # User interface components
 │   └── utils/                 # Helper utilities
@@ -96,7 +97,7 @@ nyarc_vrcat_tools/
 ## 🧪 Testing
 
 ### **Manual Testing**
-1. Install the addon in Blender 3.0+
+1. Install the addon in Blender 4.2+
 2. Test all features with various avatar types
 3. Verify VRChat compatibility
 4. Check error handling with invalid inputs
