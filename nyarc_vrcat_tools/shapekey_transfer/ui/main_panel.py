@@ -255,6 +255,9 @@ def draw_single_target_ui(layout, context, props):
                 advanced_col = advanced_box.column(align=True)
                 advanced_col.scale_y = 0.9
 
+                # Small separator before first subsection
+                advanced_col.separator(factor=0.3)
+
                 # Surface Deform Parameters Section (collapsible)
                 surface_deform_box = advanced_col.box()
                 surface_deform_header = surface_deform_box.row()
@@ -280,7 +283,7 @@ def draw_single_target_ui(layout, context, props):
                     falloff_label.label(text="Falloff (0.1 - 16.0): Interpolation smoothness (lower = smoother)", icon='SMOOTHCURVE')
                     falloff_col.prop(props, "shapekey_surface_deform_falloff", text="", slider=True)
 
-                advanced_col.separator(factor=1.5)
+                advanced_col.separator(factor=0.8)
 
                 # Post-Transfer Smoothing Section (collapsible)
                 smoothing_box = advanced_col.box()
@@ -335,7 +338,7 @@ def draw_single_target_ui(layout, context, props):
                         info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
                         info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
 
-                advanced_col.separator(factor=1.5)
+                advanced_col.separator(factor=0.8)
 
                 # Partial Island Handling Section (collapsible)
                 island_box = advanced_col.box()
@@ -370,8 +373,10 @@ def draw_single_target_ui(layout, context, props):
                     island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
 
                     threshold_info = island_col.column(align=True)
-                    threshold_info.scale_y = 0.6
+                    threshold_info.scale_y = 0.75
                     threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
+
+                    threshold_info.separator(factor=0.3)
 
                     # Explain that this affects both systems when mode != NONE
                     if props.shapekey_partial_island_mode != 'NONE':
@@ -398,7 +403,7 @@ def draw_single_target_ui(layout, context, props):
                             mode_info_col.label(text="• Moves buttons/details together as a unit")
                             mode_info_col.label(text="• Keeps mesh intact, may need manual adjustment")
 
-                advanced_col.separator(factor=1.5)
+                advanced_col.separator(factor=0.8)
 
                 # Pre-processing Modifiers Section (collapsible)
                 preprocessing_box = advanced_col.box()
@@ -605,6 +610,9 @@ def draw_multi_target_ui(layout, context, props):
             advanced_col = advanced_box.column(align=True)
             advanced_col.scale_y = 0.9
 
+            # Small separator before first subsection
+            advanced_col.separator(factor=0.3)
+
             # Surface Deform Parameters Section (collapsible)
             surface_deform_box = advanced_col.box()
             surface_deform_header = surface_deform_box.row()
@@ -630,7 +638,7 @@ def draw_multi_target_ui(layout, context, props):
                 falloff_label.label(text="Falloff (0.1 - 16.0): Interpolation smoothness (lower = smoother)", icon='SMOOTHCURVE')
                 falloff_col.prop(props, "shapekey_surface_deform_falloff", text="", slider=True)
 
-            advanced_col.separator(factor=1.5)
+            advanced_col.separator(factor=0.8)
 
             # Post-Transfer Smoothing Section (collapsible)
             smoothing_box = advanced_col.box()
@@ -685,7 +693,7 @@ def draw_multi_target_ui(layout, context, props):
                     info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
                     info_col.label(text="3. Red 'Apply Smoothing' button appears below transfer button")
 
-            advanced_col.separator(factor=1.5)
+            advanced_col.separator(factor=0.8)
 
             # Partial Island Handling Section (collapsible)
             island_box = advanced_col.box()
@@ -720,8 +728,10 @@ def draw_multi_target_ui(layout, context, props):
                 island_col.prop(props, "shapekey_partial_island_threshold", text="", slider=True)
 
                 threshold_info = island_col.column(align=True)
-                threshold_info.scale_y = 0.6
+                threshold_info.scale_y = 0.75
                 threshold_info.label(text="Max % of mesh to qualify as small island (0.05 = 5%)", icon='INFO')
+
+                threshold_info.separator(factor=0.3)
 
                 # Explain that this affects both systems when mode != NONE
                 if props.shapekey_partial_island_mode != 'NONE':
@@ -748,7 +758,7 @@ def draw_multi_target_ui(layout, context, props):
                         mode_info_col.label(text="• Moves buttons/details together as a unit")
                         mode_info_col.label(text="• Keeps mesh intact, may need manual adjustment")
 
-            advanced_col.separator(factor=1.5)
+            advanced_col.separator(factor=0.8)
 
             # Pre-processing Modifiers Section (collapsible)
             preprocessing_box = advanced_col.box()
