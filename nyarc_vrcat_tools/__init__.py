@@ -27,6 +27,7 @@ if "bpy" in locals():
 import bpy
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
+from bpy.app import timers
 
 # Import all modules
 from . import modules
@@ -55,6 +56,32 @@ def override_existing_update(self, context):
     """Make Skip and Override mutually exclusive"""
     if self.shapekey_override_existing and self.shapekey_skip_existing:
         self.shapekey_skip_existing = False
+
+
+def deferred_exit_weight_paint():
+    """
+    Timer callback to exit WEIGHT_PAINT mode.
+    Runs with full operator context, so mode_set works reliably.
+    """
+    try:
+        if bpy.context.mode == 'WEIGHT_PAINT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+    except Exception as e:
+        print(f"Error exiting weight paint mode: {e}")
+    return None  # Don't repeat timer
+
+
+def schedule_exit_weight_paint():
+    """
+    Schedule a deferred exit from WEIGHT_PAINT mode using a timer.
+    Safe to call from property update callbacks.
+    """
+    # Unregister existing timer if present
+    if timers.is_registered(deferred_exit_weight_paint):
+        timers.unregister(deferred_exit_weight_paint)
+
+    # Schedule new timer to run after 0.01 seconds
+    timers.register(deferred_exit_weight_paint, first_interval=0.01)
 
 
 def exit_weight_paint_mode_if_needed(context):
@@ -99,11 +126,9 @@ def robust_show_debug_update(self, context):
 
 def robust_transfer_toggle_update(self, context):
     """Clear visualizations when toggling between robust and normal transfer"""
-    # Exit weight paint mode if we're in it
-    try:
-        exit_weight_paint_mode_if_needed(context)
-    except:
-        pass  # May fail in update callback context
+    # Schedule deferred exit from weight paint mode (works reliably)
+    if context.mode == 'WEIGHT_PAINT':
+        schedule_exit_weight_paint()
 
     # Clear debug colors
     if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
@@ -114,11 +139,9 @@ def robust_transfer_toggle_update(self, context):
 
 def shapekey_changed_update(self, context):
     """Clear visualizations when shape key selection changes"""
-    # Exit weight paint mode if we're in it
-    try:
-        exit_weight_paint_mode_if_needed(context)
-    except:
-        pass  # May fail in update callback context
+    # Schedule deferred exit from weight paint mode (works reliably)
+    if context.mode == 'WEIGHT_PAINT':
+        schedule_exit_weight_paint()
 
     # Clear debug colors
     if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
@@ -201,11 +224,9 @@ class NyarcToolsProperties(PropertyGroup):
     def shapekey_target_update_callback(self, context):
         """Called when target object changes - clear visualizations and refresh UI"""
         try:
-            # Exit weight paint mode if we're in it
-            try:
-                exit_weight_paint_mode_if_needed(context)
-            except:
-                pass  # May fail in update callback context
+            # Schedule deferred exit from weight paint mode (works reliably)
+            if context.mode == 'WEIGHT_PAINT':
+                schedule_exit_weight_paint()
 
             # Clear debug colors from the old target (clear all to be safe)
             clear_debug_vertex_colors(context)
