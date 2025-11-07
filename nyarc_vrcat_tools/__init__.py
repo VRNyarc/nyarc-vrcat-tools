@@ -302,7 +302,7 @@ class NyarcToolsProperties(PropertyGroup):
     shapekey_smooth_iterations: IntProperty(
         name="Smoothing Iterations",
         description="Number of smoothing passes to apply to boundary region (each button click applies this many iterations)",
-        default=5,
+        default=2,
         min=1,
         max=10
     )

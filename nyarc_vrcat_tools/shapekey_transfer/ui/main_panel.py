@@ -152,12 +152,25 @@ def draw_single_target_ui(layout, context, props):
                 transfer_op.override_existing = props.shapekey_override_existing
                 transfer_op.skip_existing = props.shapekey_skip_existing
 
-        # Show Apply Smoothing button after transfer if mask exists
-        if mask_exists and props.shapekey_smooth_boundary:
-            row = layout.row()
+        # Show Apply Smoothing button after transfer if mask exists (LEGACY MODE ONLY)
+        if mask_exists and props.shapekey_smooth_boundary and not props.shapekey_use_robust_transfer:
+            row = layout.row(align=True)
             row.scale_y = 1.3
-            row.alert = True  # Make button red
-            row.operator("mesh.apply_smoothing_mask", text="Apply Smoothing", icon='SMOOTHCURVE')
+
+            # Apply Smoothing button (70% width)
+            col = row.column(align=True)
+            col.scale_x = 2.8
+            col.alert = True  # Make button red
+            col.operator("mesh.apply_smoothing_mask", text="Apply Smoothing", icon='SMOOTHCURVE')
+
+            # Delete Mask button (30% width)
+            col = row.column(align=True)
+            col.scale_x = 1.2
+            col.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
+
+            # Smoothing Iterations slider underneath
+            row = layout.row()
+            row.prop(props, "shapekey_smooth_iterations", text="Smoothing Iterations", slider=True)
         
         # Transfer options below the button
         layout.separator(factor=0.3)
