@@ -47,12 +47,9 @@ def blur_vertex_group_weights(target_obj, vertex_group_name, blur_iterations=2):
             # Calculate blurred weights
             blurred_weights = {}
             for vert in bm.verts:
+                current_weight = current_weights.get(vert.index, 0.0)
                 neighbor_sum = 0.0
                 neighbor_count = 0
-
-                # Include current vertex
-                neighbor_sum += current_weights.get(vert.index, 0.0)
-                neighbor_count += 1
 
                 # Add neighbors
                 for edge in vert.link_edges:
@@ -60,9 +57,13 @@ def blur_vertex_group_weights(target_obj, vertex_group_name, blur_iterations=2):
                     neighbor_sum += current_weights.get(neighbor.index, 0.0)
                     neighbor_count += 1
 
-                # Average
+                # Blend current with average of neighbors (60% current, 40% neighbors for smoother transitions)
                 if neighbor_count > 0:
-                    blurred_weights[vert.index] = neighbor_sum / neighbor_count
+                    avg_neighbor = neighbor_sum / neighbor_count
+                    blurred_weights[vert.index] = current_weight * 0.6 + avg_neighbor * 0.4
+                else:
+                    # No neighbors (isolated vertex) - keep current weight
+                    blurred_weights[vert.index] = current_weight
 
             # Apply blurred weights back to vertex group
             for vert_idx, weight in blurred_weights.items():
@@ -386,13 +387,13 @@ def apply_vertex_group_smoothing(target_obj, shape_key_name, vertex_group_name, 
                     avg_neighbor = neighbor_sum / neighbor_count
                     current = displacement_vectors[vert_idx]
 
-                    # Blend ratio: 30% current, 70% neighbors (aggressive smoothing)
-                    smoothed = current * 0.3 + avg_neighbor * 0.7
+                    # Blend ratio: 20% current, 80% neighbors (aggressive smoothing for better results)
+                    smoothed = current * 0.2 + avg_neighbor * 0.8
 
                     # Interpolate between original and smoothed based on weight
                     # Weight 1.0 = full smoothing, Weight 0.0 = no change
-                    # Use power curve to make weights more effective
-                    effective_weight = weight ** 0.7  # Makes mid-range weights stronger
+                    # Use sqrt curve to make weights more effective while preserving control
+                    effective_weight = weight ** 0.5  # Less aggressive power curve
                     final_displacement = current.lerp(smoothed, effective_weight)
 
                     smoothed_displacements[vert_idx] = final_displacement
