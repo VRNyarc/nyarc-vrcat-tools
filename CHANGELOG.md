@@ -102,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    * Open Shape Key Transfer panel
    * Click "Install Robust Dependencies" button
    * Wait for scipy and robust-laplacian to install
-   * Restart Blender
+   * Disable and re-enable the addon (or press F3 → Reload Scripts)
 
 2. **Transfer Shape Keys**
    * Select source object (body with shape keys)
