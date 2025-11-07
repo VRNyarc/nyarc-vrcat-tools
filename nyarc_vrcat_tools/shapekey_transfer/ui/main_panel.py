@@ -150,15 +150,14 @@ def draw_single_target_ui(layout, context, props):
             col.alert = True  # Make button red
             col.operator("mesh.apply_smoothing_mask", text="Apply Smoothing", icon='SMOOTHCURVE')
 
-            # Smoothing Iterations (30% width)
+            # Delete Mask button (30% width)
             col = row.column(align=True)
             col.scale_x = 1.2
-            col.prop(props, "shapekey_smooth_iterations", text="Iterations")
+            col.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
 
-            # Delete Mask button below
+            # Smoothing Iterations slider underneath
             row = layout.row()
-            row.scale_y = 1.0
-            row.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
+            row.prop(props, "shapekey_smooth_iterations", text="Smoothing Iterations", slider=True)
         
         # Transfer options below the button
         layout.separator(factor=0.3)
@@ -318,8 +317,8 @@ def draw_single_target_ui(layout, context, props):
                     info_col.label(text="Workflow:", icon='INFO')
                     info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
                     info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
-                    info_col.label(text="3. Red 'Apply Smoothing' button appears (with Iterations slider)")
-                    info_col.label(text="4. 'Delete Mask' button removes the mask when done")
+                    info_col.label(text="3. 'Apply Smoothing' + 'Delete Mask' buttons appear")
+                    info_col.label(text="4. 'Smoothing Iterations' slider underneath to control strength")
 
                 advanced_col.separator(factor=1.5)
 
@@ -643,8 +642,8 @@ def draw_multi_target_ui(layout, context, props):
                 info_col.label(text="Workflow:", icon='INFO')
                 info_col.label(text="1. 'Transfer + Generate Mask' creates mask + Weight Paint mode")
                 info_col.label(text="2. Edit mask: Paint/blur weights, exclude unwanted areas")
-                info_col.label(text="3. Red 'Apply Smoothing' button appears (with Iterations slider)")
-                info_col.label(text="4. 'Delete Mask' button removes the mask when done")
+                info_col.label(text="3. 'Apply Smoothing' + 'Delete Mask' buttons appear")
+                info_col.label(text="4. 'Smoothing Iterations' slider underneath to control strength")
 
             advanced_col.separator(factor=1.5)
 
@@ -797,7 +796,8 @@ def draw_help_section(layout, context, multi_mode=False):
             help_box.label(text="• Red = smooth boundary, Blue = preserved")
             help_box.label(text="• Auto-Blur Mask (Recommended): Smooths generated masks")
             help_box.label(text="• Edit mask by painting/blurring weights as needed")
-            help_box.label(text="• 'Apply Smoothing' button (with Iterations slider) and 'Delete Mask' appear")
+            help_box.label(text="• 'Apply Smoothing' + 'Delete Mask' buttons appear (side by side)")
+            help_box.label(text="• 'Smoothing Iterations' slider underneath (default: 2)")
             help_box.separator(factor=0.5)
             help_box.label(text="Partial Island Handling (WIP):", icon='MESH_CUBE')
             help_box.label(text="• Controls small mesh islands (buttons, belts, details)")
@@ -839,7 +839,8 @@ def draw_help_section(layout, context, multi_mode=False):
             help_box.label(text="• Red = smooth boundary, Blue = preserved")
             help_box.label(text="• Auto-Blur Mask (Recommended): Smooths generated masks")
             help_box.label(text="• Edit mask by painting/blurring weights as needed")
-            help_box.label(text="• 'Apply Smoothing' button (with Iterations slider) and 'Delete Mask' appear")
+            help_box.label(text="• 'Apply Smoothing' + 'Delete Mask' buttons appear (side by side)")
+            help_box.label(text="• 'Smoothing Iterations' slider underneath (default: 2)")
             help_box.separator(factor=0.5)
             help_box.label(text="Partial Island Handling (WIP):", icon='MESH_CUBE')
             help_box.label(text="• Controls small mesh islands (buttons, belts, details)")
