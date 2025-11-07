@@ -1,6 +1,31 @@
 # Module Management System
 # Bridges the main addon with the modular structure
 
+# Hot reload support - Blender standard pattern
+if "bpy" in locals():
+    import importlib
+    print("Nyarc Tools: Reloading modules.py submodules...")
+
+    # Reload core registry first
+    if "ModuleRegistry" in locals() or "try_import_module" in locals():
+        from . import core
+        if hasattr(core, 'registry'):
+            importlib.reload(core.registry)
+
+    # Reload all submodules if they were previously imported
+    if "shapekey_module" in locals() and shapekey_module:
+        importlib.reload(shapekey_module)
+    if "bone_transforms_module" in locals() and bone_transforms_module:
+        importlib.reload(bone_transforms_module)
+    if "bone_transform_saver_module" in locals() and bone_transform_saver_module:
+        importlib.reload(bone_transform_saver_module)
+    if "details_module" in locals() and details_module:
+        importlib.reload(details_module)
+    if "mirror_flip_module" in locals() and mirror_flip_module:
+        importlib.reload(mirror_flip_module)
+
+    print("Nyarc Tools: modules.py reload complete")
+
 import bpy
 from .core.registry import ModuleRegistry, try_import_module
 

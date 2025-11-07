@@ -10,66 +10,20 @@ bl_info = {
     "license": "GPL-3.0",
 }
 
-# Hot reload support - must come before any imports
-import sys
-import importlib
+# Hot reload support - Blender standard pattern
+# When Blender reloads this file, "bpy" will already be in locals()
+# This tells us to manually reload all submodules to get fresh code
+if "bpy" in locals():
+    import importlib
+    print("Nyarc Tools: Hot reload detected - reloading all submodules...")
 
+    # Reload the main modules package
+    if "modules" in locals():
+        importlib.reload(modules)
 
-def cleanup_addon_modules():
-    """
-    Remove all addon modules from sys.modules to ensure hot reload works.
+    print("Nyarc Tools: Hot reload complete - all submodules reloaded")
 
-    This prevents the "cached old version" problem where users reinstall
-    the addon but still see old code because Python cached the modules.
-
-    Called at:
-    - Module level: Runs BEFORE imports if addon is being reloaded
-    - Start of register(): Ensures fresh import when enabling addon
-    - End of unregister(): Cleans up after disabling addon
-    """
-    # Get addon package name (e.g., "nyarc_vrcat_tools")
-    addon_package = __name__.split('.')[0] if '.' in __name__ else __name__
-
-    # Find all modules belonging to this addon
-    modules_to_remove = [
-        module_name for module_name in list(sys.modules.keys())
-        if module_name.startswith(addon_package + '.') or module_name == addon_package
-    ]
-
-    # Remove them from sys.modules - DON'T remove the current __init__.py
-    # as that would break the current execution
-    current_module = __name__.split('.')[0] if '.' in __name__ else __name__
-    for module_name in modules_to_remove:
-        if module_name != current_module:  # Don't remove ourselves
-            try:
-                del sys.modules[module_name]
-            except KeyError:
-                pass
-
-    # Invalidate import caches AND finder caches to ensure fresh imports
-    importlib.invalidate_caches()
-
-    # Clear import cache more aggressively
-    if hasattr(importlib, '_bootstrap'):
-        if hasattr(importlib._bootstrap, '_module_locks'):
-            # Clear any module locks that might prevent reimport
-            locks_to_clear = [key for key in importlib._bootstrap._module_locks.keys()
-                             if key.startswith(addon_package)]
-            for key in locks_to_clear:
-                try:
-                    del importlib._bootstrap._module_locks[key]
-                except:
-                    pass
-
-    if modules_to_remove:
-        print(f"Nyarc Tools: Hot reload - cleaned {len(modules_to_remove)} cached modules")
-
-
-# Run cleanup immediately if this is a reload (addon already loaded)
-if __name__.split('.')[0] in sys.modules:
-    cleanup_addon_modules()
-
-# Now import everything - modules will be fresh after cleanup
+# Normal imports (executed both on first load and reload)
 import bpy
 from bpy.props import PointerProperty, StringProperty, BoolProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.types import Panel, PropertyGroup, Object
@@ -810,16 +764,6 @@ classes = (
 
 
 def register():
-    # Clean up cached modules for hot reload
-    cleanup_addon_modules()
-
-    # Re-import modules after cleanup to get fresh code
-    # This is critical because the module-level import happens before cleanup
-    global modules
-    from . import modules as modules_fresh
-    modules = modules_fresh
-    print("Nyarc Tools: Hot reload - re-imported modules after cleanup")
-
     # Register main classes first
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -870,9 +814,6 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except:
             pass
-
-    # Clean up cached modules for hot reload
-    cleanup_addon_modules()
 
 
 if __name__ == "__main__":
