@@ -52,12 +52,31 @@ Advanced armature difference calculation and export system:
 3. Select the downloaded ZIP file
 4. Enable "NYARC VRCat Tools" in the add-ons list
 
-### **Manual Installation** 
+### **Manual Installation**
 1. Clone or download this repository
 2. Copy the `nyarc_vrcat_tools` folder to your Blender addons directory:
    - **Windows**: `%APPDATA%\Blender Foundation\Blender\[VERSION]\scripts\addons\`
    - **macOS**: `~/Library/Application Support/Blender/[VERSION]/scripts/addons/`
    - **Linux**: `~/.config/blender/[VERSION]/scripts/addons/`
+
+## 🔄 Updating the Addon
+
+When installing a new version over an existing installation, you need to reload the addon for changes to take effect:
+
+**Method 1: Disable/Enable (Quick)**
+1. Go to `Edit` → `Preferences` → `Add-ons`
+2. Find "NYARC VRCat Tools"
+3. **Uncheck** the checkbox to disable
+4. **Check** it again to enable
+5. New version is now active! ✅
+
+**Method 2: Reload Scripts (Alternative)**
+- Press `F3` and search for "Reload Scripts"
+
+**Method 3: Restart Blender (Most Thorough)**
+- Save your work and restart Blender
+
+> 💡 **Why is this needed?** This is standard for all Blender addons due to Python's module caching system. The addon includes automatic hot-reload support that activates when you disable/enable it. This is the same workflow used by professional addons like Hard Ops, Node Wrangler, and others.
 
 ## 🎯 Usage
 

@@ -1,23 +1,8 @@
 # Shape Key Transfer Module
 # Modular implementation for shape key transfer functionality
-
-# Hot reload support - reload submodules when this module is reloaded
-if "bpy" in locals():
-    import importlib
-    if "operators" in locals():
-        importlib.reload(operators)
-    if "ui" in locals():
-        importlib.reload(ui)
-    if "utils" in locals():
-        importlib.reload(utils)
-    if "sync" in locals():
-        importlib.reload(sync)
-
-    # Reload robust module if it was previously imported (it's optional)
-    import sys
-    robust_module_name = f"{__name__}.robust"
-    if robust_module_name in sys.modules:
-        importlib.reload(sys.modules[robust_module_name])
+#
+# NOTE: Hot reload is handled by main __init__.py via sys.modules cleanup
+# No manual reload code needed here!
 
 # Import all submodule components
 import bpy
