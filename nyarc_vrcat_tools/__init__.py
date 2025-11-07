@@ -21,6 +21,36 @@ from . import modules
 _msgbus_owner = object()
 
 
+def cleanup_addon_modules():
+    """
+    Remove all addon modules from sys.modules to ensure hot reload works.
+
+    This prevents the "cached old version" problem where users reinstall
+    the addon but still see old code because Python cached the modules.
+
+    Called at:
+    - Start of register(): Ensures fresh import when enabling addon
+    - End of unregister(): Cleans up after disabling addon
+    """
+    import sys
+
+    # Get addon package name (e.g., "nyarc_vrcat_tools")
+    addon_package = __name__.split('.')[0]
+
+    # Find all modules belonging to this addon
+    modules_to_remove = []
+    for module_name in sys.modules.keys():
+        if module_name.startswith(addon_package):
+            modules_to_remove.append(module_name)
+
+    # Remove them from sys.modules
+    for module_name in modules_to_remove:
+        del sys.modules[module_name]
+
+    if modules_to_remove:
+        print(f"Nyarc Tools: Cleaned up {len(modules_to_remove)} cached modules for hot reload")
+
+
 def armature_poll(self, obj):
     """Poll function to filter armature objects"""
     return obj and obj.type == 'ARMATURE'
@@ -750,6 +780,9 @@ classes = (
 
 
 def register():
+    # Clean up cached modules for hot reload
+    cleanup_addon_modules()
+
     # Register main classes first
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -800,6 +833,9 @@ def unregister():
             bpy.utils.unregister_class(cls)
         except:
             pass
+
+    # Clean up cached modules for hot reload
+    cleanup_addon_modules()
 
 
 if __name__ == "__main__":
