@@ -5,7 +5,22 @@ All notable changes to NYARC VRCat Tools will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.2.1 (2025-11-07) - UI Polish & Hot Reload
 
+### 🔧 Improvements
+* **Hot Reload Support** - No more Blender restarts! Disable/enable addon to apply updates
+* **UI Refinements** - Improved spacing and organization in Advanced Options
+* **Collapsible Subsections** - Advanced Options now has nested collapsibles for better organization
+* **Smoothing UI** - Side-by-side buttons with slider underneath for cleaner layout
+
+### 🐛 Bug Fixes
+* Fixed duplicate "Delete Mask" button appearing next to Transfer button
+* Restored hot reload support that was accidentally removed during merge
+* Fixed internal spacing in Advanced Options subsections
+
+### 📚 Documentation
+* Updated all references from "restart Blender" to "disable/enable addon"
+* Improved documentation for hot reload functionality
 
 ## v0.2.0 (2025-11-06) - Robust Shape Key Transfer
 
