@@ -152,8 +152,8 @@ def draw_single_target_ui(layout, context, props):
                 transfer_op.override_existing = props.shapekey_override_existing
                 transfer_op.skip_existing = props.shapekey_skip_existing
 
-        # Show Apply Smoothing button after transfer if mask exists
-        if mask_exists and props.shapekey_smooth_boundary:
+        # Show Apply Smoothing button after transfer if mask exists (LEGACY MODE ONLY)
+        if mask_exists and props.shapekey_smooth_boundary and not props.shapekey_use_robust_transfer:
             row = layout.row()
             row.scale_y = 1.3
             row.alert = True  # Make button red
