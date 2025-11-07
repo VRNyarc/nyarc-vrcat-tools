@@ -36,12 +36,30 @@ def cleanup_addon_modules():
         if module_name.startswith(addon_package + '.') or module_name == addon_package
     ]
 
-    # Remove them from sys.modules
+    # Remove them from sys.modules - DON'T remove the current __init__.py
+    # as that would break the current execution
+    current_module = __name__.split('.')[0] if '.' in __name__ else __name__
     for module_name in modules_to_remove:
-        del sys.modules[module_name]
+        if module_name != current_module:  # Don't remove ourselves
+            try:
+                del sys.modules[module_name]
+            except KeyError:
+                pass
 
-    # Invalidate import caches to ensure fresh imports
+    # Invalidate import caches AND finder caches to ensure fresh imports
     importlib.invalidate_caches()
+
+    # Clear import cache more aggressively
+    if hasattr(importlib, '_bootstrap'):
+        if hasattr(importlib._bootstrap, '_module_locks'):
+            # Clear any module locks that might prevent reimport
+            locks_to_clear = [key for key in importlib._bootstrap._module_locks.keys()
+                             if key.startswith(addon_package)]
+            for key in locks_to_clear:
+                try:
+                    del importlib._bootstrap._module_locks[key]
+                except:
+                    pass
 
     if modules_to_remove:
         print(f"Nyarc Tools: Hot reload - cleaned {len(modules_to_remove)} cached modules")
@@ -795,19 +813,26 @@ def register():
     # Clean up cached modules for hot reload
     cleanup_addon_modules()
 
+    # Re-import modules after cleanup to get fresh code
+    # This is critical because the module-level import happens before cleanup
+    global modules
+    from . import modules as modules_fresh
+    modules = modules_fresh
+    print("Nyarc Tools: Hot reload - re-imported modules after cleanup")
+
     # Register main classes first
     for cls in classes:
         bpy.utils.register_class(cls)
-    
+
     # Add main properties to scene
     bpy.types.Scene.nyarc_tools_props = PointerProperty(type=NyarcToolsProperties)
-    
+
     # Register all modules
     try:
         modules.register_modules()
     except Exception as e:
         print(f"Nyarc Tools: Error registering modules: {e}")
-    
+
     # Set up delayed initialization for message bus to avoid registration conflicts
     bpy.app.timers.register(_delayed_message_bus_setup, first_interval=1.0)
 
