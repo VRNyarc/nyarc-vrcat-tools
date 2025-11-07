@@ -64,10 +64,17 @@ def deferred_exit_weight_paint():
     Runs with full operator context, so mode_set works reliably.
     """
     try:
+        print(f"[Timer] Current mode: {bpy.context.mode}")
         if bpy.context.mode == 'WEIGHT_PAINT':
+            print("[Timer] Exiting WEIGHT_PAINT mode...")
             bpy.ops.object.mode_set(mode='OBJECT')
+            print("[Timer] Successfully exited to OBJECT mode")
+        else:
+            print(f"[Timer] Not in WEIGHT_PAINT mode, skipping (mode={bpy.context.mode})")
     except Exception as e:
-        print(f"Error exiting weight paint mode: {e}")
+        print(f"[Timer] Error exiting weight paint mode: {e}")
+        import traceback
+        traceback.print_exc()
     return None  # Don't repeat timer
 
 
@@ -76,12 +83,16 @@ def schedule_exit_weight_paint():
     Schedule a deferred exit from WEIGHT_PAINT mode using a timer.
     Safe to call from property update callbacks.
     """
+    print(f"[Callback] Scheduling timer to exit WEIGHT_PAINT mode (current mode: {bpy.context.mode})")
+
     # Unregister existing timer if present
     if timers.is_registered(deferred_exit_weight_paint):
+        print("[Callback] Unregistering existing timer")
         timers.unregister(deferred_exit_weight_paint)
 
     # Schedule new timer to run after 0.01 seconds
     timers.register(deferred_exit_weight_paint, first_interval=0.01)
+    print("[Callback] Timer registered to fire in 0.01s")
 
 
 def exit_weight_paint_mode_if_needed(context):
