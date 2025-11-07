@@ -10,19 +10,29 @@ bl_info = {
     "license": "GPL-3.0",
 }
 
-# Hot reload support - Blender standard pattern
-# When Blender reloads this file, "bpy" will already be in locals()
-# This tells us to manually reload all submodules to get fresh code
+# Hot reload support - Automatic sys.modules cleanup approach
+# Based on Sollumz and other professional Blender addons
+# This automatically reloads ALL submodules without needing reload code in each file
 if "bpy" in locals():
-    import importlib
-    print("Nyarc Tools: Hot reload detected - reloading all submodules...")
+    import sys
+    print("Nyarc Tools: Hot reload detected - purging all addon modules from sys.modules...")
 
-    # Reload the main modules package
-    # CRITICAL: Assign return value to update the module reference
-    if "modules" in locals():
-        modules = importlib.reload(modules)
+    # Get all module names that belong to this addon
+    addon_module_prefix = f"{__package__}."
+    module_names = list(sys.modules.keys())
 
-    print("Nyarc Tools: Hot reload complete - all submodules reloaded")
+    # Delete all addon modules from sys.modules
+    # This forces Python to re-import them fresh with new code
+    purged_count = 0
+    for name in module_names:
+        if name.startswith(addon_module_prefix) or name == __package__:
+            try:
+                del sys.modules[name]
+                purged_count += 1
+            except KeyError:
+                pass  # Module already removed
+
+    print(f"Nyarc Tools: Hot reload complete - purged {purged_count} modules, will re-import fresh")
 
 # Normal imports (executed both on first load and reload)
 import bpy
