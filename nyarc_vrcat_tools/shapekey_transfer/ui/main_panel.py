@@ -131,26 +131,13 @@ def draw_single_target_ui(layout, context, props):
             # Properties are read from scene props directly in the operator
         else:
             # LEGACY TRANSFER MODE
-            # Main transfer button (75% width if mask exists)
-            if mask_exists and props.shapekey_smooth_boundary:
-                col = row.column(align=True)
-                col.scale_x = 3.0  # 75% width
-                transfer_op = col.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
-                transfer_op.override_existing = props.shapekey_override_existing
-                transfer_op.skip_existing = props.shapekey_skip_existing
-
-                # Delete Mask button (25% width)
-                col = row.column(align=True)
-                col.scale_x = 1.0  # 25% width
-                col.operator("mesh.delete_smoothing_mask", text="Delete Mask", icon='TRASH')
+            # Full width transfer button
+            if props.shapekey_smooth_boundary:
+                transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
             else:
-                # Full width transfer button
-                if props.shapekey_smooth_boundary:
-                    transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer + Generate Mask", icon='VPAINT_HLT')
-                else:
-                    transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer Shape Key", icon='SHAPEKEY_DATA')
-                transfer_op.override_existing = props.shapekey_override_existing
-                transfer_op.skip_existing = props.shapekey_skip_existing
+                transfer_op = row.operator("mesh.transfer_shape_key", text="Transfer Shape Key", icon='SHAPEKEY_DATA')
+            transfer_op.override_existing = props.shapekey_override_existing
+            transfer_op.skip_existing = props.shapekey_skip_existing
 
         # Show Apply Smoothing button after transfer if mask exists (LEGACY MODE ONLY)
         if mask_exists and props.shapekey_smooth_boundary and not props.shapekey_use_robust_transfer:
