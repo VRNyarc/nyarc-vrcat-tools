@@ -5,6 +5,27 @@ All notable changes to NYARC VRCat Tools will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.2.2 (2025-11-08) - Hot Reload & Mode Switching Fixes
+
+### 🔧 Improvements
+* **Enhanced Hot Reload** - Upgraded to automatic sys.modules cleanup for more reliable reloading
+  * Professional approach used by major Blender addons (Sollumz pattern)
+  * More thorough module cleanup prevents stale imports
+* **Improved Update Workflow** - Clear README instructions for addon updates
+* **Better Debug Visualization** - Auto-return to WEIGHT_PAINT mode after robust transfer debug
+
+### 🐛 Bug Fixes
+* **Fixed Mode Switching Edge Cases** - Resolved issues when changing transfer settings
+  * Reliable WEIGHT_PAINT mode exit using deferred timer execution
+  * Correct mode string checks (PAINT_WEIGHT vs WEIGHT_PAINT)
+  * Auto-clear visualizations when changing transfer modes
+* **Fixed Hot Reload** - Corrected importlib.reload() return value assignment
+* **Added .gitignore** - Proper exclusion of Python cache files from repository
+
+### 📚 Documentation
+* Added clear update workflow instructions to README
+* Better logging for mode switching and timer execution
+
 ## v0.2.1 (2025-11-07) - UI Polish & Hot Reload
 
 ### 🔧 Improvements
