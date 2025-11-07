@@ -95,6 +95,66 @@ def schedule_exit_weight_paint():
     print("[Callback] Timer registered to fire in 0.01s")
 
 
+def deferred_enter_weight_paint(target_obj_name, vgroup_name):
+    """
+    Timer callback to enter WEIGHT_PAINT mode with a specific vertex group active.
+    Runs with full operator context, so mode_set works reliably.
+    """
+    try:
+        print(f"[Timer] Entering WEIGHT_PAINT mode for {target_obj_name}")
+
+        # Get the target object
+        target_obj = bpy.data.objects.get(target_obj_name)
+        if not target_obj:
+            print(f"[Timer] Error: Object {target_obj_name} not found")
+            return None
+
+        # Ensure object mode first
+        if bpy.context.mode != 'OBJECT':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        # Select and activate the object
+        bpy.ops.object.select_all(action='DESELECT')
+        target_obj.select_set(True)
+        bpy.context.view_layer.objects.active = target_obj
+
+        # Set active vertex group
+        vgroup = target_obj.vertex_groups.get(vgroup_name)
+        if vgroup:
+            target_obj.vertex_groups.active_index = vgroup.index
+            print(f"[Timer] Set active vertex group: {vgroup_name}")
+
+        # Enter WEIGHT_PAINT mode
+        bpy.ops.object.mode_set(mode='WEIGHT_PAINT')
+        print(f"[Timer] Successfully entered WEIGHT_PAINT mode")
+
+    except Exception as e:
+        print(f"[Timer] Error entering weight paint mode: {e}")
+        import traceback
+        traceback.print_exc()
+    return None  # Don't repeat timer
+
+
+def schedule_enter_weight_paint(target_obj, vgroup_name):
+    """
+    Schedule a deferred entry into WEIGHT_PAINT mode using a timer.
+    Safe to call from property update callbacks.
+    """
+    print(f"[Callback] Scheduling timer to enter WEIGHT_PAINT mode")
+
+    # Unregister existing timers if present
+    if timers.is_registered(deferred_exit_weight_paint):
+        print("[Callback] Unregistering exit timer")
+        timers.unregister(deferred_exit_weight_paint)
+
+    # Create a lambda that captures the object name (not the object itself)
+    timer_func = lambda: deferred_enter_weight_paint(target_obj.name, vgroup_name)
+
+    # Schedule new timer to run after 0.01 seconds
+    timers.register(timer_func, first_interval=0.01)
+    print("[Callback] Enter WEIGHT_PAINT timer registered to fire in 0.01s")
+
+
 def exit_weight_paint_mode_if_needed(context):
     """
     Exit WEIGHT_PAINT mode if currently in it.
@@ -160,13 +220,29 @@ def shapekey_changed_update(self, context):
     print(f"Current mode: {context.mode}")
     print(f"shape_key value: {self.shapekey_shape_key}")
 
-    # Schedule deferred exit from weight paint mode (works reliably)
-    if context.mode == 'PAINT_WEIGHT':  # Blender reports it as PAINT_WEIGHT
+    # Check if target object has a smoothing mask for this shape key
+    target_obj = self.shapekey_target_object if hasattr(self, 'shapekey_target_object') else None
+    shape_key_name = self.shapekey_shape_key if hasattr(self, 'shapekey_shape_key') else None
+
+    has_smoothing_mask = False
+    if target_obj and shape_key_name and shape_key_name != "NONE":
+        vgroup_name = f"Smooth_{shape_key_name}"
+        if vgroup_name in target_obj.vertex_groups:
+            has_smoothing_mask = True
+            print(f"[Callback] Found smoothing mask: {vgroup_name}")
+
+    if has_smoothing_mask and context.mode != 'PAINT_WEIGHT':
+        # Auto-return to WEIGHT_PAINT mode for this shape key's mask
+        print(f"[Callback] Scheduling return to WEIGHT_PAINT mode for smoothing mask")
+        schedule_enter_weight_paint(target_obj, vgroup_name)
+    elif context.mode == 'PAINT_WEIGHT' and not has_smoothing_mask:
+        # Exit WEIGHT_PAINT mode if no mask exists for this shape key
+        print(f"[Callback] No smoothing mask found, scheduling exit from WEIGHT_PAINT mode")
         schedule_exit_weight_paint()
 
     # Clear debug colors
-    if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
-        clear_debug_vertex_colors(context, self.shapekey_target_object)
+    if target_obj:
+        clear_debug_vertex_colors(context, target_obj)
     else:
         clear_debug_vertex_colors(context)
 
