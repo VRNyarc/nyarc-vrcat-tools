@@ -57,20 +57,61 @@ def override_existing_update(self, context):
         self.shapekey_skip_existing = False
 
 
+def clear_transfer_visualizations(context, target_obj=None):
+    """
+    Clear all shape key transfer visualizations (Match Quality Debug and Smoothing Mask).
+
+    Args:
+        context: Blender context
+        target_obj: Specific object to clear (if None, clears all scene objects)
+    """
+    try:
+        from .shapekey_transfer.robust.debug import clear_match_quality_debug
+
+        # Get objects to process
+        objects_to_clear = [target_obj] if target_obj else context.scene.objects
+
+        # Clear Match Quality Debug vertex colors
+        for obj in objects_to_clear:
+            if obj and obj.type == 'MESH' and obj.data.vertex_colors:
+                if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
+                    clear_match_quality_debug(obj)
+
+        # If in WEIGHT_PAINT mode (showing smoothing mask), switch to OBJECT mode
+        if context.mode == 'WEIGHT_PAINT':
+            try:
+                bpy.ops.object.mode_set(mode='OBJECT')
+            except Exception:
+                pass  # Context may not allow mode switching
+
+    except Exception as e:
+        print(f"Error clearing transfer visualizations: {e}")
+
+
 def robust_show_debug_update(self, context):
     """Clean up debug visualization when checkbox is disabled"""
     if not self.robust_show_debug:
-        # Import cleanup function
-        try:
-            from .shapekey_transfer.robust.debug import clear_match_quality_debug
+        clear_transfer_visualizations(context)
 
-            # Clear debug visualization from all mesh objects that have it
-            for obj in context.scene.objects:
-                if obj.type == 'MESH' and obj.data.vertex_colors:
-                    if "RobustTransfer_MatchQuality" in obj.data.vertex_colors:
-                        clear_match_quality_debug(obj)
-        except Exception as e:
-            print(f"Error clearing debug visualization: {e}")
+
+def robust_transfer_toggle_update(self, context):
+    """Clear visualizations when toggling between robust and normal transfer"""
+    # Clear visualizations from target object when switching modes
+    if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
+        clear_transfer_visualizations(context, self.shapekey_target_object)
+    else:
+        # Fallback: clear all objects
+        clear_transfer_visualizations(context)
+
+
+def shapekey_changed_update(self, context):
+    """Clear visualizations when shape key selection changes"""
+    # Clear visualizations from target object when changing shape key
+    if hasattr(self, 'shapekey_target_object') and self.shapekey_target_object:
+        clear_transfer_visualizations(context, self.shapekey_target_object)
+    else:
+        # Fallback: clear all objects
+        clear_transfer_visualizations(context)
 
 
 class ShapeKeyTargetItem(PropertyGroup):
@@ -145,8 +186,11 @@ class NyarcToolsProperties(PropertyGroup):
             print(f"Error updating shape key selections: {e}")
     
     def shapekey_target_update_callback(self, context):
-        """Called when target object changes - force UI refresh for red/white markings"""
+        """Called when target object changes - clear visualizations and refresh UI"""
         try:
+            # Clear visualizations from the old target (clear all to be safe)
+            clear_transfer_visualizations(context)
+
             # Force UI redraw to update red/white shape key markings
             for area in context.screen.areas:
                 if area.type == 'VIEW_3D':
@@ -184,7 +228,8 @@ class NyarcToolsProperties(PropertyGroup):
         name="Shape Key",
         description="Shape key to transfer",
         items=lambda self, context: self.get_shape_keys(context),
-        default=0
+        default=0,
+        update=shapekey_changed_update
     )
     
     # Multi-target and multi-shape key properties
@@ -437,7 +482,8 @@ class NyarcToolsProperties(PropertyGroup):
     shapekey_use_robust_transfer: BoolProperty(
         name="Use Robust Transfer",
         description="Use harmonic inpainting for smooth boundary transfer (replaces Advanced Options when enabled)",
-        default=False
+        default=False,
+        update=robust_transfer_toggle_update
     )
 
     robust_distance_threshold: FloatProperty(
