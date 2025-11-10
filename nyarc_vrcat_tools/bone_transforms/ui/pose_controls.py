@@ -219,9 +219,10 @@ def draw_pose_history_ui(parent_box, context, props):
         count_row = history_box.row()
         count_row.scale_y = 0.8
         count_row.label(text=f"Found {len(history_entries)} history entries:", icon='INFO')
-        
-        # History entries list (show max 5 recent entries)
-        display_entries = history_entries[:5]
+
+        # Reverse history entries list so newest is at top, Original Pose at bottom
+        # Show all entries (panel will scroll if needed)
+        display_entries = list(reversed(history_entries))
         
         # With sequential numbering, Entry #1 is ALWAYS the original
         original_entry_id = "1"  # Sequential system: Entry #1 = Original Pose
@@ -262,13 +263,7 @@ def draw_pose_history_ui(parent_box, context, props):
                 info_text = f"{time_str}"
             
             entry_row.label(text=info_text, icon=icon)
-        
-        # Show count if more entries exist
-        if len(history_entries) > 5:
-            more_row = history_box.row()
-            more_row.scale_y = 0.8
-            more_row.label(text=f"... and {len(history_entries) - 5} older entries", icon='DOWNARROW_HLT')
-        
+
         # Management section - show at bottom when pose history is enabled
         if pose_history_enabled and history_entries:
             history_box.separator()
