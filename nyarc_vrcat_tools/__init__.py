@@ -2,7 +2,7 @@ bl_info = {
     "name": "Nyarc VRCat Tools",
     "blender": (4, 0, 0),
     "category": "3D View",
-    "version": (0, 2, 2),
+    "version": (0, 2, 3),
     "author": "Nyarc",
     "description": "Small quality-of-life addons for heavy VRCat avatar editing - Shape Key Transfer, Bone Transform Saver, Armature Diff Export, and more!",
     "location": "View3D > Sidebar > Nyarc VRCat Tools",
