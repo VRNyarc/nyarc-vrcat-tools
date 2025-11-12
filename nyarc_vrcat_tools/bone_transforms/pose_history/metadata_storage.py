@@ -272,11 +272,23 @@ class VRCATMetadataStorage:
         """Parse metadata and data from shape key name(s) with enhanced ID validation"""
         if not shape_key_names:
             return None
-        
-        # Separate timestamp keys from pose data keys
+
+        # Separate different key types
         timestamp_keys = [name for name in shape_key_names if "_T_" in name]
+        name_keys = [name for name in shape_key_names if "_NAME_" in name]  # NEW: Custom name override
         pose_keys = [name for name in shape_key_names if "__P" in name or "_P" in name]
-        
+
+        # Extract custom name override if available (NEW)
+        custom_name_override = None
+        if name_keys:
+            try:
+                # Format: V_2_NAME_My Custom Pose Name
+                name_key = name_keys[0]
+                custom_name_override = name_key.split("_NAME_")[1]
+                print(f"PARSE DEBUG: Found custom name override: '{custom_name_override}'")
+            except:
+                pass
+
         # Extract timestamp if available
         timestamp = datetime.now().isoformat()  # Default fallback
         if timestamp_keys:
@@ -288,34 +300,34 @@ class VRCATMetadataStorage:
             except:
                 # Keep default timestamp on parse error
                 pass
-        
+
         # Parse pose data keys only (timestamp already extracted)
         if len(pose_keys) == 1:
             # Single part - handle pose data key
             name = pose_keys[0]
             parts = name.split("_")
-            
+
             if parts[0] == "V" and len(parts) >= 4:
                 # Sequential format: V_ID_BC__P00_data or V_ID_BC__data
                 try:
                     # Parse entry ID - sequential number only
                     entry_id = parts[1]  # Simple number: 1, 2, 3, 4, etc.
                     bone_count = int(parts[2])
-                    
+
                     # Extract compressed data (skip __P00 part if present)
                     if "__P00" in name:
                         compressed_data = name.split("__P00_")[1]
                     else:
                         compressed_data = "_".join(parts[3:]) if len(parts) > 3 else ""
-                    
+
                     # Default values for missing metadata
                     pose_name = "Restored Pose"
                     type_short = "M"
-                    
+
                 except (ValueError, IndexError):
                     print(f"Error parsing pose data format: {name}")
                     return None
-                    
+
             else:
                 # No other formats supported
                 return None
@@ -332,13 +344,13 @@ class VRCATMetadataStorage:
                         return 0
                 except:
                     return 0
-            
+
             sorted_names = sorted(pose_keys, key=extract_part_number)
-            
+
             # Extract metadata from first part
             first_name = sorted_names[0]
             parts = first_name.split("_")
-            
+
             # Handle both formats in multi-part reconstruction
             try:
                 if parts[0] == "V":
@@ -353,7 +365,7 @@ class VRCATMetadataStorage:
                 else:
                     # No other formats supported
                     return None
-                
+
                 # Reconstruct compressed data from all parts
                 compressed_data = ""
                 for name in sorted_names:
@@ -366,23 +378,24 @@ class VRCATMetadataStorage:
                         # Old _P##_ format
                         data_part = name.split("_P")[1].split("_", 1)[1]  # Get data after _P##_
                         compressed_data += data_part
-                
+
             except (ValueError, IndexError) as e:
                 return None
         else:
             # No pose keys found
             return None
-        
+
         # Convert type back
         type_map = {"M": "manual", "B": "before_apply_rest", "A": "auto"}
         entry_type = type_map.get(type_short, "manual")
-        
+
         return {
             "id": entry_id,
             "type": entry_type,
             "timestamp": timestamp,
             "bone_count": bone_count,
-            "compressed_data": compressed_data
+            "compressed_data": compressed_data,
+            "custom_name_override": custom_name_override  # NEW: Pass custom name to caller
         }
     
     def save_pose_entry(self, entry_data):
@@ -492,18 +505,25 @@ class VRCATMetadataStorage:
             if bone_count == 0:  # Only skip if completely empty
                 print(f"POSE HISTORY: Skipping entry {entry_id} - no bone data")
                 continue
-            
+
+            # Determine final name: custom override > embedded name > default
+            if metadata.get("custom_name_override"):
+                final_name = metadata["custom_name_override"]
+                print(f"LOAD DEBUG: Using custom name for entry {entry_id}: '{final_name}'")
+            else:
+                final_name = pose_data.get("name", f"Pose #{entry_id}")
+
             # Create entry
             entry = {
                 "id": entry_id,  # Use the sequential ID directly
                 "timestamp": metadata["timestamp"],
                 "type": metadata["type"],
                 "bone_count": bone_count,
-                "name": pose_data.get("name", f"Pose #{entry_id}"),
+                "name": final_name,  # Use final_name (custom override or embedded)
                 "bones": pose_data.get("bones", {}),
                 "inherit_scale_state": pose_data.get("inherit_scale_state", {})  # Complete inherit_scale state
             }
-            
+
             entries.append(entry)
         
         # Sort by entry ID (sequential: 1, 2, 3, 4...) - Entry #1 first!
@@ -573,7 +593,10 @@ class VRCATMetadataStorage:
 
     def rename_pose_entry(self, entry_id, new_name):
         """
-        Rename an existing pose history entry.
+        Rename an existing pose history entry by creating/updating the NAME shape key.
+
+        This function does NOT delete or recreate the pose data - it only manages
+        the optional V_{ID}_NAME_{custom_name} shape key.
 
         Args:
             entry_id: ID of the entry to rename
@@ -583,63 +606,61 @@ class VRCATMetadataStorage:
             bool: Success status
         """
         try:
-            print(f"RENAME DEBUG: Starting rename of entry {entry_id} to '{new_name}'")
-
-            # Load current history
-            history_data = self.load_pose_history()
-            print(f"RENAME DEBUG: Loaded {len(history_data.get('entries', []))} total entries")
-
-            # Find the entry to rename
-            target_entry = None
-            for entry in history_data.get("entries", []):
-                if entry["id"] == entry_id:
-                    target_entry = entry
-                    break
-
-            if not target_entry:
-                print(f"RENAME DEBUG: Entry {entry_id} not found in history!")
-                print(f"RENAME DEBUG: Available entry IDs: {[e['id'] for e in history_data.get('entries', [])]}")
+            if not self.metadata_obj or not self.metadata_obj.data.shape_keys:
+                print(f"RENAME ERROR: No metadata object or shape keys found")
                 return False
 
-            print(f"RENAME DEBUG: Found entry - Old name: '{target_entry['name']}', Bone count: {target_entry.get('bone_count', 0)}")
-            print(f"RENAME DEBUG: Entry has {len(target_entry.get('bones', {}))} bones")
-            print(f"RENAME DEBUG: Entry structure keys: {list(target_entry.keys())}")
+            print(f"RENAME: Renaming entry {entry_id} to '{new_name}'")
 
-            # Update the name in the entry
-            old_name = target_entry["name"]
-            target_entry["name"] = new_name
-            print(f"RENAME DEBUG: Updated name from '{old_name}' to '{new_name}'")
+            # Make sure object is active for shape key operations
+            bpy.context.view_layer.objects.active = self.metadata_obj
+            self.metadata_obj.select_set(True)
 
-            # Delete old shape keys for this entry
-            print(f"RENAME DEBUG: Deleting old shape keys for entry {entry_id}...")
-            delete_success = self.delete_pose_entry(entry_id)
-            print(f"RENAME DEBUG: Delete result: {delete_success}")
+            entry_id_str = str(entry_id)
 
-            # Save the entry with updated name
-            print(f"RENAME DEBUG: Saving entry with new name...")
-            print(f"RENAME DEBUG: Entry data being saved: ID={target_entry.get('id')}, Name={target_entry.get('name')}, Bones={len(target_entry.get('bones', {}))}")
-            success = self.save_pose_entry(target_entry)
-            print(f"RENAME DEBUG: Save result: {success}")
+            # Step 1: Delete any existing NAME shape key for this entry
+            old_name_keys = []
+            for shape_key in self.metadata_obj.data.shape_keys.key_blocks:
+                if shape_key.name.startswith(f"V_{entry_id_str}_NAME_"):
+                    old_name_keys.append(shape_key)
 
-            if success:
-                print(f"RENAME DEBUG: Successfully renamed entry {entry_id} to '{new_name}'")
-                # Verify it was saved
-                verify_history = self.load_pose_history()
-                verify_entry = None
-                for entry in verify_history.get("entries", []):
-                    if entry["id"] == entry_id:
-                        verify_entry = entry
-                        break
-                if verify_entry:
-                    print(f"RENAME DEBUG: Verification - Entry {entry_id} now has name: '{verify_entry['name']}'")
-                else:
-                    print(f"RENAME DEBUG: WARNING - Entry {entry_id} not found after save!")
-                    print(f"RENAME DEBUG: Available entries after save: {[(e['id'], e['name']) for e in verify_history.get('entries', [])]}")
+            for shape_key in old_name_keys:
+                print(f"RENAME: Deleting old NAME key: {shape_key.name}")
+                self.metadata_obj.shape_key_remove(shape_key)
 
-            return success
+            # Step 2: Create new NAME shape key
+            # Format: V_{ID}_NAME_{custom_name}
+            name_key_name = f"V_{entry_id_str}_NAME_{new_name}"
+
+            # Blender shape key name limit is 63 characters
+            if len(name_key_name) > 63:
+                print(f"RENAME WARNING: Name too long ({len(name_key_name)} chars), truncating to 63")
+                # Keep prefix and truncate custom name part
+                prefix = f"V_{entry_id_str}_NAME_"
+                max_name_length = 63 - len(prefix)
+                truncated_name = new_name[:max_name_length]
+                name_key_name = f"{prefix}{truncated_name}"
+
+            shape_key = self.metadata_obj.shape_key_add(name=name_key_name)
+            print(f"RENAME: Created NAME shape key: {name_key_name}")
+
+            # Step 3: Verify by re-loading
+            verify_history = self.load_pose_history()
+            verify_entry = None
+            for entry in verify_history.get("entries", []):
+                if entry["id"] == entry_id_str:
+                    verify_entry = entry
+                    break
+
+            if verify_entry:
+                print(f"RENAME: Verified - Entry {entry_id} now shows name: '{verify_entry['name']}'")
+                return True
+            else:
+                print(f"RENAME WARNING: Entry {entry_id} not found after rename")
+                return False
 
         except Exception as e:
-            print(f"RENAME DEBUG ERROR: {e}")
+            print(f"RENAME ERROR: {e}")
             import traceback
             traceback.print_exc()
             return False
