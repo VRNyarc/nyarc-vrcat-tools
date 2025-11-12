@@ -539,31 +539,86 @@ class MESH_OT_batch_transfer_shape_keys(Operator):
         successful_transfers = 0
         failed_transfers = 0
         skipped_transfers = 0
-        
+
+        # Check if robust transfer is enabled
+        use_robust = props.shapekey_use_robust_transfer
+
+        # If robust mode is enabled, check dependencies
+        if use_robust:
+            try:
+                from ..robust import DEPENDENCIES_AVAILABLE
+                if not DEPENDENCIES_AVAILABLE:
+                    self.report({'ERROR'}, "Robust transfer dependencies not installed. Click 'Install Dependencies' button.")
+                    return {'CANCELLED'}
+            except ImportError:
+                self.report({'ERROR'}, "Robust transfer module not available")
+                return {'CANCELLED'}
+
         for shape_key_name in selected_shape_keys:
             for target_obj in target_objects:
                 try:
-                    # Call the transfer logic directly with override/skip options
-                    result = transfer_shape_key_direct(self, working_source, target_obj, shape_key_name,
-                                                     self.override_existing, self.skip_existing,
-                                                     props.shapekey_surface_deform_strength,
-                                                     props.shapekey_surface_deform_falloff,
-                                                     props.shapekey_smooth_boundary,
-                                                     props.shapekey_smooth_iterations,
-                                                     props.shapekey_smooth_boundary_width,
-                                                     props.shapekey_auto_blur_mask,
-                                                     props.shapekey_blur_iterations,
-                                                     props.shapekey_partial_island_mode,
-                                                     props.shapekey_partial_island_threshold)
-                    
-                    if result == "SKIPPED":
-                        skipped_transfers += 1
-                    elif result:
-                        successful_transfers += 1
+                    # Choose transfer method based on robust mode toggle
+                    if use_robust:
+                        # ROBUST TRANSFER MODE - skip debug in batch mode as requested by user
+                        from ..robust.core import transfer_shape_key_robust
+
+                        # Check skip/override settings for robust transfer
+                        if target_obj.data.shape_keys and shape_key_name in target_obj.data.shape_keys.key_blocks:
+                            if self.skip_existing:
+                                self.report({'INFO'}, f"Skipped '{shape_key_name}' on '{target_obj.name}' (already exists)")
+                                skipped_transfers += 1
+                                continue
+                            elif not self.override_existing:
+                                self.report({'WARNING'}, f"Skipped '{shape_key_name}' on '{target_obj.name}' (exists, override not enabled)")
+                                skipped_transfers += 1
+                                continue
+                            # If override is enabled, remove existing shape key before transfer
+                            else:
+                                target_shape_key = target_obj.data.shape_keys.key_blocks[shape_key_name]
+                                target_obj.shape_key_remove(target_shape_key)
+                                self.report({'INFO'}, f"Overriding existing shape key '{shape_key_name}' on '{target_obj.name}'")
+
+                        # Call robust transfer (without debug visualization for batch mode)
+                        result = transfer_shape_key_robust(
+                            source_obj=working_source,
+                            target_obj=target_obj,
+                            shape_key_name=shape_key_name,
+                            distance_threshold=props.robust_distance_threshold,
+                            normal_threshold=props.robust_normal_threshold,
+                            use_pointcloud=props.robust_use_pointcloud,
+                            smooth_iterations=props.robust_smooth_iterations,
+                            show_debug=False,  # Never show debug in batch mode (user's request)
+                            handle_islands=props.robust_handle_islands,
+                            operator=self
+                        )
+
+                        if result:
+                            successful_transfers += 1
+                        else:
+                            failed_transfers += 1
+                            self.report({'WARNING'}, f"Failed: '{shape_key_name}' → '{target_obj.name}'")
                     else:
-                        failed_transfers += 1
-                        self.report({'WARNING'}, f"Failed: '{shape_key_name}' → '{target_obj.name}'")
-                        
+                        # LEGACY TRANSFER MODE
+                        result = transfer_shape_key_direct(self, working_source, target_obj, shape_key_name,
+                                                         self.override_existing, self.skip_existing,
+                                                         props.shapekey_surface_deform_strength,
+                                                         props.shapekey_surface_deform_falloff,
+                                                         props.shapekey_smooth_boundary,
+                                                         props.shapekey_smooth_iterations,
+                                                         props.shapekey_smooth_boundary_width,
+                                                         props.shapekey_auto_blur_mask,
+                                                         props.shapekey_blur_iterations,
+                                                         props.shapekey_partial_island_mode,
+                                                         props.shapekey_partial_island_threshold)
+
+                        if result == "SKIPPED":
+                            skipped_transfers += 1
+                        elif result:
+                            successful_transfers += 1
+                        else:
+                            failed_transfers += 1
+                            self.report({'WARNING'}, f"Failed: '{shape_key_name}' → '{target_obj.name}'")
+
                 except Exception as e:
                     failed_transfers += 1
                     self.report({'ERROR'}, f"Error transferring '{shape_key_name}' to '{target_obj.name}': {str(e)[:50]}")

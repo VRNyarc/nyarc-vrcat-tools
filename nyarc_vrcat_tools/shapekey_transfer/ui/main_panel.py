@@ -602,6 +602,78 @@ def draw_multi_target_ui(layout, context, props):
         if props.shapekey_override_existing and props.shapekey_skip_existing:
             col.label(text="⚠️ Both options selected - Skip takes priority", icon='ERROR')
 
+        # Robust Transfer Toggle (same as single mode)
+        layout.separator(factor=0.2)
+        col = options_box.column()
+        col.prop(props, "shapekey_use_robust_transfer", text="Use Robust Transfer (Harmonic Inpainting)")
+
+        # Conditional UI based on robust toggle
+        if props.shapekey_use_robust_transfer:
+            # Check if dependencies are available
+            from ..robust import DEPENDENCIES_AVAILABLE, get_missing_dependencies
+
+            layout.separator(factor=0.3)
+            robust_box = layout.box()
+            robust_header = robust_box.row()
+            robust_header.label(text="Robust Transfer Settings", icon='SMOOTHCURVE')
+
+            # Show installer if dependencies missing
+            if not DEPENDENCIES_AVAILABLE:
+                missing = get_missing_dependencies()
+                warning_box = robust_box.box()
+                warning_col = warning_box.column(align=True)
+                warning_col.alert = True
+                warning_col.label(text=f"Missing dependencies: {', '.join(missing)}", icon='ERROR')
+                warning_col.label(text="Install required libraries to use Robust Transfer")
+                warning_col.separator()
+                install_row = warning_col.row()
+                install_row.scale_y = 1.5
+                install_row.operator("mesh.install_robust_dependencies", text="Install Dependencies", icon='IMPORT')
+                warning_col.separator(factor=0.5)
+                info_col = warning_col.column(align=True)
+                info_col.scale_y = 0.7
+                info_col.label(text="This will download scipy and robust-laplacian", icon='INFO')
+                info_col.label(text="Takes ~30-60 seconds, restart Blender after")
+            else:
+                # Show robust transfer settings
+                robust_col = robust_box.column(align=True)
+                robust_col.scale_y = 0.9
+
+                # Distance threshold with auto-tune
+                dist_row = robust_col.row(align=True)
+                dist_row.prop(props, "robust_distance_threshold", text="Distance Threshold", slider=True)
+                dist_row.operator("mesh.auto_tune_distance_threshold", text="", icon='AUTO')
+
+                # Normal threshold
+                robust_col.prop(props, "robust_normal_threshold", text="Normal Threshold", slider=True)
+
+                # Point cloud option
+                robust_col.prop(props, "robust_use_pointcloud", text="Use Point Cloud Laplacian")
+
+                # Post-smoothing
+                robust_col.prop(props, "robust_smooth_iterations", text="Post-Smooth Iterations", slider=True)
+
+                robust_col.separator()
+
+                # Island handling (fully automatic, just a checkbox)
+                robust_col.prop(props, "robust_handle_islands", text="Auto-Handle Unmatched Islands (Buttons, Patches)")
+
+                robust_col.separator()
+
+                # Debug info (explain why it's not shown in batch mode)
+                debug_info = robust_box.box()
+                debug_col = debug_info.column(align=True)
+                debug_col.scale_y = 0.7
+                debug_col.label(text="Note: Debug visualization is disabled in Multi-Target Mode", icon='INFO')
+                debug_col.label(text="Use Single-Target Mode to see match quality colors")
+
+                # Info box
+                info_box = robust_box.box()
+                info_col = info_box.column(align=True)
+                info_col.scale_y = 0.7
+                info_col.label(text="Robust Transfer uses harmonic inpainting for smooth boundaries", icon='INFO')
+                info_col.label(text="Works well with mismatched topology and disconnected parts")
+
         # Advanced Options (collapsible) - same as single mode
         layout.separator(factor=0.3)
         advanced_box = layout.box()
