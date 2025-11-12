@@ -239,9 +239,14 @@ def draw_pose_history_ui(parent_box, context, props):
             # Revert button with appropriate text
             revert_op = entry_row.operator("armature.revert_pose_history", text=button_text)
             revert_op.entry_id = entry_id
-            
+
+            # Small rename button
+            rename_op = entry_row.operator("armature.rename_pose_history", text="", icon='GREASEPENCIL', emboss=True)
+            rename_op.entry_id = entry_id
+            rename_op.current_name = name
+
             # Small export to preset button
-            export_op = entry_row.operator("armature.export_pose_history_to_preset", text="Save→Rest", emboss=True)
+            export_op = entry_row.operator("armature.export_pose_history_to_preset", text="", icon='EXPORT', emboss=True)
             export_op.entry_id = entry_id
             export_op.preset_name = f"From_{name.replace(' ', '_')[:15]}"  # Default name from history entry
             

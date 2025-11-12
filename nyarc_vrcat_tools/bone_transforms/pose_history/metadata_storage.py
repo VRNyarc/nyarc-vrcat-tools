@@ -562,6 +562,52 @@ class VRCATMetadataStorage:
         
         print(f"Cleaned up {len(entries_to_delete)} old pose history entries")
 
+    def rename_pose_entry(self, entry_id, new_name):
+        """
+        Rename an existing pose history entry.
+
+        Args:
+            entry_id: ID of the entry to rename
+            new_name: New name for the entry
+
+        Returns:
+            bool: Success status
+        """
+        try:
+            # Load current history
+            history_data = self.load_pose_history()
+
+            # Find the entry to rename
+            target_entry = None
+            for entry in history_data.get("entries", []):
+                if entry["id"] == entry_id:
+                    target_entry = entry
+                    break
+
+            if not target_entry:
+                print(f"Entry {entry_id} not found")
+                return False
+
+            # Update the name in the entry
+            target_entry["name"] = new_name
+
+            # Delete old shape keys for this entry
+            self.delete_pose_entry(entry_id)
+
+            # Save the entry with updated name
+            success = self.save_pose_entry(target_entry)
+
+            if success:
+                print(f"Successfully renamed entry {entry_id} to '{new_name}'")
+
+            return success
+
+        except Exception as e:
+            print(f"Error renaming pose entry: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
 # Updated utility functions
 def get_metadata_manager(armature):
     """Get metadata manager for armature"""

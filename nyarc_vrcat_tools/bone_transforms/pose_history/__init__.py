@@ -123,7 +123,7 @@ def save_pose_history_snapshot(armature, snapshot_name="Auto Snapshot", history_
         success = metadata_manager.save_pose_entry(entry_data)
         
         if success:
-            metadata_manager.cleanup_old_entries(20)
+            metadata_manager.cleanup_old_entries(100)
             print(f"POSE HISTORY SAVE: Successfully saved '{snapshot_name}' with {len(bone_data)} bones")
         
         return success
@@ -359,42 +359,72 @@ def clear_all_pose_transforms(armature):
 def get_pose_history_list(armature):
     """
     Get list of pose history entries for UI display.
-    
+
     Args:
         armature: Blender armature object
-    
+
     Returns:
         list: List of (id, name, timestamp, type) tuples
     """
     try:
         history_data = get_pose_history(armature)
         entries = []
-        
+
         # Keep sequential order (Entry #1 first, Entry #2 second, etc.)
         # DO NOT re-sort by timestamp - this causes UI flipping!
         sorted_entries = history_data["entries"]  # Already sorted by ID in metadata_storage.py
-        
+
         # Build UI list entries without debug spam
         for entry in sorted_entries:
             entries.append((
                 entry["id"],
-                entry["name"], 
+                entry["name"],
                 entry["timestamp"],
                 entry.get("type", "manual")
             ))
-        
+
         return entries
-        
+
     except Exception as e:
         print(f"POSE HISTORY: Error getting history list: {e}")
         return []
 
 
+def rename_pose_history_entry(armature, entry_id, new_name):
+    """
+    Rename a pose history entry.
+
+    Args:
+        armature: Blender armature object
+        entry_id: ID of the entry to rename
+        new_name: New name for the entry
+
+    Returns:
+        tuple: (success: bool, message: str)
+    """
+    try:
+        metadata_manager = get_metadata_manager(armature)
+        success = metadata_manager.rename_pose_entry(entry_id, new_name)
+
+        if success:
+            return True, f"Renamed entry to '{new_name}'"
+        else:
+            return False, "Failed to rename entry"
+
+    except Exception as e:
+        error_msg = f"Error renaming pose entry: {e}"
+        print(f"POSE HISTORY RENAME ERROR: {error_msg}")
+        import traceback
+        traceback.print_exc()
+        return False, error_msg
+
+
 # Export main functions for external use
 __all__ = [
     'save_pose_history_snapshot',
-    'get_pose_history', 
+    'get_pose_history',
     'revert_to_pose_history_entry',
     'get_pose_history_list',
-    'clear_all_pose_transforms'
+    'clear_all_pose_transforms',
+    'rename_pose_history_entry'
 ]

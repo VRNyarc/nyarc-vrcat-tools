@@ -10,7 +10,7 @@ from mathutils import Vector, Quaternion
 
 # Import pose history functions from main __init__.py
 try:
-    from . import revert_to_pose_history_entry, save_pose_history_snapshot, get_pose_history
+    from . import revert_to_pose_history_entry, save_pose_history_snapshot, get_pose_history, rename_pose_history_entry
     POSE_FUNCTIONS_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Could not import pose history functions: {e}")
@@ -423,10 +423,77 @@ class ARMATURE_OT_export_pose_history_to_preset(Operator):
         return context.window_manager.invoke_props_dialog(self)
 
 
+class ARMATURE_OT_rename_pose_history(Operator):
+    """Rename a pose history entry"""
+    bl_idname = "armature.rename_pose_history"
+    bl_label = "Rename Pose"
+    bl_description = "Rename this pose history entry"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    entry_id: StringProperty(name="Entry ID")
+    current_name: StringProperty(name="Current Name", default="")
+    new_name: StringProperty(
+        name="New Name",
+        description="New name for this pose",
+        default=""
+    )
+
+    def execute(self, context):
+        props = getattr(context.scene, 'nyarc_tools_props', None)
+        if not props or not props.bone_armature_object:
+            self.report({'ERROR'}, "Please select an armature first")
+            return {'CANCELLED'}
+
+        armature = props.bone_armature_object
+
+        # Validate new name
+        if not self.new_name or self.new_name.strip() == "":
+            self.report({'ERROR'}, "Please enter a valid name")
+            return {'CANCELLED'}
+
+        # Call rename function
+        success, message = rename_pose_history_entry(armature, self.entry_id, self.new_name.strip())
+
+        if success:
+            self.report({'INFO'}, message)
+
+            # Force UI refresh
+            for area in context.screen.areas:
+                if area.type == 'PROPERTIES':
+                    area.tag_redraw()
+
+            return {'FINISHED'}
+        else:
+            self.report({'ERROR'}, message)
+            return {'CANCELLED'}
+
+    def invoke(self, context, event):
+        # Set default name to current name if not already set
+        if not self.new_name:
+            self.new_name = self.current_name
+
+        # Show dialog to enter new name
+        return context.window_manager.invoke_props_dialog(self, width=400)
+
+    def draw(self, context):
+        layout = self.layout
+        col = layout.column()
+
+        # Show current name for reference
+        if self.current_name:
+            info_row = col.row()
+            info_row.label(text=f"Current: {self.current_name}", icon='INFO')
+            col.separator()
+
+        # Input field for new name
+        col.prop(self, "new_name")
+
+
 # Registration classes - only if functions are available
 if POSE_FUNCTIONS_AVAILABLE:
     classes = (
         ARMATURE_OT_revert_pose_history,
+        ARMATURE_OT_rename_pose_history,
         ARMATURE_OT_pose_history_education_popup,
         ARMATURE_OT_pose_history_disable_warning,
         ARMATURE_OT_refresh_pose_history_ui,
