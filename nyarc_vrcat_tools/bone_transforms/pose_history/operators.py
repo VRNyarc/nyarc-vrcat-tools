@@ -92,9 +92,9 @@ class ARMATURE_OT_pose_history_education_popup(Operator):
         
         tech_col.label(text="Technical details:", icon='DISCLOSURE_TRI_RIGHT')
         tech_col.label(text="• Non-destructive: Doesn't modify your armature or mesh data")
-        tech_col.label(text="• Storage: Uses hidden shape keys for maximum compatibility")
+        tech_col.label(text="• Storage: Metadata stored in shape keys on hidden helper object")
         tech_col.label(text="• File size: Minimal increase (~1-5KB per pose state)")
-        tech_col.label(text="• Unity safe: Hidden objects maintain proper spatial behavior")
+        tech_col.label(text="• Unity: Can be deleted before export, or kept (small file size)")
         
         col.separator()
         
