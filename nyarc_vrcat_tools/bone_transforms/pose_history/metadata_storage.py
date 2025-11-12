@@ -527,21 +527,30 @@ class VRCATMetadataStorage:
         return result
     
     def delete_pose_entry(self, entry_id):
-        """Delete pose history entry by ID""" 
+        """Delete pose history entry by ID"""
         if not self.metadata_obj or not self.metadata_obj.data.shape_keys:
             return False
-        
+
         # Find and delete all shape keys for this entry
-        entry_id_str = entry_id.replace("hist_", "")
+        entry_id_str = str(entry_id).replace("hist_", "")
         keys_to_delete = []
-        
+
+        print(f"DELETE DEBUG: Looking for shape keys with entry ID: {entry_id_str}")
+
         for shape_key in self.metadata_obj.data.shape_keys.key_blocks:
-            if shape_key.name.startswith(f"VRCAT_{entry_id_str}_"):
+            # Support both old (VRCAT_) and new (V_) format
+            # New format: V_2_45_... or V_2_45__P00_...
+            # Old format: VRCAT_2_...
+            if (shape_key.name.startswith(f"V_{entry_id_str}_") or
+                shape_key.name.startswith(f"VRCAT_{entry_id_str}_")):
                 keys_to_delete.append(shape_key)
-        
+                print(f"DELETE DEBUG: Marking for deletion: {shape_key.name[:50]}...")
+
+        print(f"DELETE DEBUG: Found {len(keys_to_delete)} shape keys to delete")
+
         for shape_key in keys_to_delete:
             self.metadata_obj.shape_key_remove(shape_key)
-        
+
         print(f"Deleted {len(keys_to_delete)} shape keys for entry: {entry_id}")
         return len(keys_to_delete) > 0
     
