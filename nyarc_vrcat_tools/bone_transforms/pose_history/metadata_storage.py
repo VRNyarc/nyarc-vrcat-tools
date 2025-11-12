@@ -74,21 +74,21 @@ class VRCATMetadataStorage:
     def _ensure_object_hidden(self, obj):
         """Ensure metadata object is properly hidden"""
         try:
-            obj.hide_viewport = True      # Hide in viewport (3D view)
+            obj.hide_viewport = False     # VISIBLE for debugging (was True)
             obj.hide_render = True        # Hide in render
-            obj.hide_select = True        # Hide from selection
-            obj.hide_set(True)           # Hide in outliner
-            
+            obj.hide_select = False       # SELECTABLE for debugging (was True)
+            obj.hide_set(False)          # VISIBLE in outliner for debugging (was True)
+
             # Make it very small but keep at armature location for Unity compatibility
             obj.scale = (0.001, 0.001, 0.001)
             obj.display_type = 'WIRE'
-            
+
             # Keep at armature location (don't move far away to avoid Unity bounding box issues)
             obj.location = self.armature.location
-            
-            print(f"Applied hiding settings to existing metadata object: {obj.name}")
+
+            print(f"Applied visibility settings to metadata object (DEBUG MODE): {obj.name}")
         except Exception as e:
-            print(f"Warning: Could not fully hide metadata object {obj.name}: {e}")
+            print(f"Warning: Could not apply settings to metadata object {obj.name}: {e}")
     
     def _create_metadata_object(self, name):
         """Create minimal dummy mesh for metadata storage with armature modifier linking"""
@@ -574,8 +574,11 @@ class VRCATMetadataStorage:
             bool: Success status
         """
         try:
+            print(f"RENAME DEBUG: Starting rename of entry {entry_id} to '{new_name}'")
+
             # Load current history
             history_data = self.load_pose_history()
+            print(f"RENAME DEBUG: Loaded {len(history_data.get('entries', []))} total entries")
 
             # Find the entry to rename
             target_entry = None
@@ -585,25 +588,49 @@ class VRCATMetadataStorage:
                     break
 
             if not target_entry:
-                print(f"Entry {entry_id} not found")
+                print(f"RENAME DEBUG: Entry {entry_id} not found in history!")
+                print(f"RENAME DEBUG: Available entry IDs: {[e['id'] for e in history_data.get('entries', [])]}")
                 return False
 
+            print(f"RENAME DEBUG: Found entry - Old name: '{target_entry['name']}', Bone count: {target_entry.get('bone_count', 0)}")
+            print(f"RENAME DEBUG: Entry has {len(target_entry.get('bones', {}))} bones")
+            print(f"RENAME DEBUG: Entry structure keys: {list(target_entry.keys())}")
+
             # Update the name in the entry
+            old_name = target_entry["name"]
             target_entry["name"] = new_name
+            print(f"RENAME DEBUG: Updated name from '{old_name}' to '{new_name}'")
 
             # Delete old shape keys for this entry
-            self.delete_pose_entry(entry_id)
+            print(f"RENAME DEBUG: Deleting old shape keys for entry {entry_id}...")
+            delete_success = self.delete_pose_entry(entry_id)
+            print(f"RENAME DEBUG: Delete result: {delete_success}")
 
             # Save the entry with updated name
+            print(f"RENAME DEBUG: Saving entry with new name...")
+            print(f"RENAME DEBUG: Entry data being saved: ID={target_entry.get('id')}, Name={target_entry.get('name')}, Bones={len(target_entry.get('bones', {}))}")
             success = self.save_pose_entry(target_entry)
+            print(f"RENAME DEBUG: Save result: {success}")
 
             if success:
-                print(f"Successfully renamed entry {entry_id} to '{new_name}'")
+                print(f"RENAME DEBUG: Successfully renamed entry {entry_id} to '{new_name}'")
+                # Verify it was saved
+                verify_history = self.load_pose_history()
+                verify_entry = None
+                for entry in verify_history.get("entries", []):
+                    if entry["id"] == entry_id:
+                        verify_entry = entry
+                        break
+                if verify_entry:
+                    print(f"RENAME DEBUG: Verification - Entry {entry_id} now has name: '{verify_entry['name']}'")
+                else:
+                    print(f"RENAME DEBUG: WARNING - Entry {entry_id} not found after save!")
+                    print(f"RENAME DEBUG: Available entries after save: {[(e['id'], e['name']) for e in verify_history.get('entries', [])]}")
 
             return success
 
         except Exception as e:
-            print(f"Error renaming pose entry: {e}")
+            print(f"RENAME DEBUG ERROR: {e}")
             import traceback
             traceback.print_exc()
             return False
