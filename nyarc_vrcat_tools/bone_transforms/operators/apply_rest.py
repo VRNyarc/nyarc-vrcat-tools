@@ -294,7 +294,7 @@ def execute_apply_rest_pose_core(context, armature, operator_self, skip_inherit_
         
         # AUTO-SAVE POSE HISTORY: Save current pose before applying as rest pose (IF ENABLED)
         if POSE_HISTORY_AVAILABLE and props and props.pose_history_enabled:
-            snapshot_name = f"Before Apply Rest Pose - {armature.name}"
+            snapshot_name = "Pose"
             success = save_pose_history_snapshot(armature, snapshot_name, "before_apply_rest")
             if success:
                 print(f"Pose History: Auto-saved snapshot before apply rest pose")
@@ -418,7 +418,7 @@ def execute_flattened_apply_rest_pose(context, armature, operator_self=None):
         
         # AUTO-SAVE POSE HISTORY before flattening
         if POSE_HISTORY_AVAILABLE and props and props.pose_history_enabled:
-            snapshot_name = f"Before Flattened Apply Rest - {armature.name}"
+            snapshot_name = "Pose"
             success = save_pose_history_snapshot(armature, snapshot_name, "before_flattened_apply_rest")
             if success:
                 print(f"Pose History: Auto-saved snapshot before flattened apply rest")

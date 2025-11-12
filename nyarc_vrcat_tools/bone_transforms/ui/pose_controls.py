@@ -219,31 +219,49 @@ def draw_pose_history_ui(parent_box, context, props):
         count_row = history_box.row()
         count_row.scale_y = 0.8
         count_row.label(text=f"Found {len(history_entries)} history entries:", icon='INFO')
-        
-        # History entries list (show max 5 recent entries)
-        display_entries = history_entries[:5]
+
+        # Reverse history entries list so newest is at top, Original Pose at bottom
+        # Show all entries (panel will scroll if needed)
+        display_entries = list(reversed(history_entries))
         
         # With sequential numbering, Entry #1 is ALWAYS the original
         original_entry_id = "1"  # Sequential system: Entry #1 = Original Pose
         
         for i, (entry_id, name, timestamp, entry_type) in enumerate(display_entries):
-            entry_row = history_box.row()
-            
             # With sequential numbering: Entry #1 = Original, all others = regular poses
             is_original = (entry_id == "1")
-            
-            # Button text: "Load Original Pose" for first entry, "Load Pose" for others
-            button_text = "Load Original Pose" if is_original else "Load Pose"
-            
-            # Revert button with appropriate text
+
+            # Determine button text with actual pose name
+            max_button_name_length = 20  # Max characters for name on button
+            if is_original:
+                button_text = "Load Original Pose"
+                display_name = "Original Pose"
+            else:
+                # Truncate name for button if too long
+                if len(name) > max_button_name_length:
+                    truncated_name = name[:max_button_name_length] + "..."
+                    button_text = f"Load ({truncated_name})"
+                else:
+                    button_text = f"Load ({name})"
+                display_name = name
+
+            # Main button row
+            entry_row = history_box.row()
+
+            # Revert button with pose name
             revert_op = entry_row.operator("armature.revert_pose_history", text=button_text)
             revert_op.entry_id = entry_id
-            
+
+            # Small rename button
+            rename_op = entry_row.operator("armature.rename_pose_history", text="", icon='GREASEPENCIL', emboss=True)
+            rename_op.entry_id = entry_id
+            rename_op.current_name = name
+
             # Small export to preset button
-            export_op = entry_row.operator("armature.export_pose_history_to_preset", text="Save→Rest", emboss=True)
+            export_op = entry_row.operator("armature.export_pose_history_to_preset", text="", icon='EXPORT', emboss=True)
             export_op.entry_id = entry_id
             export_op.preset_name = f"From_{name.replace(' ', '_')[:15]}"  # Default name from history entry
-            
+
             # Format timestamp nicely
             try:
                 from datetime import datetime
@@ -251,7 +269,7 @@ def draw_pose_history_ui(parent_box, context, props):
                 time_str = dt.strftime("%m/%d %H:%M")
             except Exception as e:
                 time_str = timestamp[:16].replace('T', ' ')
-            
+
             # Icon and text based on entry type and if it's original
             if is_original:
                 icon = 'HOME'  # Special icon for original
@@ -260,15 +278,16 @@ def draw_pose_history_ui(parent_box, context, props):
                 # Use valid Blender icons
                 icon = 'LOOP_BACK' if entry_type == "before_apply_rest" else 'RECOVER_LAST'
                 info_text = f"{time_str}"
-            
+
             entry_row.label(text=info_text, icon=icon)
-        
-        # Show count if more entries exist
-        if len(history_entries) > 5:
-            more_row = history_box.row()
-            more_row.scale_y = 0.8
-            more_row.label(text=f"... and {len(history_entries) - 5} older entries", icon='DOWNARROW_HLT')
-        
+
+            # If name is too long, show full name in additional row below
+            if not is_original and len(name) > max_button_name_length:
+                name_row = history_box.row()
+                name_row.scale_y = 0.8
+                name_row.label(text=f"   Full name: {name}", icon='BLANK1')
+
+
         # Management section - show at bottom when pose history is enabled
         if pose_history_enabled and history_entries:
             history_box.separator()
