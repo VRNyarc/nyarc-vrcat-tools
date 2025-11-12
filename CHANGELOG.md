@@ -5,6 +5,24 @@ All notable changes to NYARC VRCat Tools will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## v0.2.3 (2025-11-12) - Robust Transfer Multi-Target & Pose History UX
+
+### ✨ New Features
+* **Robust Transfer for Batch Operations** - Robust shape key transfer now works with multi-target batch transfers
+  * Supports skip/override settings in robust mode
+  * Auto-detects and installs dependencies before transfer
+  * Debug visualization disabled in batch mode for performance
+
+### 🔧 Improvements
+* **Improved Pose History UI** - Better organization and usability for pose history
+  * Newest poses now appear at top (reversed list order)
+  * Shows all history entries with scrollable panel
+  * Pose names displayed on Load buttons
+  * Added rename button for pose entries
+  * Full pose names shown below if truncated
+
+
 ## v0.2.2 (2025-11-08) - Hot Reload & Mode Switching Fixes
 
 ### 🔧 Improvements
